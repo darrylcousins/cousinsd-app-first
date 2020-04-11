@@ -1,0 +1,32 @@
+{
+  "name": "cousinsd-app-first",
+  "version": "1.0.0",
+  "description": "First try at a shopify app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "node server.js",
+    "build": "build",
+    "start": "NODE_ENV=production node server.js"
+  },
+  "keywords": [],
+  "author": "darryljcousins@gmail.com",
+  "license": "ISC",
+  "dependencies": {
+    "@shopify/koa-shopify-auth": "^3.1.58",
+    "dotenv": "^8.2.0",
+    "isomorphic-fetch": "^2.2.1",
+    "koa": "^2.11.0",
+    "koa-session": "^5.13.1",
+    "next": "^9.3.4",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1"
+  },
+  "devDependencies": {
+    "@types/node": "^13.11.1",
+    "@types/react": "^16.9.34",
+    "ngrok": "^3.2.7",
+    "npx": "^10.2.2",
+    "typescript": "^3.8.3"
+  }
+}
