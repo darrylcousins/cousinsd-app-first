@@ -2,39 +2,49 @@ require('isomorphic-fetch');
 const Koa = require('koa');
 const next = require('next');
 const { default: createShopifyAuth } = require('@shopify/koa-shopify-auth');
-const dotenv = require('dotenv');
 const { default: graphQLProxy } = require('@shopify/koa-shopify-graphql-proxy');
 const { ApiVersion } = require('@shopify/koa-shopify-graphql-proxy');
 const { verifyRequest } = require('@shopify/koa-shopify-auth');
 const session = require('koa-session');
 const Router = require('koa-router');
+const { ApolloServer, gql } = require("apollo-server-koa");
 const {receiveWebhook, registerWebhook} = require('@shopify/koa-shopify-webhooks');
+const graphiql = require("koa-graphiql").default;
+const ENV = require('./config');
+const { resolver, schema } = require('./graphql');
+const { createContext, EXPECTED_OPTIONS_KEY } = require('dataloader-sequelize');
 
-dotenv.config();
+console.log(resolver)
 
-const port = parseInt(process.env.PORT, 10) || 3000;
-const dev = process.env.NODE_ENV !== 'production';
+const port = parseInt(ENV.PORT, 10) || 3000;
+const dev = ENV.NODE_ENV !== 'production';
 const app = next({ dev });
 const handle = app.getRequestHandler();
 
-const {
-  SHOPIFY_API_SECRET_KEY,
-  SHOPIFY_API_KEY,
-  HOST,
-  API_VERSION,
-} = process.env;
-console.log(HOST);
+const graphQLServer = new ApolloServer({
+  typeDefs: schema,
+  resolvers: resolver,
+  playground: true,
+  bodyParser: true,
+});
+
+console.log('connecting as ', ENV.HOST, '\n');
 
 app.prepare().then(() => {
   const server = new Koa();
+
+  graphQLServer.applyMiddleware({
+    app: server
+  });
+
   server.use(session({ sameSite: 'none', secure: true }, server));
-  server.keys = [SHOPIFY_API_SECRET_KEY];
+  server.keys = [ENV.SHOPIFY_API_SECRET_KEY];
 
   server.use(
 
     createShopifyAuth({
-      apiKey: SHOPIFY_API_KEY,
-      secret: SHOPIFY_API_SECRET_KEY,
+      apiKey: ENV.SHOPIFY_API_KEY,
+      secret: ENV.SHOPIFY_API_SECRET_KEY,
       scopes: [
         'read_products',
         'write_products',

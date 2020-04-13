@@ -1,0 +1,10 @@
+type Shop {
+  id: Int
+  name: String
+  email: String
+  title: String
+}
+
+type Query {
+  getShop(id: Int): [Shop]
+}
