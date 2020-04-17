@@ -1,6 +1,7 @@
 const { Sequelize } = require('sequelize');
 const { ENV } = require('../config/env.config');
 const Shop = require('./shop.model');
+const SelectedProducts = require('./selected_products.model');
 
 const sequelize = new Sequelize({
   host: ENV.DB_HOST,
@@ -16,6 +17,7 @@ const sequelize = new Sequelize({
 
 module.exports = { 
   sequelize: sequelize,
-  Shop: Shop(sequelize)
+  Shop: Shop(sequelize),
+  SelectedProducts: SelectedProducts(sequelize),
 };
 

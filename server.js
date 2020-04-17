@@ -14,12 +14,12 @@ const ENV = require('./config');
 const { resolver, schema } = require('./graphql');
 const { createContext, EXPECTED_OPTIONS_KEY } = require('dataloader-sequelize');
 
-console.log(resolver)
-
 const port = parseInt(ENV.PORT, 10) || 3000;
 const dev = ENV.NODE_ENV !== 'production';
 const app = next({ dev });
 const handle = app.getRequestHandler();
+
+console.log(resolver);
 
 const graphQLServer = new ApolloServer({
   typeDefs: schema,
@@ -34,8 +34,10 @@ app.prepare().then(() => {
   const server = new Koa();
 
   graphQLServer.applyMiddleware({
-    app: server
+    app: server,
+    path: '/local_graphql'
   });
+
 
   server.use(session({ sameSite: 'none', secure: true }, server));
   server.keys = [ENV.SHOPIFY_API_SECRET_KEY];
@@ -58,7 +60,7 @@ app.prepare().then(() => {
         });
 
         const registration = await registerWebhook({
-          address: `${HOST}/webhooks/products/create`,
+          address: `${ENV.HOST}/webhooks/products/create`,
           topic: 'PRODUCTS_CREATE',
           accessToken,
           shop,

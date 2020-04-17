@@ -1,10 +1,11 @@
 type Shop {
-  id: Int
+  shop_id: Int
+  url: String
   name: String
-  email: String
   title: String
+  email: String
 }
 
 type Query {
-  getShop(id: Int): [Shop]
+  getShop(id: Int): Shop
 }

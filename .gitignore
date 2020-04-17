@@ -1,6 +1,6 @@
 # Vim
-.swp
-.swo
+*.swp
+*.swo
 
 # Logs
 logs
