@@ -7,26 +7,16 @@ const { ApiVersion } = require('@shopify/koa-shopify-graphql-proxy');
 const { verifyRequest } = require('@shopify/koa-shopify-auth');
 const session = require('koa-session');
 const Router = require('koa-router');
-const { ApolloServer, gql } = require("apollo-server-koa");
 const {receiveWebhook, registerWebhook} = require('@shopify/koa-shopify-webhooks');
 const graphiql = require("koa-graphiql").default;
+
 const ENV = require('./config');
-const { resolver, schema } = require('./graphql');
-const { createContext, EXPECTED_OPTIONS_KEY } = require('dataloader-sequelize');
+const { graphQLServer } = require('./graphql');
 
 const port = parseInt(ENV.PORT, 10) || 3000;
 const dev = ENV.NODE_ENV !== 'production';
 const app = next({ dev });
 const handle = app.getRequestHandler();
-
-console.log(resolver);
-
-const graphQLServer = new ApolloServer({
-  typeDefs: schema,
-  resolvers: resolver,
-  playground: true,
-  bodyParser: true,
-});
 
 console.log('connecting as ', ENV.HOST, '\n');
 
@@ -44,12 +34,16 @@ app.prepare().then(() => {
 
   server.use(
 
+  // If you have a private shopify app, you can than skip over the auth step and use this library directly for setting up graphql proxy.
+  // https://github.com/Shopify/quilt/tree/master/packages/koa-shopify-graphql-proxy
     createShopifyAuth({
       apiKey: ENV.SHOPIFY_API_KEY,
       secret: ENV.SHOPIFY_API_SECRET_KEY,
       scopes: [
         'read_products',
         'write_products',
+        'read_script_tags',
+        'write_script_tags',
       ],
       async afterAuth(ctx) {
         const { shop, accessToken } = ctx.session;

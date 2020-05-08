@@ -1,8 +1,0 @@
-type SelectedProducts {
-  shop_id: Int
-  product_ids: String
-}
-
-type Query {
-  getSelectedProducts(shop_id: Int): SelectedProducts
-}
