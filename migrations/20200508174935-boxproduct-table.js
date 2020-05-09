@@ -3,7 +3,7 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.createTable(
-      'BoxProducts',
+      'BoxProduct',
       {
         createdAt: {
           allowNull: false,
@@ -13,11 +13,11 @@ module.exports = {
           allowNull: false,
           type: Sequelize.DATE,
         },
-        BoxId: {
+        boxId: {
           type: Sequelize.INTEGER,
           primaryKey: true,
         },
-        ProductId: {
+        productId: {
           type: Sequelize.INTEGER,
           primaryKey: true,
         },
@@ -26,6 +26,6 @@ module.exports = {
   },
 
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('BoxProducts');
+    return queryInterface.dropTable('BoxProduct');
   },
 };

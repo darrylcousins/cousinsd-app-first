@@ -1,61 +1,44 @@
-'use strict';
-
+'use strict'
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    /*
-      Add altering commands here.
-      Return a promise to correctly handle asynchronicity.
-
-      Example:
-      return queryInterface.createTable('users', { id: Sequelize.INTEGER });
-    */
     return queryInterface.addColumn(
-      'Boxes',
-      'ShopId',
+      'Boxes', // name of Source model
+      'shopId', // name of the key we're adding 
       {
         type: Sequelize.INTEGER,
         references: {
-          model: 'Shops',
-          key: 'id',
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'SET NULL',
+        model: 'Shops', // name of Target model
+        key: 'id', // key in Target model that we're referencing
+      },
+      onUpdate: 'CASCADE',
+      onDelete: 'SET NULL',
       }
-    )
-    .then(() => {
-       return queryInterface.addColumn(
-         'Products',
-         'ShopId',
-         {
+    ).then(() => {
+      return queryInterface.addColumn(
+          'Products', // name of Source model
+          'shopId', // name of the key we're adding 
+          {
             type: Sequelize.INTEGER,
             references: {
-              model: 'Shops', // name of Source model
-              key: 'id',
-            },
-            onUpdate: 'CASCADE',
-            onDelete: 'SET NULL',
-         }
-       );
-    })
+            model: 'Shops', // name of Target model
+            key: 'id', // key in Target model that we're referencing
+          },
+          onUpdate: 'CASCADE',
+          onDelete: 'SET NULL',
+        }
+      );
+    });
   },
 
   down: (queryInterface, Sequelize) => {
-    /*
-      Add reverting commands here.
-      Return a promise to correctly handle asynchronicity.
-
-      Example:
-      return queryInterface.dropTable('users');
-    */
     return queryInterface.removeColumn(
-      'Boxes',
-      'ShopId'
-      )
-      .then(() => {
-        return queryInterface.removeColumn(
-          'Products',
-          'ShopId'
-          );
-        });
-  }
+        'Boxes', // name of Source model
+        'shopId' // key we want to remove
+    ).then(() => {
+      return queryInterface.removeColumn(
+          'Products', // name of Source model
+          'shopId' // key we want to remove
+        );
+      });
+    }
 };

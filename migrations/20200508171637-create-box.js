@@ -9,13 +9,13 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       name: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        unique: 'compositeIndex',
       },
       delivered: {
-        type: Sequelize.DATE
-      },
-      shopify_product_id: {
-        type: Sequelize.STRING
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.NOW,
+        unique: 'compositeIndex',
       },
       createdAt: {
         allowNull: false,

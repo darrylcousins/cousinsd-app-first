@@ -13,19 +13,19 @@ import { Query } from 'react-apollo';
 import LocalClient from '../LocalClient';
 
 const GET_ALL_PRODUCE = gql`
-  query getAllProduce {
-    getAllProduce {
-    id
-    name
-    alt_name
-    created
-  }
+  query getProducts($shopId: Int!) {
+    getProducts(shopId: $shopId) {
+      id
+      name
+      createdAt
+    }
   }
 `;
 
 class Produce extends React.Component {
 
   render() {
+    const shopId = 1;
     return (
       <Frame>
         <Page>
@@ -36,15 +36,16 @@ class Produce extends React.Component {
                   Produce
                 </Heading>
 
-                <Query client={LocalClient} query={GET_ALL_PRODUCE}>
+                <Query client={LocalClient} query={GET_ALL_PRODUCE} variables={{shopId}}>
                   {({ loading, error, data }) => {
                     if (loading) { return <Loading />; }
+                    console.log(error);
                     if (error) { return (
                       <Banner status="critical">{error.message}</Banner>
                     )}
                     console.log(data);
-                    const rows = data.getAllProduce.map((item) => (
-                      [item.name, new Date(parseInt(item.created)).toDateString()]
+                    const rows = data.getProducts.map((item) => (
+                      [item.name, new Date(parseInt(item.createdAt)).toDateString()]
                     ));
                     return (
                       <React.Fragment>

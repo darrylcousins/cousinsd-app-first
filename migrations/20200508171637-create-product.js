@@ -9,13 +9,16 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       name: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        unique: true,
+        unique: 'compositeIndex',
       },
       alt_name: {
         type: Sequelize.STRING
       },
       available: {
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.NOW,
       },
       createdAt: {
         allowNull: false,
