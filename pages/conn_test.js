@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   Banner,
   Layout,
@@ -14,7 +15,7 @@ import { Query } from 'react-apollo';
 import LocalClient from '../LocalClient';
 
 const GET_SHOP = gql`
-  query getShop($id: ID!) {
+  query getShop($id: Int!) {
     getShop(id: $id) {
       name
       email
@@ -38,7 +39,7 @@ const GET_SHOPIFY = gql`
 class ConnTest extends React.Component {
 
   render() {
-    const shop_id = 1;
+    const shop_id = SHOP_ID;
     return (
       <Frame>
         <Page>
@@ -60,7 +61,7 @@ class ConnTest extends React.Component {
                     )}
                     console.log(data);
                     const { name, email, url, shopify_name, createdAt } = data.getShop;
-                    console.log(new Date(parseInt(created)).toDateString());
+                    console.log(new Date(parseInt(createdAt)).toDateString());
                     return (
                       <React.Fragment>
                         <TextStyle variation="strong">Local Storage</TextStyle>
@@ -115,7 +116,7 @@ class ConnTest extends React.Component {
         </Page>
       </Frame>
     );
-  };
+  }
 }
 
 export default ConnTest;

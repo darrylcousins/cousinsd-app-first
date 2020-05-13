@@ -6,7 +6,10 @@ const apiKey =  JSON.stringify(process.env.SHOPIFY_API_KEY);
 
 module.exports = withCSS({
   webpack: (config) => {
-    const env = { API_KEY: apiKey };
+    const env = { 
+      API_KEY: apiKey,
+      SHOP_ID: 1,
+    };
     config.plugins.push(new webpack.DefinePlugin(env));
     return config;
   },

@@ -1,9 +1,8 @@
-import React, {useCallback, useRef, useState} from 'react';
+import React from 'react';
 import {
   Layout,
   Card,
   TextContainer,
-  SkeletonPage,
   SkeletonDisplayText,
   SkeletonBodyText,
 } from '@shopify/polaris';

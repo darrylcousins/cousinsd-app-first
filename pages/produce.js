@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   Banner,
   Layout,
@@ -32,9 +33,7 @@ class Produce extends React.Component {
           <Layout>
             <Layout.Section>
               <TextContainer>
-                <Heading>
-                  Produce
-                </Heading>
+                <Heading>Produce</Heading>
 
                 <Query client={LocalClient} query={GET_ALL_PRODUCE} variables={{shopId}}>
                   {({ loading, error, data }) => {
@@ -70,7 +69,7 @@ class Produce extends React.Component {
         </Page>
       </Frame>
     );
-  };
+  }
 }
 
 export default Produce;

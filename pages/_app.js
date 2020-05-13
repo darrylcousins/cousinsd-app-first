@@ -1,3 +1,4 @@
+import React from 'react';
 import '@shopify/polaris/styles.css';
 import App from 'next/app';
 import Head from 'next/head';
@@ -15,6 +16,7 @@ const client = new ApolloClient({
 });
 
 class MyApp extends App {
+
   render() {
     const { Component, pageProps } = this.props;
     const config = { apiKey: API_KEY, shopOrigin: Cookies.get("shopOrigin"), forceRedirect: true };

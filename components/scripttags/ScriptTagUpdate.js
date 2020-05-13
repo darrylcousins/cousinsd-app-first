@@ -1,4 +1,4 @@
-import React, {useCallback, useRef, useState} from 'react';
+import React, {useState} from 'react';
 import {
   Banner,
   Button,
@@ -13,7 +13,6 @@ import {
 import { Query } from 'react-apollo';
 import { Mutation } from 'react-apollo';
 import LoadingTextMarkup from '../common/LoadingTextMarkup';
-import LoadingPageMarkup from '../common/LoadingPageMarkup';
 import { UPDATE_SCRIPTTAG, GET_SCRIPTTAGS, GET_SCRIPTTAG } from './queries';
 
 export default function ScriptTagUpdate({id, setShowUpdateForm, displayToast}) {

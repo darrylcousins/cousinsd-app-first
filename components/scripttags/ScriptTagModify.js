@@ -1,18 +1,14 @@
-import React, {useCallback, useRef, useState} from 'react';
+import React, {useState} from 'react';
 import {
   Card,
   Button,
   ButtonGroup,
   OptionList,
-  Stack,
-  TextStyle,
   Banner,
-  Frame,
   Page,
   PageActions,
   Loading,
   Layout,
-  TextContainer,
   Toast,
   EmptyState,
 } from '@shopify/polaris';
@@ -27,10 +23,6 @@ import { DELETE_SCRIPTTAG, GET_SCRIPTTAGS } from './queries';
 export default function ScriptTagModify() {
   // loading state
   const [isLoading, setIsLoading] = useState(false);
-  const toggleIsLoading = useCallback(
-    () => setIsLoading((isLoading) => !isLoading),
-    [],
-  );
 
   const loadingMarkup = isLoading ? <Loading /> : null;
 
