@@ -21,6 +21,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       onUpdate: 'CASCADE',
       onDelete: 'SET NULL',
+      unique: 'compositeIndex',
     },
   }, {});
   Box.associate = function(models) {

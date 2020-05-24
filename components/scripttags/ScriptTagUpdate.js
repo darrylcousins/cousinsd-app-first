@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import PropTypes from 'prop-types';
 import {
   Banner,
   Button,
@@ -15,7 +16,13 @@ import { Mutation } from 'react-apollo';
 import LoadingTextMarkup from '../common/LoadingTextMarkup';
 import { UPDATE_SCRIPTTAG, GET_SCRIPTTAGS, GET_SCRIPTTAG } from './queries';
 
-export default function ScriptTagUpdate({id, setShowUpdateForm, displayToast}) {
+const propTypes = {
+  id: PropTypes.int,
+  setShowUpdateForm: PropTypes.func,
+  displayToast: PropTypes.func,
+}
+
+function ScriptTagUpdate({id, setShowUpdateForm, displayToast}) {
 
   function ScriptTagUpdateForm(props) {
     const id = props.id;
@@ -122,6 +129,12 @@ export default function ScriptTagUpdate({id, setShowUpdateForm, displayToast}) {
     );
   }
 
+  ScriptTagUpdateForm.propTypes = {
+    id: PropTypes.int,
+    src: PropTypes.string,
+    displayScope: PropTypes.bool,
+  }
+
   return (
     <React.Fragment>
       <Card
@@ -143,3 +156,6 @@ export default function ScriptTagUpdate({id, setShowUpdateForm, displayToast}) {
   );
 }
 
+ScriptTagUpdate.propTypes = propTypes;
+
+export default ScriptTagUpdate;

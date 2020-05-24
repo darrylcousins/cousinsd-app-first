@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import PropTypes from 'prop-types';
 import {
   Card,
   Banner,
@@ -15,8 +16,13 @@ import { Mutation } from 'react-apollo';
 import LoadingPageMarkup from '../common/LoadingPageMarkup';
 import { INSTALL_SCRIPTTAG, GET_SCRIPTTAGS } from './queries';
 
-export default function ScriptTagCreate({ setShowCreateForm, displayToast }) {
-  const [src, setSrc] = useState('https://68331e1c.ngrok.io/products.js');
+const propTypes = {
+  setShowCreateForm: PropTypes.func,
+  displayToast: PropTypes.func,
+}
+
+function ScriptTagCreate({ setShowCreateForm, displayToast }) {
+  const [src, setSrc] = useState([HOST, 'products.js'].join('/'));
   const [displayScope, setDisplayScope] = useState('ALL');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -130,4 +136,8 @@ export default function ScriptTagCreate({ setShowCreateForm, displayToast }) {
     </Layout.Section>
   );
 }
+
+ScriptTagCreate.propTypes = propTypes;
+
+export default ScriptTagCreate;
 

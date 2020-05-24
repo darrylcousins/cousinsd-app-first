@@ -21,6 +21,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       onUpdate: 'CASCADE',
       onDelete: 'SET NULL',
+      unique: 'compositeIndex',
     },
   }, {});
   Product.associate = function(models) {

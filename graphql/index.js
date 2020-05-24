@@ -1,6 +1,6 @@
 const { ApolloServer, gql, UserInputError } = require("apollo-server-koa");
 const { Op } = require("sequelize");
-const { Shop, Product, Box, BoxProduct } = require('../models');
+const { Shop, Product, Box } = require('../models');
 
 const typeDefs = gql`
   type Shop {
@@ -49,6 +49,7 @@ const typeDefs = gql`
     getProducts(shopId: Int!): [Product]
     getBox(id: Int!): Box
     getBoxes(shopId: Int!): [Box]
+    boxGetDeselectedProducts(boxId: Int!): [Product]
   }
 
   input ShopInput {
@@ -65,17 +66,24 @@ const typeDefs = gql`
 
   input ProductInput {
     name: String!
-    alt_name: String!
+    alt_name: String
     shopId: Int!
+    available: String
   }
 
   input ProductLooseInput {
+    productId: Int
     name: String!
   }
 
   input BoxProductInput {
     boxId: Int!
     productId: Int!
+  }
+
+  input BoxDeliveredInput {
+    boxId: Int!
+    delivered: String!
   }
 
   input BoxCreateProductInput {
@@ -90,6 +98,7 @@ const typeDefs = gql`
     boxAddProduct(input: BoxProductInput!): Product
     productAddBox(input: BoxProductInput!): Box
     boxAddCreateProduct(input: BoxCreateProductInput!): Product
+    boxUpdateDelivered(input: BoxDeliveredInput!): Box
   }
 `;
 
@@ -118,7 +127,8 @@ const resolvers = {
       return Box.findByPk(id);
     },
     async getBoxes(root, { shopId }, { models }, info) {
-      const fields = getFieldsFromInfo(info);
+      var fields = getFieldsFromInfo(info);
+      fields = fields.filter(item => item !== '__typename');
       return fields ?
         Box.findAll({
           attributes: fields,
@@ -136,6 +146,23 @@ const resolvers = {
           attributes: fields,
           where: { shopId: shopId }
         }) : Product.findAll({ where: { shopId: shopId } });
+    },
+    async boxGetDeselectedProducts(root, { boxId }, { models }, info) {
+      // TODO There must be better way with only one sql call
+      const box = await Box.findByPk(boxId);
+      const products = await box.getProducts({
+        attributes: ['id'],
+        raw: true,
+      });
+      const productIds = products.map((product) => product.id);
+      return Product.findAll({
+        attributes: ['id', 'name'],
+        where: {
+          id: {
+            [Op.notIn]: productIds
+          }
+        }
+      });
     },
   },
   Mutation: {
@@ -156,9 +183,11 @@ const resolvers = {
       });
     },
     async createProduct (root, { input }, { models }, info) {
-      const { name, shopId } = input;
+      const { name, alt_name, available, shopId } = input;
       return Product.create({
         name,
+        alt_name,
+        available,
         shopId,
       })
     },
@@ -189,9 +218,29 @@ const resolvers = {
     async boxAddCreateProduct (root, { input }, { models }, info) {
       const { boxId, data } = input;
       const box = await Box.findByPk(boxId);
-      data.shopId = box.shopId;
-      product = box.createProduct(data);
+      const { productId, ...productData } = data;
+      let product = null;
+      if (productId) {
+        product = await Product.findByPk(productId);
+        if (box.shopId != product.shopId) {
+          throw new UserInputError('Shop ownership does not match for box and product', {
+            invalidArgs: Object.keys(args),
+          });
+        };
+        if (!box.hasProduct(product)) box.addProduct(product);
+      } else {
+        productData.shopId = box.shopId;
+        product = box.createProduct(productData);
+      }
       return product;
+    },
+    async boxUpdateDelivered (root, { input }, { models }, info) {
+      const { boxId, delivered } = input;
+      console.log(input, boxId, delivered);
+      var box = await Box.findByPk(boxId);
+      box.delivered = delivered;
+      await box.save();
+      return box;
     },
   },
   Shop: {

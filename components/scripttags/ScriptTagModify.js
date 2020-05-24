@@ -5,7 +5,6 @@ import {
   ButtonGroup,
   OptionList,
   Banner,
-  Page,
   PageActions,
   Loading,
   Layout,
@@ -82,7 +81,7 @@ export default function ScriptTagModify() {
     displayToast('ScriptTag Deleted');
   }
 
-  // when not loading
+  // when done loading
   const listScriptTagsMarkup = (
     <React.Fragment>
       <Card

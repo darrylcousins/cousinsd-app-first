@@ -4,48 +4,48 @@ import {
   Layout,
   Page,
 } from '@shopify/polaris';
-import BoxList from '../components/boxes/BoxList';
+import ProductList from '../components/products/ProductList';
 
-export default function Boxes() {
+export default function Products() {
 
   // add form
   const [showCreateForm, setShowCreateForm] = useState(false);
   // edit form
   const [showEditForm, setShowEditForm] = useState(false);
 
-  const BoxAdd = () => (
+  const ProductAdd = () => (
     <Layout.Section>
       Show add form here
     </Layout.Section>
   );
 
   const createForm = showCreateForm && (
-      <BoxAdd />
+      <ProductAdd />
   );
 
-  const BoxEdit = () => (
+  const ProductEdit = () => (
     <Layout.Section>
       Show edit form here
     </Layout.Section>
   );
 
   const editForm = showEditForm && (
-      <BoxEdit />
+      <ProductEdit />
   );
 
   return (
     <Frame>
       <Page
-        title="Boxes"
+        title="Produce"
         primaryAction={{
-          content: 'Add Box',
+          content: 'Add Product',
           onAction: () => setShowCreateForm(true),
         }}
       >
         <Layout>
           {createForm}
           {editForm}
-          <BoxList />
+          <ProductList />
         </Layout>
       </Page>
     </Frame>
