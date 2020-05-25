@@ -23,3 +23,19 @@ export const BOX_UPDATE_DELIVERED = gql`
     }
   }
 `
+
+export const CREATE_BOX = gql`
+  mutation createBox($input: BoxInput!) {
+    createBox(input: $input) {
+      id
+      name
+      delivered
+    }
+  }
+`
+
+export const DELETE_BOX = gql`
+  mutation deleteBox($input: BoxDeleteInput!) {
+    deleteBox(input: $input)
+  }
+`

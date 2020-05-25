@@ -12,6 +12,8 @@ import {
   Layout,
   List,
   Loading,
+  Sheet,
+  Stack,
   TextContainer,
 } from '@shopify/polaris';
 import {
@@ -22,6 +24,7 @@ import LocalClient from '../../LocalClient';
 import ItemDatePicker from '../common/ItemDatePicker';
 import ProductAdd from '../products/ProductAdd';
 import ProductSelect from '../products/ProductSelect';
+import BoxItem from './BoxItem';
 import { GET_BOXES, BOX_UPDATE_DELIVERED } from './queries';
 
 export default function BoxList() {
@@ -35,11 +38,11 @@ export default function BoxList() {
     return <Icon source={CancelSmallMinor} />
   }
 
+  // { active ? <ProductSelect boxId={parseInt(item.id)} /> : null }
+
   return (
     <Layout.Section>
       <TextContainer>
-        <Heading>Boxes</Heading>
-
         <Query client={LocalClient} query={GET_BOXES} variables={{shopId}}>
           {({ loading, error, data }) => {
             if (loading) { return <Loading />; }
@@ -47,51 +50,14 @@ export default function BoxList() {
               <Banner status="critical">{error.message}</Banner>
             )}
             console.log(data);
-            const rows = data.getBoxes.map((item) => (
-              [
-                item.name,
-                <ItemDatePicker
-                  mutation={BOX_UPDATE_DELIVERED}
-                  date={new Date(parseInt(item.delivered))}
-                  boxId={parseInt(item.id)}
-                />,
-                (
-                  <React.Fragment>
-                      { item.products.map(product => (
-                        <Card
-                          key={product.id}
-                          title={product.name}
-                          primaryFooterAction={
-                            {
-                              content: <RemoveButton />,
-                            }
-                          }
-                        >
-                        </Card>
-                      )) }
-                        <Button
-                          primary plain
-                          onClick={toggleActive}
-                        >
-                          Add product
-                      </Button>
-                    { active ? <ProductSelect boxId={parseInt(item.id)} /> : null }
-                  </React.Fragment>
-                ),
-              ]
-            ));
             return (
-              <React.Fragment>
-                <DataTable
-                  columnContentTypes={[
-                    'text', 'text'
-                  ]}
-                  headings={[
-                    'Name', 'Deliver Date', 'Products'
-                  ]}
-                  rows={rows}
-                />
-              </React.Fragment>
+              <Layout>
+                <Layout.Section>
+                 { data.getBoxes.map((box) => 
+                  <BoxItem box={box} key={box.id} />
+                 )}
+                </Layout.Section>
+              </Layout>
             );
           }}
         </Query>

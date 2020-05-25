@@ -1,37 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
+  Button,
   Frame,
+  Heading,
   Layout,
   Page,
+  Sheet,
+  Icon,
 } from '@shopify/polaris';
+import {
+  MobileCancelMajorMonotone,
+} from '@shopify/polaris-icons';
+import SheetHelper from '../components/common/SheetHelper';
 import BoxList from '../components/boxes/BoxList';
+import BoxAdd from '../components/boxes/BoxAdd';
 
 export default function Boxes() {
 
-  // add form
-  const [showCreateForm, setShowCreateForm] = useState(false);
-  // edit form
-  const [showEditForm, setShowEditForm] = useState(false);
-
-  const BoxAdd = () => (
-    <Layout.Section>
-      Show add form here
-    </Layout.Section>
-  );
-
-  const createForm = showCreateForm && (
-      <BoxAdd />
-  );
-
-  const BoxEdit = () => (
-    <Layout.Section>
-      Show edit form here
-    </Layout.Section>
-  );
-
-  const editForm = showEditForm && (
-      <BoxEdit />
-  );
+  const [sheetActive, setSheetActive] = useState(false);
+  const toggleSheetActive = useCallback(() => setSheetActive(!sheetActive), [sheetActive]);
 
   return (
     <Frame>
@@ -39,12 +26,15 @@ export default function Boxes() {
         title="Boxes"
         primaryAction={{
           content: 'Add Box',
-          onAction: () => setShowCreateForm(true),
+          onAction: toggleSheetActive,
         }}
       >
+        <Sheet open={sheetActive} onClose={toggleSheetActive}>
+          <SheetHelper title="Add Box" toggle={toggleSheetActive}>
+            <BoxAdd onComplete={toggleSheetActive} />
+          </SheetHelper>
+        </Sheet>
         <Layout>
-          {createForm}
-          {editForm}
           <BoxList />
         </Layout>
       </Page>

@@ -61,7 +61,10 @@ export default function ItemDatePicker(props) {
   
           return (
             <Popover fluidContent={true} active={popoverActive} onClose={togglePopoverActive} activator={(
-              <Button onClick={togglePopoverActive} disclosure>
+              <Button
+                onClick={togglePopoverActive}
+                disclosure={!popoverActive ? 'down' : 'up'}
+                >
                   {date.toDateString()}
               </Button>
             )}>

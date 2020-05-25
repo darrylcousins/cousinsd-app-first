@@ -61,6 +61,7 @@ const typeDefs = gql`
 
   input BoxInput {
     name: String!
+    delivered: String!
     shopId: Int!
   }
 
@@ -91,9 +92,14 @@ const typeDefs = gql`
     data: ProductLooseInput!
   }
 
+  input BoxDeleteInput {
+    boxId: Int!
+  }
+
   type Mutation {
     createShop(input: ShopInput!): Shop
     createBox(input: BoxInput!): Box
+    deleteBox(input: BoxDeleteInput!): Int
     createProduct(input: ProductInput!): Product
     boxAddProduct(input: BoxProductInput!): Product
     productAddBox(input: BoxProductInput!): Box
@@ -181,6 +187,14 @@ const resolvers = {
         name,
         shopId,
       });
+    },
+    async deleteBox (root, { input }, { models }, info) {
+      console.log(input);
+      const { boxId } = input;
+      const box = await Box.findByPk(boxId);
+      console.log(box);
+      box.destroy();
+      return boxId;
     },
     async createProduct (root, { input }, { models }, info) {
       const { name, alt_name, available, shopId } = input;
