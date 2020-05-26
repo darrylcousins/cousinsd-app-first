@@ -10,14 +10,28 @@ import {
 } from '@shopify/polaris';
 import { Mutation } from 'react-apollo';
 import LocalClient from '../../LocalClient';
-import { DELETE_BOX } from './queries';
+import { DELETE_BOX, GET_BOXES } from './queries';
 
 export default function BoxDelete({ box, onComplete }) {
+
+  const shopId = SHOP_ID;
+
+  const updateCacheAfterDelete = (cache, { data } ) => {
+    const variables = { shopId };
+    const query = GET_BOXES;
+    const boxId = data.deleteBox;
+
+    const getBoxes = cache.readQuery({ query, variables }).getBoxes.filter((box) => parseInt(box.id) !== boxId)
+    data = { getBoxes };
+
+    cache.writeQuery({ query, variables, data });
+  }
 
   return (
     <Mutation
       client={LocalClient}
       mutation={DELETE_BOX}
+      update={updateCacheAfterDelete}
     >
       {(boxDelete, { loading, error, data }) => {
 
@@ -30,9 +44,11 @@ export default function BoxDelete({ box, onComplete }) {
         const handleBoxDelete = () => {
           const boxId = parseInt(box.id);
           const input = { boxId }
-          console.log({ input });
-          boxDelete({ variables: { input } });
-          onComplete();
+          boxDelete({ variables: { input } }).then((value) => {
+            onComplete();
+          }).catch((error) => {
+            console.log('error', error);
+          });
         };
 
         return (

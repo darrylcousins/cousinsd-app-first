@@ -34,12 +34,6 @@ export default function BoxList() {
   const [active, setActive] = useState(false);
   const toggleActive = useCallback(() => setActive(!active), [active]);
 
-  const RemoveButton = () => {
-    return <Icon source={CancelSmallMinor} />
-  }
-
-  // { active ? <ProductSelect boxId={parseInt(item.id)} /> : null }
-
   return (
     <Layout.Section>
       <TextContainer>

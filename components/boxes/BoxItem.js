@@ -27,14 +27,15 @@ import {
   CaretDownMinor,
   CaretUpMinor,
 } from '@shopify/polaris-icons';
-import { Query } from 'react-apollo';
+import { Query, Mutation } from 'react-apollo';
+import { useMutation } from "@apollo/react-hooks";
 import LocalClient from '../../LocalClient';
 import ItemDatePicker from '../common/ItemDatePicker';
 import SheetHelper from '../common/SheetHelper';
-import ProductAdd from '../products/ProductAdd';
 import ProductSelect from '../products/ProductSelect';
+import ProductRemove from '../products/ProductRemove';
 import BoxDelete from './BoxDelete';
-import { GET_BOXES, BOX_UPDATE_DELIVERED } from './queries';
+import { SET_SELECTED_BOX, GET_BOXES, BOX_UPDATE_DELIVERED } from './queries';
 
 export default function BoxItem({ box }) {
 
@@ -52,28 +53,8 @@ export default function BoxItem({ box }) {
   const [sheetActive, setSheetActive] = useState(false);
   const toggleSheetActive = useCallback(() => setSheetActive(!sheetActive), [sheetActive]);
 
-  const ProductRemoveButton = ({ id }) => {
-    return (
-      <Button
-        key={ id }
-        plain
-        destructive={true}
-        onClick={ () => console.log('clicked remove button', id)}>
-        <TextStyle variation="negative">
-          <Icon destructive source={DeleteMinor} />
-        </TextStyle>
-      </Button>
-    )
-  }
-
-  //{ active ? <ProductSelect boxId={parseInt(item.id)} /> : null }
-  const BoxRemoveButton = ({ id }) => {
-    return (
-      <TextStyle variation="negative">
-        Delete box
-      </TextStyle>
-    )
-  }
+  const [productSelectActive, setProductSelectActive] = useState(false);
+  const toggleProductSelectActive = useCallback(() => setProductSelectActive(!productSelectActive), [productSelectActive]);
 
   const BoxTitle = () => (
     <Stack>
@@ -85,6 +66,13 @@ export default function BoxItem({ box }) {
       </TextStyle>
     </Stack>
   );
+
+  const toggleProductActions = () => {
+    if ( !productsCollapsible ) setProductsCollapsible(true);
+    toggleProductSelectActive();
+  };
+
+  const [setSelectedBox, { data }] = useMutation(SET_SELECTED_BOX, { client: LocalClient });
 
   return (
     <React.Fragment>
@@ -135,21 +123,26 @@ export default function BoxItem({ box }) {
                 >
                   { box.products.map(product => (
                     <Stack key={product.id}>
-                      <ProductRemoveButton id={product.id} />
-                      <TextContainer>
-                        {product.name}
-                      </TextContainer>
+                      <ProductRemove
+                        boxId={parseInt(box.id)}
+                        productId={parseInt(product.id)}
+                        productName={product.name}
+                        setActive={setProductsCollapsible}
+                      />
                     </Stack>
                   )) }
                 </Collapsible>
               </Stack>
               : <TextStyle variation="subdued">No products</TextStyle>
             }
+              { productSelectActive ?
+                  <ProductSelect boxId={parseInt(box.id)} toggleActive={toggleProductSelectActive} />
+                  : null }
           </div>
           <ButtonGroup>
             <Button
               primary
-              onClick={() => console.log('clicked add button' + box.id)}
+              onClick={toggleProductActions}
             >
               Add product
             </Button>

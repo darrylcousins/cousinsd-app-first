@@ -17,11 +17,11 @@ import LocalClient from '../../LocalClient';
 import ProductAdd from './ProductAdd';
 import { BOX_GET_DESELECTED_PRODUCTS } from './queries';
 
-export default function ProductSelect({ boxId }) {
+export default function ProductSelect({ boxId, toggleActive }) {
 
   const shopId = SHOP_ID;
 
-  function NameAutocomplete({ deselectedOptions }) {
+  function NameAutocomplete({ deselectedOptions, toggleActive }) {
 
     const [selectedOptions, setSelectedOptions] = useState([]);
     const [inputValue, setInputValue] = useState('');
@@ -83,7 +83,7 @@ export default function ProductSelect({ boxId }) {
           onSelect={updateSelection}
           textField={textField}
         />
-        <ProductAdd boxId={boxId} selected={selectedValue(deselectedOptions)} />
+        <ProductAdd boxId={boxId} selected={selectedValue(deselectedOptions)} toggleActive={toggleActive} />
       </React.Fragment>
     );
   }
@@ -99,7 +99,7 @@ export default function ProductSelect({ boxId }) {
           {value: item.id, label: item.name}
         ));
         return (
-          <NameAutocomplete deselectedOptions={rows} />
+          <NameAutocomplete deselectedOptions={rows} toggleActive={toggleActive}/>
         );
       }}
     </Query>

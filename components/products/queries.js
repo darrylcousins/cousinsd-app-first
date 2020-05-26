@@ -27,3 +27,10 @@ export const BOX_GET_DESELECTED_PRODUCTS = gql`
   }
 `;
 
+export const BOX_REMOVE_PRODUCT = gql`
+  mutation boxRemoveProduct($input: BoxProductInput!) {
+    boxRemoveProduct(input: $input) {
+      id
+    }
+  }
+`

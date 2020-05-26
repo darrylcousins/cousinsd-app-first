@@ -1,5 +1,11 @@
 import gql from 'graphql-tag';
 
+export const SET_SELECTED_BOX = gql`
+  mutation {
+    setSelectedBox(id: $id) @client
+  }
+`;
+
 export const GET_BOXES = gql`
   query getBoxes($shopId: Int!) {
     getBoxes(shopId: $shopId) {

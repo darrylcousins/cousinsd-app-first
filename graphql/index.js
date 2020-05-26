@@ -102,6 +102,7 @@ const typeDefs = gql`
     deleteBox(input: BoxDeleteInput!): Int
     createProduct(input: ProductInput!): Product
     boxAddProduct(input: BoxProductInput!): Product
+    boxRemoveProduct(input: BoxProductInput!): Box
     productAddBox(input: BoxProductInput!): Box
     boxAddCreateProduct(input: BoxCreateProductInput!): Product
     boxUpdateDelivered(input: BoxDeliveredInput!): Box
@@ -182,17 +183,16 @@ const resolvers = {
       });
     },
     async createBox (root, { input }, { models }, info) {
-      const { name, shopId } = input;
+      const { name, shopId, delivered } = input;
       return Box.create({
         name,
         shopId,
+        delivered,
       });
     },
     async deleteBox (root, { input }, { models }, info) {
-      console.log(input);
       const { boxId } = input;
       const box = await Box.findByPk(boxId);
-      console.log(box);
       box.destroy();
       return boxId;
     },
@@ -214,8 +214,15 @@ const resolvers = {
           invalidArgs: Object.keys(args),
         });
       };
-      box.addProduct(product);
+      await box.addProduct(product);
       return product;
+    },
+    async boxRemoveProduct (root, { input }, { models }, info) {
+      const { boxId, productId } = input;
+      const box = await Box.findByPk(boxId);
+      const product = await Product.findByPk(productId);
+      await box.removeProduct(product);
+      return box;
     },
     async productAddBox (root, { input }, { models }, info) {
       const { boxId, productId } = input;
@@ -234,17 +241,20 @@ const resolvers = {
       const box = await Box.findByPk(boxId);
       const { productId, ...productData } = data;
       let product = null;
+      console.log(productId, productData);
       if (productId) {
         product = await Product.findByPk(productId);
+        console.log(product.name);
         if (box.shopId != product.shopId) {
           throw new UserInputError('Shop ownership does not match for box and product', {
             invalidArgs: Object.keys(args),
           });
         };
-        if (!box.hasProduct(product)) box.addProduct(product);
+        const hasProduct = await box.hasProduct(product);
+        if (!hasProduct) box.addProduct(product);
       } else {
         productData.shopId = box.shopId;
-        product = box.createProduct(productData);
+        product = await box.createProduct(productData);
       }
       return product;
     },
