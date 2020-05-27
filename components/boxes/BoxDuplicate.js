@@ -19,21 +19,21 @@ import {
   GET_SELECTED_DATE,
 } from './queries';
 
-export default function BoxAdd({ onComplete }) {
+export default function BoxDuplicate({ box, onComplete }) {
 
   const shopId = SHOP_ID;
 
-  const [name, setName] = useState('');
+  const [name, setName] = useState(box.name);
 
   const handleNameChange = useCallback((newValue) => setName(newValue), []);
 
   const isInvalid = (value, pattern) => value ? new RegExp(pattern).test(value) : true;
 
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(new Date(parseInt(box.delivered)));
 
   const [{month, year}, setDate] = useState({
-    month: new Date().getMonth(),
-    year: new Date().getFullYear(),
+    month: selectedDate.getMonth(),
+    year: selectedDate.getFullYear(),
   });
 
   const handleMonth= useCallback(
@@ -84,7 +84,6 @@ export default function BoxAdd({ onComplete }) {
           const delivered = correctedDate(tempDate);
           const input = { shopId, name, delivered };
           boxAdd({ variables: { input } }).then((value) => {
-            console.log('then', value);
             onComplete();
           }).catch((error) => {
             console.log('error', error);
@@ -135,3 +134,4 @@ export default function BoxAdd({ onComplete }) {
     </Mutation>
   );
 }
+

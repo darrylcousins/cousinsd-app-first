@@ -48,7 +48,7 @@ const typeDefs = gql`
     getProduct(id: Int!): Product
     getProducts(shopId: Int!): [Product]
     getBox(id: Int!): Box
-    getBoxes(shopId: Int!): [Box]
+    getBoxes(shopId: Int!, delivered: String!): [Box]
     boxGetDeselectedProducts(boxId: Int!): [Product]
   }
 
@@ -96,6 +96,10 @@ const typeDefs = gql`
     boxId: Int!
   }
 
+  input ProductSimpleInput {
+    productId: Int!
+  }
+
   type Mutation {
     createShop(input: ShopInput!): Shop
     createBox(input: BoxInput!): Box
@@ -106,6 +110,7 @@ const typeDefs = gql`
     productAddBox(input: BoxProductInput!): Box
     boxAddCreateProduct(input: BoxCreateProductInput!): Product
     boxUpdateDelivered(input: BoxDeliveredInput!): Box
+    toggleProductAvailable(input: ProductSimpleInput!): Product
   }
 `;
 
@@ -133,13 +138,14 @@ const resolvers = {
     async getBox(root, { id }, { models }, info){
       return Box.findByPk(id);
     },
-    async getBoxes(root, { shopId }, { models }, info) {
+    async getBoxes(root, { shopId, delivered}, { models }, info) {
       var fields = getFieldsFromInfo(info);
       fields = fields.filter(item => item !== '__typename');
       return fields ?
         Box.findAll({
           attributes: fields,
-          where: { shopId: shopId }
+          where: { shopId: shopId, delivered: {[Op.gt]: delivered} },
+          order: [['delivered', 'DESC']],
         }) : Box.findAll({ where: { shopId: shopId } });
     },
     async getProduct(root, { id }, { models }, info) {
@@ -151,8 +157,12 @@ const resolvers = {
       return fields ?
         Product.findAll({
           attributes: fields,
-          where: { shopId: shopId }
-        }) : Product.findAll({ where: { shopId: shopId } });
+          where: { shopId: shopId },
+          order: [['name', 'ASC']],
+        }) : Product.findAll({ 
+          where: { shopId: shopId },
+          order: [['name', 'ASC']],
+        });
     },
     async boxGetDeselectedProducts(root, { boxId }, { models }, info) {
       // TODO There must be better way with only one sql call
@@ -167,7 +177,8 @@ const resolvers = {
         where: {
           id: {
             [Op.notIn]: productIds
-          }
+          },
+          available: 1,
         }
       });
     },
@@ -241,10 +252,8 @@ const resolvers = {
       const box = await Box.findByPk(boxId);
       const { productId, ...productData } = data;
       let product = null;
-      console.log(productId, productData);
       if (productId) {
         product = await Product.findByPk(productId);
-        console.log(product.name);
         if (box.shopId != product.shopId) {
           throw new UserInputError('Shop ownership does not match for box and product', {
             invalidArgs: Object.keys(args),
@@ -265,6 +274,13 @@ const resolvers = {
       box.delivered = delivered;
       await box.save();
       return box;
+    },
+    async toggleProductAvailable (root, { input }, { models }, info) {
+      const { productId } = input;
+      var product = await Product.findByPk(productId);
+      product.available = !product.availabe;
+      await product.save();
+      return product;
     },
   },
   Shop: {

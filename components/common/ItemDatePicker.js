@@ -48,7 +48,9 @@ export default function ItemDatePicker(props) {
           const displayLoading = loading && <Loading />;
 
           const dateChange = () => {
-            const delivered = selectedDate.toISOString().slice(0, 10) + ' 00:00:00';
+            const tempDate = selectedDate;
+            tempDate.setDate(selectedDate.getDate() + 1); // correct for unfound day descrepency
+            const delivered = tempDate.toISOString().slice(0, 10) + ' 00:00:00';
             const input = { ...args, delivered };
             handleDateChange({ variables: { input } });
             togglePopoverActive();

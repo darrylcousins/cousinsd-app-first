@@ -28,14 +28,20 @@ import {
   CaretUpMinor,
 } from '@shopify/polaris-icons';
 import { Query, Mutation } from 'react-apollo';
-import { useMutation } from "@apollo/react-hooks";
+import { useQuery, useMutation } from "@apollo/react-hooks";
 import LocalClient from '../../LocalClient';
 import ItemDatePicker from '../common/ItemDatePicker';
 import SheetHelper from '../common/SheetHelper';
 import ProductSelect from '../products/ProductSelect';
 import ProductRemove from '../products/ProductRemove';
 import BoxDelete from './BoxDelete';
-import { SET_SELECTED_BOX, GET_BOXES, BOX_UPDATE_DELIVERED } from './queries';
+import BoxDuplicate from './BoxDuplicate';
+import { 
+  SET_SELECTED_BOX, 
+  GET_SELECTED_BOX, 
+  GET_BOXES, 
+  BOX_UPDATE_DELIVERED 
+} from './queries';
 
 export default function BoxItem({ box }) {
 
@@ -43,9 +49,6 @@ export default function BoxItem({ box }) {
 
   const [productsCollapsible, setProductsCollapsible] = useState(false);
   const toggleProductsCollapsible = useCallback(() => setProductsCollapsible(!productsCollapsible), [productsCollapsible]);
-
-  const [activeCollapsible, setActiveCollapsible] = useState(false);
-  const toggleActiveCollapsible = useCallback(() => setActiveCollapsible(!activeCollapsible), [activeCollapsible]);
 
   const [activeSelectForm, setActiveSelectForm] = useState(false);
   const toggleActiveSelectForm = useCallback(() => setActiveSelectForm(!activeSelectForm), [activeSelectForm]);
@@ -72,16 +75,34 @@ export default function BoxItem({ box }) {
     toggleProductSelectActive();
   };
 
-  const [setSelectedBox, { data }] = useMutation(SET_SELECTED_BOX, { client: LocalClient });
+  const { data } = useQuery(GET_SELECTED_BOX, { client: LocalClient });
+  const activeCollapsible = (data && data.selectedBox === box.id);
+  const [setSelectedBox] = useMutation(
+    SET_SELECTED_BOX,
+    { 
+      variables: { id: activeCollapsible ? null : box.id }, 
+      client: LocalClient 
+    }
+  );
+
+  const [sheetTitle, setSheetTitle] = useState('');
+  const toggleSheet = (title) => {
+    setSheetTitle(title);
+    toggleSheetActive();
+  }
 
   return (
     <React.Fragment>
       <Sheet open={sheetActive} onClose={toggleSheetActive}>
         <SheetHelper
-          title={`Delete ${box.name}?`}
+          title={`${sheetTitle} ${box.name}?`}
           toggle={toggleSheetActive}
         >
-          <BoxDelete box={box} onComplete={toggleSheetActive} />
+          { sheetTitle === 'Delete' ?
+            <BoxDelete box={box} onComplete={toggleSheetActive} />
+            :
+            <BoxDuplicate box={box} onComplete={toggleSheetActive} />
+          }
         </SheetHelper>
       </Sheet>
       <Card
@@ -89,7 +110,7 @@ export default function BoxItem({ box }) {
         key={box.id}
         actions={{
           content: <Icon source={activeCollapsible ? CaretUpMinor : CaretDownMinor} />,
-          onAction: toggleActiveCollapsible,
+          onAction: setSelectedBox,
           ariaControls: 'box-collapsible' + box.id,
         }}
         sectioned
@@ -125,8 +146,7 @@ export default function BoxItem({ box }) {
                     <Stack key={product.id}>
                       <ProductRemove
                         boxId={parseInt(box.id)}
-                        productId={parseInt(product.id)}
-                        productName={product.name}
+                        product={product}
                         setActive={setProductsCollapsible}
                       />
                     </Stack>
@@ -139,7 +159,7 @@ export default function BoxItem({ box }) {
                   <ProductSelect boxId={parseInt(box.id)} toggleActive={toggleProductSelectActive} />
                   : null }
           </div>
-          <ButtonGroup>
+          <ButtonGroup segmented>
             <Button
               primary
               onClick={toggleProductActions}
@@ -147,8 +167,13 @@ export default function BoxItem({ box }) {
               Add product
             </Button>
             <Button
+              onClick={ () => toggleSheet('Duplicate') }
+            >
+              Duplicate box
+            </Button>
+            <Button
               destructive
-              onClick={toggleSheetActive}
+              onClick={ () => toggleSheet('Delete') }
             >
               Delete box
             </Button>

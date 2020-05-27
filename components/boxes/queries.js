@@ -1,20 +1,39 @@
 import gql from 'graphql-tag';
 
 export const SET_SELECTED_BOX = gql`
-  mutation {
+  mutation setSelectedBox($id: Int!) {
     setSelectedBox(id: $id) @client
   }
 `;
 
+export const GET_SELECTED_BOX = gql`
+  query selectedBox {
+    selectedBox @client
+  }
+`;
+
+export const SET_SELECTED_DATE = gql`
+  mutation setSelectedDate($delivered: String!) {
+    setSelectedDate(delivered: $delivered) @client
+  }
+`;
+
+export const GET_SELECTED_DATE = gql`
+  query selectedDate {
+    selectedDate @client
+  }
+`;
+
 export const GET_BOXES = gql`
-  query getBoxes($shopId: Int!) {
-    getBoxes(shopId: $shopId) {
+  query getBoxes($shopId: Int!, $delivered: String!) {
+    getBoxes(shopId: $shopId, delivered: $delivered) {
       id
       name
       delivered
       products {
         id
         name
+        available
       }
     }
   }

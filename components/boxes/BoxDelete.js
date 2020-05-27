@@ -9,15 +9,27 @@ import {
   TextContainer,
 } from '@shopify/polaris';
 import { Mutation } from 'react-apollo';
+import { useQuery } from '@apollo/react-hooks';
 import LocalClient from '../../LocalClient';
-import { DELETE_BOX, GET_BOXES } from './queries';
+import { 
+  DELETE_BOX, 
+  GET_BOXES,
+  GET_SELECTED_DATE,
+} from './queries';
 
 export default function BoxDelete({ box, onComplete }) {
 
   const shopId = SHOP_ID;
 
+  const correctedDate = (date) => {
+    return date.toISOString().slice(0, 10) + ' 00:00:00';
+  }
+
+  const { data } = useQuery(GET_SELECTED_DATE, { client: LocalClient });
+  const delivered = data && data.selectedDate ? data.selectedDate : correctedDate(new Date());
+
   const updateCacheAfterDelete = (cache, { data } ) => {
-    const variables = { shopId };
+    const variables = { shopId, delivered };
     const query = GET_BOXES;
     const boxId = data.deleteBox;
 

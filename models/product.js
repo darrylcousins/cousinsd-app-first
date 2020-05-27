@@ -9,8 +9,8 @@ module.exports = (sequelize, DataTypes) => {
     },
     alt_name: DataTypes.STRING,
     available: {
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
+      type: DataTypes.BOOLEAN,
+      defaultValue: true,
       allowNull: false,
     },
     shopId: {

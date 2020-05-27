@@ -12,22 +12,34 @@ import {
 } from '@shopify/polaris';
 import {
   DeleteMinor,
+  CircleDisableMinor,
 } from '@shopify/polaris-icons';
 import { Mutation } from 'react-apollo';
+import { useQuery } from '@apollo/react-hooks';
 import LocalClient from '../../LocalClient';
 import { BOX_REMOVE_PRODUCT } from './queries';
-import { GET_BOXES } from '../boxes/queries';
+import {
+  GET_BOXES,
+  GET_SELECTED_DATE,
+} from '../boxes/queries';
 
-export default function ProductRemove({ boxId, productId, productName, setActive }) {
+export default function ProductRemove({ boxId, product, setActive }) {
 
   const shopId = SHOP_ID;
 
+  const correctedDate = (date) => {
+    return date.toISOString().slice(0, 10) + ' 00:00:00';
+  }
+
+  const { data } = useQuery(GET_SELECTED_DATE, { client: LocalClient });
+  const delivered = data && data.selectedDate ? data.selectedDate : correctedDate(new Date());
+
   const updateCacheAfterRemove = (cache, { data } ) => {
-    let variables = { shopId };
+    let variables = { shopId, delivered };
     let query = GET_BOXES;
     const getBoxes = cache.readQuery({ query, variables }).getBoxes.map((box) => {
       if (parseInt(box.id) === boxId) {
-        box.products = box.products.filter((item) => parseInt(item.id) !== productId);
+        box.products = box.products.filter((item) => parseInt(item.id) !== parseInt(product.id));
       }
       return box;
     });
@@ -51,19 +63,23 @@ export default function ProductRemove({ boxId, productId, productName, setActive
         )}
 
         const handleProductRemove = () => {
+          const productId = parseInt(product.id);
           const input = { boxId, productId };
           productRemove({ variables: { input } }).then(() => setActive(false)).then(() => setActive(true));
         };
+
+        console.log(product.available);
+        const textStyle = product.available === 'true' ? 'strong' : 'subdued';
 
         return (
           <Stack>
             <Button
               plain
               onClick={handleProductRemove}>
-                <Icon source={DeleteMinor} />
+                <Icon source={CircleDisableMinor} />
             </Button>
-            <TextStyle>
-              {productName}
+            <TextStyle variation={textStyle}>
+              {product.name}
             </TextStyle>
           </Stack>
         );
