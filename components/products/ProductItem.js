@@ -2,28 +2,26 @@ import React, { useState, useCallback } from 'react';
 import {
   Banner,
   Button,
-  Layout,
-  TextContainer,
-  Heading,
+  ButtonGroup,
   Icon,
   Loading,
-  Frame,
-  Scrollable,
   Stack,
-  TextStyle,
 } from '@shopify/polaris';
 import {
-  AddProductMajorMonotone,
-  RemoveProductMajorMonotone,
   CircleTickOutlineMinor,
   CircleDisableMinor,
   DeleteMinor,
 } from '@shopify/polaris-icons';
 import { Query, Mutation } from 'react-apollo';
-import LocalClient from '../../LocalClient';
+import { LocalClient } from '../../LocalClient';
+import Editable from '../common/Editable';
+import ProductDelete from './ProductDelete';
 import { 
   TOGGLE_PRODUCT_AVAILABLE,
   GET_PRODUCTS,
+  FRAGMENT_PRODUCT_AVAILABLE,
+  FRAGMENT_PRODUCT_NAME,
+  PRODUCT_UPDATE_NAME,
 } from './queries';
 
 export default function ProductItem({ product }) {
@@ -33,20 +31,33 @@ export default function ProductItem({ product }) {
   const [active, setActive] = useState(product.available === 'true');
   const toggleActive = useCallback(() => setActive(!active), [active]);
 
-  const updateCacheAfterRemove = (cache, { data } ) => {
-    let variables = { shopId };
-    let query = GET_PRODUCTS;
-    const getProducts = cache.readQuery({ query, variables }).getProducts.map((item) => {
-      if (parseInt(item.id) === parseInt(product.id)) {
-        item.available = !item.available;
-        toggleActive();
-      }
-      return item;
-    });
-    data = { getProducts };
+  const updateCacheAfterRemove = (cache) => {
+    const id = `Product:${product.id}`;
+    const fragment = FRAGMENT_PRODUCT_AVAILABLE;
+    const fragmentName = 'productAvailable';
 
-    cache.writeQuery({ query, variables, data });
-  }
+    let data = cache.readFragment({ id, fragment, fragmentName });
+    const available = data.available === "true" ? "false" : "true";
+    data = { available };
+
+    cache.writeFragment({ id, fragment, fragmentName, data });
+    toggleActive();
+  };
+
+  const updateCacheAfterNameChange = (cache, { data }) => {
+    console.log(data);
+    const { name } = data.productUpdateName;
+
+    const id = `Product:${product.id}`;
+    const fragment = FRAGMENT_PRODUCT_NAME;
+    const fragmentName = 'productName';
+
+    data = cache.readFragment({ id, fragment, fragmentName });
+    data = { name };
+    console.log(name);
+
+    cache.writeFragment({ id, fragment, fragmentName, data });
+  };
 
   return (
     <Mutation
@@ -55,50 +66,56 @@ export default function ProductItem({ product }) {
       update={updateCacheAfterRemove}
     >
       {(toggleProductAvailable, { loading, error, data }) => {
-          const showError = error && (
-            <Banner status="critical">{error.message}</Banner>
-          );
+        if (loading) { return <Loading />; }
+        if (error) { return (
+          <Banner status="critical">{error.message}</Banner>
+        )}
 
-          const displayLoading = loading && <Loading />;
-
-          const handleToggle = () => {
-            const input = {
-              productId: parseInt(product.id),
-            }
-            console.log(input);
-            toggleProductAvailable({ variables: { input } }).then((value) => console.log('success'));
-          };
-
-          const contentVariation = active ? 'strong' : 'subdued';
-
-          const ToggleButton = ({ icon, available }) => {
-            return (
-              <Button
-                disabled={available}
-                primary={!available}
-                onClick={handleToggle}
-                size='slim'
-              >
-                <Icon source={icon} />
-              </Button>
-            );
+        const handleToggle = () => {
+          const input = {
+            productId: parseInt(product.id),
+            available: !active
           }
+          toggleProductAvailable({ variables: { input } }).then((value) => console.log('success'));
+        };
 
+        const contentVariant = active ? 'strong' : 'subdued';
+
+        const ToggleButton = ({ icon, available }) => {
           return (
-            <div
-              style={{
-                alignItems: 'center',
-                display: 'flex',
-                justifyContent: 'space-between',
-                padding: '0.3rem',
-              }}
-            >
-              <ToggleButton icon={CircleTickOutlineMinor} available={active} />
-              <TextStyle variation={contentVariation}>{product.name}</TextStyle>
-              <ToggleButton icon={CircleDisableMinor} available={!active} />
-            </div>
+            <Button
+              disabled={available}
+              primary={!available}
+              onClick={handleToggle}
+              size='slim'
+              icon={icon}
+            />
           );
-        }
+        };
+
+        return (
+          <div
+            style={{
+              alignItems: 'left',
+              display: 'flex',
+              justifyContent: 'space-between',
+              padding: '0.3rem',
+            }}
+          >
+            <Editable 
+              name={product.name}
+              id={product.id}
+              mutation={PRODUCT_UPDATE_NAME}
+              update={updateCacheAfterNameChange}
+              textStyle={contentVariant}
+            />
+            <ButtonGroup segmented>
+              <ToggleButton icon={CircleTickOutlineMinor} available={active} />
+              <ToggleButton icon={CircleDisableMinor} available={!active} />
+              <ProductDelete product={product} />
+            </ButtonGroup>
+          </div>
+        )}
       }
     </Mutation>
   );

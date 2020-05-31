@@ -16,36 +16,44 @@ import {
 } from '@shopify/polaris-icons';
 import { Mutation } from 'react-apollo';
 import { useQuery } from '@apollo/react-hooks';
-import LocalClient from '../../LocalClient';
-import { BOX_REMOVE_PRODUCT } from './queries';
+import { LocalClient } from '../../LocalClient';
+import { nameSort } from '../../lib';
+import {
+  BOX_REMOVE_PRODUCT,
+  BOX_GET_DESELECTED_PRODUCTS,
+} from './queries';
 import {
   GET_BOXES,
-  GET_SELECTED_DATE,
+  FRAGMENT_PRODUCT_ARRAY,
 } from '../boxes/queries';
+
+/*
+ * Remove a product from a box
+ */
 
 export default function ProductRemove({ boxId, product, setActive }) {
 
-  const shopId = SHOP_ID;
-
-  const correctedDate = (date) => {
-    return date.toISOString().slice(0, 10) + ' 00:00:00';
-  }
-
-  const { data } = useQuery(GET_SELECTED_DATE, { client: LocalClient });
-  const delivered = data && data.selectedDate ? data.selectedDate : correctedDate(new Date());
-
   const updateCacheAfterRemove = (cache, { data } ) => {
-    let variables = { shopId, delivered };
-    let query = GET_BOXES;
-    const getBoxes = cache.readQuery({ query, variables }).getBoxes.map((box) => {
-      if (parseInt(box.id) === boxId) {
-        box.products = box.products.filter((item) => parseInt(item.id) !== parseInt(product.id));
-      }
-      return box;
-    });
-    data = { getBoxes };
 
-    cache.writeQuery({ query, variables, data });
+    const product = data.boxRemoveProduct;
+    const fragment = FRAGMENT_PRODUCT_ARRAY;
+    const fragmentName = 'productArray';
+    const id = `Box:${boxId}`;
+
+    data = cache.readFragment({ id, fragment, fragmentName });
+    const products = data.products.filter((item) => item.id !== product.id);
+    data = { products }
+    cache.writeFragment({ id, fragment, fragmentName, data });
+
+    const variables = { boxId };
+    const query = BOX_GET_DESELECTED_PRODUCTS;
+    try {
+      const boxGetDeselectedProducts = cache.readQuery({ query, variables })
+        .boxGetDeselectedProducts.concat([product]).sort(nameSort);
+      data = { boxGetDeselectedProducts };
+
+      cache.writeQuery({ query, variables, data });
+    } catch(e) {};
   }
 
   return (
@@ -55,9 +63,7 @@ export default function ProductRemove({ boxId, product, setActive }) {
       update={updateCacheAfterRemove}
     >
       {(productRemove, { loading, error, data }) => {
-
         if (loading) { return <Loading />; }
-
         if (error) { return (
           <Banner status="critical">{error.message}</Banner>
         )}
@@ -65,10 +71,9 @@ export default function ProductRemove({ boxId, product, setActive }) {
         const handleProductRemove = () => {
           const productId = parseInt(product.id);
           const input = { boxId, productId };
-          productRemove({ variables: { input } }).then(() => setActive(false)).then(() => setActive(true));
+          productRemove({ variables: { input } });
         };
 
-        console.log(product.available);
         const textStyle = product.available === 'true' ? 'strong' : 'subdued';
 
         return (

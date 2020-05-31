@@ -13,7 +13,7 @@ import {
   SearchMinor
 } from '@shopify/polaris-icons';
 import { Query } from 'react-apollo';
-import LocalClient from '../../LocalClient';
+import { LocalClient } from '../../LocalClient';
 import ProductAdd from './ProductAdd';
 import { BOX_GET_DESELECTED_PRODUCTS } from './queries';
 
@@ -29,7 +29,6 @@ export default function ProductSelect({ boxId, toggleActive }) {
 
     const updateText = useCallback(
       (value) => {
-        console.log('update Text', value);
         setInputValue(value);
 
         if (value === '') {
@@ -66,7 +65,6 @@ export default function ProductSelect({ boxId, toggleActive }) {
               placeholder="Search"
       />
     );
-
 
     const selectedValue = (deselectedOptions) => {
       const matchedOption = deselectedOptions.find((option) => {

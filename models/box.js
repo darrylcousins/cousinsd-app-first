@@ -13,6 +13,11 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       unique: 'compositeIndex',
     },
+    storeProductId: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: 'compositeIndex',
+    },
     shopId: {
       type: DataTypes.INTEGER,
       references: {

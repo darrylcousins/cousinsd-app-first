@@ -1,7 +1,8 @@
 import ApolloClient from 'apollo-boost';
 import gql from 'graphql-tag';
+import { dateToISOString } from './lib';
 
-const HOST = 'https://4d7183b3.ngrok.io';
+const HOST = 'https://d1dc35b33bca.ngrok.io';
 
 const resolvers = {
   Mutation: {
@@ -11,18 +12,22 @@ const resolvers = {
       cache.writeData({ data });
       return null;
     },
-    // deliver date for box list query
-    setSelectedDate: (_, args, { cache, getCacheKey }) => {
-      const data = { selectedDate: args.delivered };
-      cache.writeData({ data });
-      return null;
-    },
   },
 };
 
-const LocalClient = new ApolloClient({
+export const LocalClient = new ApolloClient({
   uri: `${HOST}/local_graphql`,
   resolvers
 });
 
-export default LocalClient;
+const initState = (date) => {
+  if (!date) date = new Date();
+  LocalClient.writeData({ data: { selectedDate: dateToISOString(date) }})
+}
+initState(new Date());
+
+export const resetStore = (date) => {
+  LocalClient.resetStore().then(() => initState(date));
+  initState(date);
+}
+LocalClient.onResetStore(initState);

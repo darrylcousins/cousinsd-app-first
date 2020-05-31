@@ -9,14 +9,18 @@ import {
   TextField,
   DatePicker,
 } from '@shopify/polaris';
-import { Mutation } from 'react-apollo';
+import { Query, Mutation } from 'react-apollo';
 import { useQuery } from '@apollo/react-hooks';
-import LocalClient from '../../LocalClient';
-import ItemDatePicker from '../common/ItemDatePicker';
+import { LocalClient } from '../../LocalClient';
+import { dateToISOString } from '../../lib';
+import BoxSelectDate from './BoxSelectDate';
+import BoxSelectName from './BoxSelectName';
+import BoxSelectProduct from './BoxSelectProduct';
 import { 
-  CREATE_BOX, 
+  DUPLICATE_BOX, 
   GET_BOXES,
   GET_SELECTED_DATE,
+  GET_SHOPIFY_PRODUCT,
 } from './queries';
 
 export default function BoxDuplicate({ box, onComplete }) {
@@ -24,39 +28,17 @@ export default function BoxDuplicate({ box, onComplete }) {
   const shopId = SHOP_ID;
 
   const [name, setName] = useState(box.name);
-
-  const handleNameChange = useCallback((newValue) => setName(newValue), []);
-
-  const isInvalid = (value, pattern) => value ? new RegExp(pattern).test(value) : true;
-
   const [selectedDate, setSelectedDate] = useState(new Date(parseInt(box.delivered)));
-
-  const [{month, year}, setDate] = useState({
-    month: selectedDate.getMonth(),
-    year: selectedDate.getFullYear(),
-  });
-
-  const handleMonth= useCallback(
-    (month, year) => setDate({month, year}),
-    [],
-  );
-
-  const setSelectedDateChange = (date) => {
-    setSelectedDate(date.start);
-  }
-
-  const correctedDate = (date) => {
-    return date.toISOString().slice(0, 10) + ' 00:00:00';
-  }
+  const [storeProduct, setStoreProduct] = useState({ id: box.storeProductId });
+  const [storeProductId, setStoreProductId] = useState(storeProduct.id);
 
   const { data } = useQuery(GET_SELECTED_DATE, { client: LocalClient });
-  const delivered = data && data.selectedDate ? data.selectedDate : correctedDate(new Date());
+  const delivered = data && data.selectedDate ? data.selectedDate : dateToISOString(new Date());
 
   const updateCacheAfterAdd = (cache, { data }) => {
     const variables = { shopId, delivered };
     const query = GET_BOXES;
-    const box = data.createBox;
-    box.products = [];
+    const box = data.duplicateBox;
 
     const getBoxes = cache.readQuery({ query, variables }).getBoxes.concat([box]);
     data = { getBoxes };
@@ -67,13 +49,11 @@ export default function BoxDuplicate({ box, onComplete }) {
   return (
     <Mutation
       client={LocalClient}
-      mutation={CREATE_BOX}
+      mutation={DUPLICATE_BOX}
       update={updateCacheAfterAdd}
     >
-      {(boxAdd, { loading, error, data }) => {
-
+      {(duplicateBox, { loading, error, data }) => {
         if (loading) { return <Loading />; }
-
         if (error) { return (
           <Banner status="critical">{error.message}</Banner>
         )}
@@ -81,37 +61,35 @@ export default function BoxDuplicate({ box, onComplete }) {
         const handleBoxAdd = () => {
           const tempDate = selectedDate;
           tempDate.setDate(selectedDate.getDate() + 1); // correct for unfound day descrepency
-          const delivered = correctedDate(tempDate);
-          const input = { shopId, name, delivered };
-          boxAdd({ variables: { input } }).then((value) => {
+          const delivered = dateToISOString(tempDate);
+          const boxId = parseInt(box.id);
+          const storeProductId = storeProduct.id;
+          const input = { boxId, shopId, name, delivered, storeProductId };
+          console.log('duplicate input', input);
+          duplicateBox({ variables: { input } }).then((value) => {
             onComplete();
           }).catch((error) => {
             console.log('error', error);
           });
         }
 
-        const namePattern = "/^[a-zA-Z ]+$/";
-        const errorMessage = () => {
-          if (name === '') return false;
-          return isInvalid(name, namePattern) ? "Invalid name entered!" : false;
-        }
-
         return (
           <Stack vertical>
-            <TextField
-              value={name}
-              onChange={handleNameChange}
-              placeholder="Box name"
-              pattern={namePattern}
-              error={errorMessage()}
-            />
-            <DatePicker
-              month={month}
-              year={year}
-              onMonthChange={handleMonth}
-              selected={selectedDate}
-              onChange={setSelectedDateChange}
-            />
+            <BoxSelectName name={name} onSelect={setName} />
+            <Query query={GET_SHOPIFY_PRODUCT} variables={{ id: storeProductId }}>
+              {({ loading, error, data }) => {
+                if (loading) { return <Loading />; }
+                if (error) { return (
+                  <Banner status="critical">{error.message}</Banner>
+                )}
+
+                const { product } = data;
+                return (
+                  <BoxSelectProduct product={product} onSelect={setStoreProduct} />
+                )
+              }}
+            </Query>
+            <BoxSelectDate date={selectedDate} onSelect={setSelectedDate} />
             <ButtonGroup
               segmented
               fullWidth

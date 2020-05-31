@@ -5,9 +5,15 @@ module.exports = (sequelize, DataTypes) => {
   const Product = sequelize.define('Product', {
     name: {
       type: DataTypes.STRING,
+    },
+    handle: {
+      type: DataTypes.STRING,
       unique: 'compositeIndex',
     },
-    alt_name: DataTypes.STRING,
+    storeProductId: {
+      type: DataTypes.STRING,
+      unique: 'compositeIndex',
+    },
     available: {
       type: DataTypes.BOOLEAN,
       defaultValue: true,

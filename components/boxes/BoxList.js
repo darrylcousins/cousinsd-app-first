@@ -7,6 +7,7 @@ import {
   Card,
   DataTable,
   DatePicker,
+  EmptyState,
   Heading,
   Icon,
   Layout,
@@ -23,11 +24,12 @@ import {
 } from '@shopify/polaris-icons';
 import { Query } from 'react-apollo';
 import { useQuery, useMutation } from '@apollo/react-hooks';
-import LocalClient from '../../LocalClient';
+import { LocalClient, resetStore } from '../../LocalClient';
 import ItemDatePicker from '../common/ItemDatePicker';
 import ProductAdd from '../products/ProductAdd';
 import ProductSelect from '../products/ProductSelect';
 import BoxItem from './BoxItem';
+import { dateToISOString } from '../../lib';
 import { 
   GET_BOXES,
   BOX_UPDATE_DELIVERED,
@@ -35,7 +37,7 @@ import {
   SET_SELECTED_DATE,
 } from './queries';
 
-export default function BoxList() {
+export default function BoxList({ addBox }) {
 
   const shopId = SHOP_ID;
 
@@ -48,7 +50,11 @@ export default function BoxList() {
     [],
   );
 
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const { data } = useQuery(GET_SELECTED_DATE, { client: LocalClient });
+  const [delivered, setDelivered] = useState(data.selectedDate);
+
+  const [selectedDate, setSelectedDate] = useState(new Date(Date.parse(delivered)));
+
 
   const [{month, year}, setDate] = useState({
     month: new Date().getMonth(),
@@ -60,36 +66,14 @@ export default function BoxList() {
     [],
   );
 
-  const correctedDate = (date) => {
-    const tempDate = date;
-    //tempDate.setDate(date.getDate() + 1); // correct for unfound day descrepency
-    return tempDate.toISOString().slice(0, 10) + ' 00:00:00';
-  }
-
-  const { data } = useQuery(GET_SELECTED_DATE, { client: LocalClient });
-  const [delivered, setDelivered] = useState(
-    data && data.selectedDate ? data.selectedDate : correctedDate(selectedDate)
-  );
-
-  const [storeSelectedDate] = useMutation(
-    SET_SELECTED_DATE,
-    { 
-      variables: { delivered }, 
-      client: LocalClient 
-    }
-  );
-
   const setSelectedDateChange = (date) => {
     const tempDate = date.start;
-    //tempDate.setDate(date.start.getDate() + 1); // correct for unfound day descrepency
+    resetStore(tempDate);
     setSelectedDate(tempDate);
-    setDelivered(correctedDate(tempDate));
-    //LocalClient.writeData({ data: { selectedDate: correctedDate(tempDate) }})
-    storeSelectedDate();
+    setDelivered(dateToISOString(tempDate));
+    LocalClient.writeData({ data: { selectedDate: dateToISOString(tempDate) }})
     togglePopoverActive();
   }
-
-  console.log('delivered in box list', delivered);
 
   return (
     <React.Fragment>
@@ -122,17 +106,27 @@ export default function BoxList() {
             variables={{delivered, shopId}}
           >
             {({ loading, error, data }) => {
+              console.log(data);
               if (loading) { return <Loading />; }
               if (error) { return (
                 <Banner status="critical">{error.message}</Banner>
               )}
-              console.log(data);
               return (
                 <Layout>
                   <Layout.Section>
-                   { data.getBoxes.map((box) => 
-                    <BoxItem box={box} key={box.id} />
-                   )}
+                    { data.getBoxes.length ?
+                      data.getBoxes.map((box) => 
+                        <BoxItem box={box} key={box.id} />
+                       )
+                    :
+                      <EmptyState
+                        heading="Manage your vege boxes"
+                        action={{content: 'Add box', onAction: addBox}}
+                        secondaryAction={{content: 'Learn more', url: 'http://cousinsd.net/'}}
+                      >
+                          <p>Add boxes with products and link to your products on your store</p>
+                      </EmptyState>
+                    }
                   </Layout.Section>
                 </Layout>
               );

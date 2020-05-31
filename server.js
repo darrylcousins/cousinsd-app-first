@@ -12,6 +12,9 @@ const graphiql = require("koa-graphiql").default;
 
 const ENV = require('./config');
 const { graphQLServer } = require('./graphql');
+const getSubscriptionUrl = require('./server/getSubscriptionUrl');
+const productCreate = require('./webhooks/products/create');
+const productDelete = require('./webhooks/products/delete');
 
 const port = parseInt(ENV.PORT, 10) || 3000;
 const dev = ENV.NODE_ENV !== 'production';
@@ -22,20 +25,17 @@ console.log('connecting as ', ENV.HOST, '\n');
 
 app.prepare().then(() => {
   const server = new Koa();
+  const router = new Router();
 
   graphQLServer.applyMiddleware({
     app: server,
     path: '/local_graphql'
   });
 
-
   server.use(session({ sameSite: 'none', secure: true }, server));
   server.keys = [ENV.SHOPIFY_API_SECRET_KEY];
 
   server.use(
-
-  // If you have a private shopify app, you can than skip over the auth step and use this library directly for setting up graphql proxy.
-  // https://github.com/Shopify/quilt/tree/master/packages/koa-shopify-graphql-proxy
     createShopifyAuth({
       apiKey: ENV.SHOPIFY_API_KEY,
       secret: ENV.SHOPIFY_API_SECRET_KEY,
@@ -53,7 +53,7 @@ app.prepare().then(() => {
           sameSite: 'none'
         });
 
-        const registration = await registerWebhook({
+        await registerWebhook({
           address: `${ENV.HOST}/webhooks/products/create`,
           topic: 'PRODUCTS_CREATE',
           accessToken,
@@ -61,25 +61,40 @@ app.prepare().then(() => {
           apiVersion: ApiVersion.October19
         });
 
-        if (registration.success) {
-          console.log('Successfully registered webhook!');
-        } else {
-          console.log('Failed to register webhook', registration.result);
-        }
+        await registerWebhook({
+          address: `${ENV.HOST}/webhooks/products/delete`,
+          topic: 'PRODUCTS_DELETE',
+          accessToken,
+          shop,
+          apiVersion: ApiVersion.October19
+        });
 
-        ctx.redirect('/');
-      },
-    }),
+        //await getSubscriptionUrl(ctx, accessToken, shop);
+      }
+    })
   );
 
+
+  const webhook = receiveWebhook({ secret: ENV.SHOPIFY_API_SECRET_KEY });
+
+  router.post('/webhooks/products/create', webhook, (ctx) => {
+    productCreate(ctx.state.webhook);
+  });
+
+  router.post('/webhooks/products/delete', webhook, (ctx) => {
+    productDelete(ctx.state.webhook);
+  });
+
   server.use(graphQLProxy({version: ApiVersion.October19}))
-  server.use(verifyRequest());
-  server.use(async (ctx) => {
+
+  router.get('*', verifyRequest(), async (ctx) => {
     await handle(ctx.req, ctx.res);
     ctx.respond = false;
     ctx.res.statusCode = 200;
-
   });
+
+  server.use(router.allowedMethods());
+  server.use(router.routes());
 
   server.listen(port, () => {
     console.log(`> Ready on http://localhost:${port}`);

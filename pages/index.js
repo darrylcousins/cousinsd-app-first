@@ -2,17 +2,10 @@ import {
   Frame,
   Page,
 } from '@shopify/polaris';
+import Boxes from './boxes';
 
 export default function Index() {
   return (
-    <Frame>
-      <Page
-        title='App Index'
-        primaryAction={{
-          content: 'Edit Boxes',
-        }}
-      >
-      </Page>
-    </Frame>
+    <Boxes />
   );
 }

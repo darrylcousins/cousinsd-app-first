@@ -10,7 +10,7 @@ import {
 } from '@shopify/polaris';
 import { Mutation } from 'react-apollo';
 import { useQuery } from '@apollo/react-hooks';
-import LocalClient from '../../LocalClient';
+import { LocalClient } from '../../LocalClient';
 import { 
   DELETE_BOX, 
   GET_BOXES,
@@ -46,9 +46,7 @@ export default function BoxDelete({ box, onComplete }) {
       update={updateCacheAfterDelete}
     >
       {(boxDelete, { loading, error, data }) => {
-
         if (loading) { return <Loading />; }
-
         if (error) { return (
           <Banner status="critical">{error.message}</Banner>
         )}
@@ -66,7 +64,7 @@ export default function BoxDelete({ box, onComplete }) {
         return (
           <Stack vertical>
             <TextContainer>
-              This action is irrevesible, are you sure you want to delete {box.name}?
+              This action is irreversible, are you sure you want to delete {box.name}?
             </TextContainer>
             <ButtonGroup
               segmented

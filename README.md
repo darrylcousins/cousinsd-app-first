@@ -11,7 +11,7 @@ First crack at a shopify app
 # development
 
 ```
-  npx http grok 3000
+  npx ngrok http 3000
 ```
 
 And in second terminal:

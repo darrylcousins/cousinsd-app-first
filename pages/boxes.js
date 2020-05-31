@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 import {
   Button,
   DatePicker,
+  EmptyState,
   Frame,
   Heading,
   Popover,
@@ -16,7 +17,8 @@ import {
 import {
   MobileCancelMajorMonotone,
 } from '@shopify/polaris-icons';
-import LocalClient from '../LocalClient';
+import { LocalClient } from '../LocalClient';
+import { printCache } from '../components/common/ShowCache';
 import SheetHelper from '../components/common/SheetHelper';
 import BoxList from '../components/boxes/BoxList';
 import BoxAdd from '../components/boxes/BoxAdd';
@@ -34,8 +36,6 @@ export default function Boxes() {
     toggleSheetActive();
   }
 
-  console.log(LocalClient.cache);
-
   return (
     <Frame>
       <Page
@@ -48,7 +48,11 @@ export default function Boxes() {
           {
             content: 'View Products',
             onAction: () => toggleSheet('View Products'),
-          }
+          },
+          {
+            content: 'Show Cache',
+            onAction: () => printCache(),
+          },
         ]}
       >
         <Sheet open={sheetActive} onClose={toggleSheetActive}>
@@ -62,7 +66,7 @@ export default function Boxes() {
         </Sheet>
         <Layout>
         <Layout.Section>
-          <BoxList />
+          <BoxList addBox={() => toggleSheet('Add Box')}/>
         </Layout.Section>
         </Layout>
       </Page>

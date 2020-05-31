@@ -22,6 +22,7 @@ const typeDefs = gql`
     createdAt: String!
     updatedAt: String!
     shopId: Int!
+    storeProductId: String
     products: [Product]
     shop: Shop
   }
@@ -33,6 +34,8 @@ const typeDefs = gql`
     createdAt: String!
     updatedAt: String!
     shopId: Int!
+    handle: String!
+    storeProductId: String!
     boxes: [Box]
     shop: Shop
   }
@@ -63,17 +66,41 @@ const typeDefs = gql`
     name: String!
     delivered: String!
     shopId: Int!
+    storeProductId: String!
+  }
+
+  input BoxDuplicateInput {
+    name: String!
+    delivered: String!
+    shopId: Int!
+    storeProductId: String!
+    boxId: Int!
+  }
+
+  input BoxLooseInput {
+    id: Int!
+    name: String!
+  }
+
+  input BoxProductGidInput {
+    id: Int!
+    storeProductId: String!
   }
 
   input ProductInput {
     name: String!
     alt_name: String
     shopId: Int!
-    available: String
+    available: Boolean!
   }
 
   input ProductLooseInput {
-    productId: Int
+    id: Int
+    name: String!
+  }
+
+  input ProductCreateInput {
+    shopId: Int!
     name: String!
   }
 
@@ -96,21 +123,31 @@ const typeDefs = gql`
     boxId: Int!
   }
 
+  input ProductDeleteInput {
+    productId: Int!
+  }
+
   input ProductSimpleInput {
     productId: Int!
+    available: Boolean!
   }
 
   type Mutation {
     createShop(input: ShopInput!): Shop
     createBox(input: BoxInput!): Box
     deleteBox(input: BoxDeleteInput!): Int
-    createProduct(input: ProductInput!): Product
+    deleteProduct(input: ProductDeleteInput!): Int
+    duplicateBox(input: BoxDuplicateInput!): Box
+    createProduct(input: ProductCreateInput!): Product
     boxAddProduct(input: BoxProductInput!): Product
-    boxRemoveProduct(input: BoxProductInput!): Box
+    boxRemoveProduct(input: BoxProductInput!): Product
     productAddBox(input: BoxProductInput!): Box
     boxAddCreateProduct(input: BoxCreateProductInput!): Product
     boxUpdateDelivered(input: BoxDeliveredInput!): Box
     toggleProductAvailable(input: ProductSimpleInput!): Product
+    productUpdateName(input: ProductLooseInput!): Product
+    boxUpdateName(input: BoxLooseInput!): Box
+    boxUpdateProductGid(input: BoxProductGidInput!): Box
   }
 `;
 
@@ -141,12 +178,16 @@ const resolvers = {
     async getBoxes(root, { shopId, delivered}, { models }, info) {
       var fields = getFieldsFromInfo(info);
       fields = fields.filter(item => item !== '__typename');
-      return fields ?
-        Box.findAll({
+      const boxes = fields ?
+        await Box.findAll({
           attributes: fields,
           where: { shopId: shopId, delivered: {[Op.gt]: delivered} },
-          order: [['delivered', 'DESC']],
-        }) : Box.findAll({ where: { shopId: shopId } });
+          order: [['delivered', 'ASC']],
+        }) : await Box.findAll({
+          where: { shopId: shopId, delivered: {[Op.gt]: delivered} },
+          order: [['delivered', 'ASC']],
+        });
+      return boxes
     },
     async getProduct(root, { id }, { models }, info) {
       return Product.findByPk(id);
@@ -173,13 +214,14 @@ const resolvers = {
       });
       const productIds = products.map((product) => product.id);
       return Product.findAll({
-        attributes: ['id', 'name'],
+        attributes: ['id', 'name', 'available'],
         where: {
           id: {
             [Op.notIn]: productIds
           },
-          available: 1,
-        }
+          shopId: box.shopId,
+        },
+        order: [['name', 'ASC']],
       });
     },
   },
@@ -194,27 +236,69 @@ const resolvers = {
       });
     },
     async createBox (root, { input }, { models }, info) {
-      const { name, shopId, delivered } = input;
-      return Box.create({
+      /* { name, shopId, storeProductId, delivered } */
+      return Box.create(input);
+    },
+    async duplicateBox (root, { input }, { models }, info) {
+      const { boxId, name, shopId, storeProductId, delivered } = input;
+      const box = await Box.findOne({
+        where: { id: boxId },
+        include: Product,
+      });
+      const newbox = await Box.create({
         name,
         shopId,
         delivered,
+        storeProductId,
       });
+      await newbox.addProducts(box.Products);
+      return newbox;
     },
     async deleteBox (root, { input }, { models }, info) {
       const { boxId } = input;
-      const box = await Box.findByPk(boxId);
+      const box = await Box.findOne({
+        where: { id: boxId },
+        include: Product,
+      });
+      await box.removeProducts(box.Products.map((product) => product.id));
       box.destroy();
       return boxId;
     },
     async createProduct (root, { input }, { models }, info) {
-      const { name, alt_name, available, shopId } = input;
+      const { name, shopId } = input;
+      const alt_name = '';
+      const available = true;
+      console.log(input, available, alt_name);
       return Product.create({
         name,
         alt_name,
         available,
         shopId,
-      })
+      });
+    },
+    async deleteProduct (root, { input }, { models }, info) {
+      const { productId } = input;
+      const product = await Product.findOne({
+        where: { id: productId },
+        include: Box,
+      });
+      await product.removeBoxes(product.Boxes.map((box) => box.id));
+      product.destroy();
+      return productId;
+    },
+    async boxUpdateName (root, { input }, { models }, info) {
+      const { id, name } = input;
+      var box = await Box.findByPk(id);
+      box.name = name;
+      await box.save();
+      return box;
+    },
+    async boxUpdateProductGid (root, { input }, { models }, info) {
+      const { id, storeProductId } = input;
+      var box = await Box.findByPk(id);
+      box.storeProductId = storeProductId;
+      await box.save();
+      return box;
     },
     async boxAddProduct (root, { input }, { models }, info) {
       const { boxId, productId } = input;
@@ -233,7 +317,7 @@ const resolvers = {
       const box = await Box.findByPk(boxId);
       const product = await Product.findByPk(productId);
       await box.removeProduct(product);
-      return box;
+      return product;
     },
     async productAddBox (root, { input }, { models }, info) {
       const { boxId, productId } = input;
@@ -250,10 +334,10 @@ const resolvers = {
     async boxAddCreateProduct (root, { input }, { models }, info) {
       const { boxId, data } = input;
       const box = await Box.findByPk(boxId);
-      const { productId, ...productData } = data;
+      const { id, ...productData } = data;
       let product = null;
-      if (productId) {
-        product = await Product.findByPk(productId);
+      if (id) {
+        product = await Product.findByPk(id);
         if (box.shopId != product.shopId) {
           throw new UserInputError('Shop ownership does not match for box and product', {
             invalidArgs: Object.keys(args),
@@ -269,16 +353,22 @@ const resolvers = {
     },
     async boxUpdateDelivered (root, { input }, { models }, info) {
       const { boxId, delivered } = input;
-      console.log(input, boxId, delivered);
       var box = await Box.findByPk(boxId);
       box.delivered = delivered;
       await box.save();
       return box;
     },
     async toggleProductAvailable (root, { input }, { models }, info) {
-      const { productId } = input;
+      const { productId, available } = input;
       var product = await Product.findByPk(productId);
-      product.available = !product.availabe;
+      product.available = available;
+      await product.save();
+      return product;
+    },
+    async productUpdateName (root, { input }, { models }, info) {
+      const { id, name } = input;
+      var product = await Product.findByPk(id);
+      product.name = name;
       await product.save();
       return product;
     },

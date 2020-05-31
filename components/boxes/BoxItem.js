@@ -1,46 +1,40 @@
 import React, {useState, useCallback} from 'react';
 import PropTypes from 'prop-types';
 import {
-  Banner,
   Button,
   ButtonGroup,
   Card,
-  DataTable,
-  DatePicker,
-  Heading,
-  Icon,
-  Layout,
-  Link,
-  List,
-  Loading,
-  Stack,
-  TextContainer,
-  TextStyle,
-  Tooltip,
   Collapsible,
+  Icon,
+  Loading,
   Sheet,
+  Stack,
+  TextStyle,
 } from '@shopify/polaris';
 import {
-  CancelSmallMinor,
-  RemoveProductMajorMonotone,
   DeleteMinor,
+  DuplicateMinor,
   CaretDownMinor,
   CaretUpMinor,
 } from '@shopify/polaris-icons';
+import gql from 'graphql-tag';
 import { Query, Mutation } from 'react-apollo';
 import { useQuery, useMutation } from "@apollo/react-hooks";
-import LocalClient from '../../LocalClient';
+import { LocalClient } from '../../LocalClient';
 import ItemDatePicker from '../common/ItemDatePicker';
 import SheetHelper from '../common/SheetHelper';
 import ProductSelect from '../products/ProductSelect';
 import ProductRemove from '../products/ProductRemove';
 import BoxDelete from './BoxDelete';
 import BoxDuplicate from './BoxDuplicate';
+import BoxTitle from './BoxTitle';
 import { 
   SET_SELECTED_BOX, 
   GET_SELECTED_BOX, 
   GET_BOXES, 
-  BOX_UPDATE_DELIVERED 
+  BOX_UPDATE_DELIVERED,
+  BOX_UPDATE_NAME,
+  FRAGMENT_BOX_NAME,
 } from './queries';
 
 export default function BoxItem({ box }) {
@@ -58,17 +52,6 @@ export default function BoxItem({ box }) {
 
   const [productSelectActive, setProductSelectActive] = useState(false);
   const toggleProductSelectActive = useCallback(() => setProductSelectActive(!productSelectActive), [productSelectActive]);
-
-  const BoxTitle = () => (
-    <Stack>
-      <TextStyle variation="subdued">
-        {'[' + new Date(parseInt(box.delivered)).toDateString() + '] '}
-      </TextStyle>
-      <TextStyle variation="strong">
-        {box.name}
-      </TextStyle>
-    </Stack>
-  );
 
   const toggleProductActions = () => {
     if ( !productsCollapsible ) setProductsCollapsible(true);
@@ -106,7 +89,7 @@ export default function BoxItem({ box }) {
         </SheetHelper>
       </Sheet>
       <Card
-        title={<BoxTitle />}
+        title={<BoxTitle box={box} />}
         key={box.id}
         actions={{
           content: <Icon source={activeCollapsible ? CaretUpMinor : CaretDownMinor} />,
@@ -126,7 +109,7 @@ export default function BoxItem({ box }) {
             date={new Date(parseInt(box.delivered))}
             boxId={parseInt(box.id)}
           />
-          <div style={{ width: "300px" }}>
+          <div>
             { box.products.length ? 
               <Stack vertical>
                 <Button 
@@ -168,14 +151,16 @@ export default function BoxItem({ box }) {
             </Button>
             <Button
               onClick={ () => toggleSheet('Duplicate') }
+              icon={DuplicateMinor}
             >
-              Duplicate box
+              Duplicate
             </Button>
             <Button
               destructive
               onClick={ () => toggleSheet('Delete') }
+              icon={DeleteMinor}
             >
-              Delete box
+              Delete
             </Button>
           </ButtonGroup>
         </Stack>

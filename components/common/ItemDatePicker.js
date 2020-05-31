@@ -8,7 +8,7 @@ import {
   Popover,
 } from '@shopify/polaris';
 import { Mutation } from 'react-apollo';
-import LocalClient from '../../LocalClient';
+import { LocalClient } from '../../LocalClient';
 
 export default function ItemDatePicker(props) {
 
@@ -41,11 +41,11 @@ export default function ItemDatePicker(props) {
         mutation={mutation}
       >
         {(handleDateChange, { loading, error, data }) => {
-          const showError = error && (
-            <Banner status="critical">{error.message}</Banner>
-          );
+          if (loading) { return <Loading />; }
 
-          const displayLoading = loading && <Loading />;
+          if (error) { return (
+            <Banner status="critical">{error.message}</Banner>
+          )}
 
           const dateChange = () => {
             const tempDate = selectedDate;
