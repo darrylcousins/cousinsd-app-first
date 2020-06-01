@@ -2,7 +2,7 @@
 module.exports = (sequelize, DataTypes) => {
   const Shop = sequelize.define('Shop', {
       name: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
         unique: true,
       },
       shopify_name: {
@@ -10,16 +10,16 @@ module.exports = (sequelize, DataTypes) => {
         unique: true,
       },
       shopify_id: {
-        type: DataTypes.INTEGER
+        type: DataTypes.BIGINT,
         unique: true,
       },
       email: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
         unique: true,
         validate: { isEmail: true },
       },
       url: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
         unique: true,
       },
   }, {});

@@ -1,10 +1,14 @@
 'use strict';
-const Shop = require('./shop');
+const { Shop } = require('./shop');
 
 module.exports = (sequelize, DataTypes) => {
   const Product = sequelize.define('Product', {
+    name: {
+      type: DataTypes.STRING,
+      unique: 'compositeIndex',
+    },
     handle: {
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
       unique: 'compositeIndex',
     },
     shopify_id: {

@@ -1,5 +1,5 @@
 'use strict';
-const Shop = require('./shop');
+const { Shop } = require('./shop');
 
 module.exports = (sequelize, DataTypes) => {
   const Box = sequelize.define('Box', {
