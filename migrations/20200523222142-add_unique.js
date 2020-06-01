@@ -6,7 +6,7 @@ module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.addConstraint(
       'Boxes', // name of Source model
-      ['name', 'delivered', 'shopId'],
+      ['handle', 'delivered', 'shopify_id', 'shopify_gid'],
       {
         type: 'unique',
         name: 'box_unique',
@@ -14,7 +14,7 @@ module.exports = {
     ).then(() => {
       return queryInterface.addConstraint(
         'Products', // name of Source model
-        ['name', 'shopId'],
+        ['handle', 'shopify_id', 'shopify_gid'],
         {
           type: 'unique',
           name: 'product_unique',

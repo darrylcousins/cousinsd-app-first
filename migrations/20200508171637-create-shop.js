@@ -12,13 +12,20 @@ module.exports = {
         type: Sequelize.STRING
       },
       shopify_name: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        unique: true,
+      },
+      shopify_id: {
+        type: Sequelize.BIGINT,
+        unique: true,
       },
       email: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        unique: true,
       },
       url: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        unique: true,
       },
       createdAt: {
         allowNull: false,

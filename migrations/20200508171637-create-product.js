@@ -3,22 +3,28 @@ module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.createTable('Products', {
       id: {
+        type: Sequelize.INTEGER,
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
       },
-      name: {
+      handle: {
         type: Sequelize.STRING,
         unique: true,
-        unique: 'compositeIndex',
       },
-      alt_name: {
-        type: Sequelize.STRING
+      shopify_id: {
+        type: Sequelize.BIGINT,
+        allowNull: false,
+        unique: true,
+      },
+      shopify_gid: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        unique: true,
       },
       available: {
-        type: Sequelize.DATE,
-        defaultValue: Sequelize.NOW,
+        type: Sequelize.BOOLEAN,
+        defaultValue: true,
       },
       createdAt: {
         allowNull: false,

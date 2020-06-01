@@ -8,14 +8,23 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      name: {
+      handle: {
         type: Sequelize.STRING,
-        unique: 'compositeIndex',
+        unique: true,
+      },
+      shopify_id: {
+        type: Sequelize.BIGINT,
+        allowNull: false,
+        unique: true,
+      },
+      shopify_gid: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        unique: true,
       },
       delivered: {
         type: Sequelize.DATE,
         defaultValue: Sequelize.NOW,
-        unique: 'compositeIndex',
       },
       createdAt: {
         allowNull: false,
