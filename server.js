@@ -15,6 +15,10 @@ const { graphQLServer } = require('./graphql');
 const getSubscriptionUrl = require('./server/getSubscriptionUrl');
 const productCreate = require('./webhooks/products/create');
 const productDelete = require('./webhooks/products/delete');
+const productUpdate = require('./webhooks/products/update');
+const shopRedact = require('./webhooks/shops/redact');
+const customerRedact = require('./webhooks/customers/redact');
+const customerDataRequest = require('./webhooks/customers/data-request');
 
 const port = parseInt(ENV.PORT, 10) || 3000;
 const dev = ENV.NODE_ENV !== 'production';
@@ -77,8 +81,26 @@ app.prepare().then(() => {
 
   const webhook = receiveWebhook({ secret: ENV.SHOPIFY_API_SECRET_KEY });
 
+  // mandatory webhooks
+  router.post('/webhooks/customers/redact', webhook, (ctx) => {
+    customerRedact(ctx.state.webhook);
+  });
+
+  router.post('/webhooks/customers/data_request', webhook, (ctx) => {
+    customerDataRequest(ctx.state.webhook);
+  });
+
+  router.post('/webhooks/shops/redact', webhook, (ctx) => {
+    shopRedact(ctx.state.webhook);
+  });
+
+  // product webhooks
   router.post('/webhooks/products/create', webhook, (ctx) => {
     productCreate(ctx.state.webhook);
+  });
+
+  router.post('/webhooks/products/update', webhook, (ctx) => {
+    productUpdate(ctx.state.webhook);
   });
 
   router.post('/webhooks/products/delete', webhook, (ctx) => {
