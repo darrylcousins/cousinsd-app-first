@@ -3,21 +3,23 @@ const Shop = require('./shop');
 
 module.exports = (sequelize, DataTypes) => {
   const Product = sequelize.define('Product', {
-    name: {
-      type: DataTypes.STRING,
-    },
     handle: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING
       unique: 'compositeIndex',
     },
-    storeProductId: {
+    shopify_id: {
+      type: DataTypes.BIGINT,
+      allowNull: false,
+      unique: 'compositeIndex',
+    },
+    shopify_gid: {
       type: DataTypes.STRING,
+      allowNull: false,
       unique: 'compositeIndex',
     },
     available: {
       type: DataTypes.BOOLEAN,
       defaultValue: true,
-      allowNull: false,
     },
     shopId: {
       type: DataTypes.INTEGER,
@@ -27,7 +29,6 @@ module.exports = (sequelize, DataTypes) => {
       },
       onUpdate: 'CASCADE',
       onDelete: 'SET NULL',
-      unique: 'compositeIndex',
     },
   }, {});
   Product.associate = function(models) {
