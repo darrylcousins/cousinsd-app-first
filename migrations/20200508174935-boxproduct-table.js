@@ -16,10 +16,14 @@ module.exports = {
         boxId: {
           type: Sequelize.INTEGER,
           primaryKey: true,
+          //onUpdate: 'CASCADE',
+          //onDelete: 'SET NULL',
         },
         productId: {
           type: Sequelize.INTEGER,
           primaryKey: true,
+          //onUpdate: 'CASCADE',
+          //onDelete: 'SET NULL',
         },
       }
     );

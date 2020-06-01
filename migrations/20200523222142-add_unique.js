@@ -14,7 +14,7 @@ module.exports = {
     ).then(() => {
       return queryInterface.addConstraint(
         'Products', // name of Source model
-        ['handle', 'shopify_id', 'shopify_gid'],
+        ['name', 'handle', 'shopify_id', 'shopify_gid'],
         {
           type: 'unique',
           name: 'product_unique',

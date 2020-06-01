@@ -8,6 +8,10 @@ module.exports = {
         autoIncrement: true,
         primaryKey: true,
       },
+      name: {
+        type: Sequelize.STRING,
+        unique: true,
+      },
       handle: {
         type: Sequelize.STRING,
         unique: true,
@@ -25,6 +29,15 @@ module.exports = {
       available: {
         type: Sequelize.BOOLEAN,
         defaultValue: true,
+      },
+      shopId: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'Shops', // name of Target model
+          key: 'id', // key in Target model that we're referencing
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL',
       },
       createdAt: {
         allowNull: false,
