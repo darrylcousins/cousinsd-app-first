@@ -12,7 +12,7 @@ const product = gql`
     updatedAt: String!
     shopId: Int!
     boxes: [Box]
-    shop: Product
+    shop: Shop
   }
 
   input ProductInput {

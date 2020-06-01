@@ -6,11 +6,9 @@ const { dateToISOString, getFieldsFromInfo } = require('../../lib');
 const resolvers = {
   Shop: {
     async boxes(shopObj) {
-      console.log('what the fuck is goin on here', shopObj);
       return await shopObj.getBoxes();
     },
     async products(shopObj) {
-      console.log('what the fuck is goin on here', shopObj);
       return await shopObj.getProducts();
     },
   },

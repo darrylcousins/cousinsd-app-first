@@ -12,36 +12,32 @@ module.exports = {
         type: Sequelize.STRING,
         unique: true,
       },
-      shopify_id: {
-        type: Sequelize.BIGINT,
-        allowNull: false,
-        unique: true,
-      },
-      shopify_gid: {
-        type: Sequelize.STRING,
-        allowNull: false,
-        unique: true,
-      },
       delivered: {
         type: Sequelize.DATE,
         defaultValue: Sequelize.NOW,
       },
+      shopify_id: {
+        type: Sequelize.BIGINT,
+        primaryKey: true,
+        unique: true,
+      },
+      shopify_gid: {
+        type: Sequelize.STRING,
+        primaryKey: true,
+        unique: true,
+      },
       shopId: {
         type: Sequelize.INTEGER,
-        references: {
-          model: 'Shops', // name of Target model
-          key: 'id', // key in Target model that we're referencing
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'SET NULL',
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.NOW,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.NOW,
       }
     });
   },

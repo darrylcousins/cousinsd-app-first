@@ -1,6 +1,4 @@
 'use strict';
-
-//down: queryInterface => queryInterface.removeConstraint('TableName', 'indexname')
 module.exports = {
 
   up: (queryInterface, Sequelize) => {
@@ -48,3 +46,4 @@ module.exports = {
     });
   }
 };
+

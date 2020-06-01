@@ -1,7 +1,7 @@
 'use strict';
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('Shops', {
+    return queryInterface.createTable('Products', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -9,35 +9,43 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       name: {
-        type: Sequelize.STRING
-      },
-      shopify_name: {
         type: Sequelize.STRING,
         unique: true,
+      },
+      handle: {
+        type: Sequelize.STRING,
+        unique: true,
+      },
+      available: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: true,
       },
       shopify_id: {
         type: Sequelize.BIGINT,
+        primaryKey: true,
         unique: true,
       },
-      email: {
+      shopify_gid: {
         type: Sequelize.STRING,
+        primaryKey: true,
         unique: true,
       },
-      url: {
-        type: Sequelize.STRING,
-        unique: true,
+      shopId: {
+        type: Sequelize.INTEGER,
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.NOW,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.NOW,
       }
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('Shops');
+    return queryInterface.dropTable('Products');
   }
 };

@@ -5,12 +5,11 @@ const { dateToISOString, getFieldsFromInfo } = require('../../lib');
 
 const resolvers = {
   Box: {
-    async products(boxObj) {
-      return await boxObj.getProducts();
+    async products(instance, arguments, context, info) {
+      return await instance.getProducts();
     },
-    async shop(boxObj) {
-      console.log('what the fuck is goin on here');
-      return await boxObj.getShop();
+    async shop(instance, arguments, context, info) {
+      return await instance.getShop();
     },
   },
   Query: {
@@ -19,16 +18,13 @@ const resolvers = {
       const fields = getFieldsFromInfo(info);
       const box = await Box.findOne({ 
         where: { id },
-        attributes: fields,
       });
       return box;
     },
     async getBoxes(root, { input }, { models }, info) {
       let { shopId, delivered } = input;
       if (!delivered) delivered = dateToISOString(new Date());
-      const fields = getFieldsFromInfo(info);
       const boxes = await Box.findAll({
-        attributes: fields,
         where: { shopId: shopId, delivered: {[Op.gt]: delivered} },
         order: [['delivered', 'ASC']],
       });

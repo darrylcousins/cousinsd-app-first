@@ -1,55 +1,46 @@
 'use strict';
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('Products', {
+    return queryInterface.createTable('Shops', {
       id: {
-        type: Sequelize.INTEGER,
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
+        type: Sequelize.INTEGER
       },
       name: {
         type: Sequelize.STRING,
         unique: true,
       },
-      handle: {
+      shopify_name: {
         type: Sequelize.STRING,
         unique: true,
       },
       shopify_id: {
         type: Sequelize.BIGINT,
-        allowNull: false,
         unique: true,
       },
-      shopify_gid: {
+      email: {
         type: Sequelize.STRING,
-        allowNull: false,
         unique: true,
       },
-      available: {
-        type: Sequelize.BOOLEAN,
-        defaultValue: true,
-      },
-      shopId: {
-        type: Sequelize.INTEGER,
-        references: {
-          model: 'Shops', // name of Target model
-          key: 'id', // key in Target model that we're referencing
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'SET NULL',
+      url: {
+        type: Sequelize.STRING,
+        unique: true,
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.NOW,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.NOW,
       }
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('Products');
+    return queryInterface.dropTable('Shops');
   }
 };

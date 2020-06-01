@@ -1,5 +1,4 @@
 'use strict';
-
 module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.createTable(
@@ -16,14 +15,10 @@ module.exports = {
         boxId: {
           type: Sequelize.INTEGER,
           primaryKey: true,
-          //onUpdate: 'CASCADE',
-          //onDelete: 'SET NULL',
         },
         productId: {
           type: Sequelize.INTEGER,
           primaryKey: true,
-          //onUpdate: 'CASCADE',
-          //onDelete: 'SET NULL',
         },
       }
     );
@@ -33,3 +28,4 @@ module.exports = {
     return queryInterface.dropTable('BoxProduct');
   },
 };
+
