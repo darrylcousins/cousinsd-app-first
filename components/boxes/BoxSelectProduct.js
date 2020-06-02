@@ -44,6 +44,7 @@ export default function BoxSelectProduct({ product, onSelect }) {
         resourceType="Product"
         open={pickerActive}
         allowMultiple={false}
+        showHidden={false}
         onSelection={handleResourceSelection}
         onCancel={handleResourcePickerClose}
       />

@@ -27,7 +27,7 @@ class MyApp extends App {
     return (
       <React.Fragment>
         <Head>
-          <title>Sample App</title>
+          <title>Vege Boxes</title>
           <meta charSet="utf-8" />
         </Head>
         <Provider config={config}>

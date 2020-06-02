@@ -73,6 +73,14 @@ app.prepare().then(() => {
           apiVersion: ApiVersion.October19
         });
 
+        await registerWebhook({
+          address: `${ENV.HOST}/webhooks/products/update`,
+          topic: 'PRODUCTS_UPDATE',
+          accessToken,
+          shop,
+          apiVersion: ApiVersion.October19
+        });
+
         //await getSubscriptionUrl(ctx, accessToken, shop);
       }
     })
@@ -96,11 +104,11 @@ app.prepare().then(() => {
 
   // product webhooks
   router.post('/webhooks/products/create', webhook, (ctx) => {
-    productCreate(ctx.state.webhook);
+    productCreate(ctx.state.webhook, ENV.SHOP_ID);
   });
 
   router.post('/webhooks/products/update', webhook, (ctx) => {
-    productUpdate(ctx.state.webhook);
+    productUpdate(ctx.state.webhook, ENV.SHOP_ID);
   });
 
   router.post('/webhooks/products/delete', webhook, (ctx) => {

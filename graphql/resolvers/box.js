@@ -33,8 +33,11 @@ const resolvers = {
   },
   Mutation: {
     async createBox (root, { input }, { models }, info) {
-      /* handle, shopId, shopify_id, shopify_gid, delivered */
-      return Box.create(input);
+      console.log('got this in createBox', input);
+      /* title handle, shopId, shopify_id, shopify_gid, delivered */
+      return Box.create(input)
+        .then(value => value)
+        .catch(error => error);
     },
     async updateBox (root, { input }, { models }, info) {
       /* id, handle, shopId, shopify_id, shopify_gid, delivered */
@@ -43,10 +46,8 @@ const resolvers = {
         props,
         { where: { id } }
       );
-      const fields = getFieldsFromInfo(info);
-      return Box.findOne({ 
+      return await Box.findOne({ 
         where: { id },
-        attributes: fields,
       });
     },
     async deleteBox (root, { input }, { models }, info) {

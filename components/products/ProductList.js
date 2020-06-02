@@ -1,74 +1,59 @@
-import React, {useState} from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   Banner,
-  Button,
+  DataTable,
   Loading,
-  Scrollable,
 } from '@shopify/polaris';
-import { Query } from 'react-apollo';
+import { Query, Mutation } from 'react-apollo';
+import { useQuery, useMutation } from '@apollo/react-hooks';
 import { LocalClient } from '../../LocalClient';
-import ProductItem from './ProductItem';
-import ProductCreate from './ProductCreate';
-import Editable from '../common/Editable';
-import {
+import { 
   GET_PRODUCTS,
-  BOX_ADD_PRODUCT,
-  CREATE_PRODUCT,
 } from './queries';
 
-export default function ProductList({ onComplete }) {
+export default function ProductList() {
 
   const shopId = SHOP_ID;
-
-  const windowHeight = window.innerHeight - 180;
-  console.log(window.innerHeight, windowHeight);
+  const input = { shopId };
 
   return (
-    <Query client={LocalClient} query={GET_PRODUCTS} variables={{shopId}} fetchPolicy='network-only'>
+    <Query
+      client={LocalClient}
+      query={GET_PRODUCTS}
+      variables={ { input } }
+    >
       {({ loading, error, data }) => {
+        console.log(data);
         if (loading) { return <Loading />; }
         if (error) { return (
           <Banner status="critical">{error.message}</Banner>
         )}
+        console.log(data);
+
+        /* datatable stuff */
+        const rows = data.getProducts.map((product) => (
+          [
+            product.title,
+            product.shopify_gid,
+            JSON.stringify(product.available),
+          ]
+        ));
+        /* end datatable stuff */
+
         return (
-          <React.Fragment>
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-              }}
-            >
-              <ProductCreate />
-              <div
-                style={{
-                  height: `${windowHeight}px`,
-                  overflowY: 'auto',
-                  paddingTop: '1.6rem',
-                }}
-              >
-                { data.getProducts.map(product => (
-                  <ProductItem product={product} key={product.id} />
-                )) }
-              </div>
-            </div>
-            <div
-              style={{
-              alignItems: 'left',
-              borderTop: '1px solid #DFE3E8',
-              display: 'flex',
-              justifyContent: 'space-between',
-              padding: '1rem',
-              width: '100%',
-              }}
-            >
-              <Button onClick={onComplete}>Cancel</Button>
-              <Button primary onClick={onComplete}>
-              Done
-              </Button>
-            </div>
-          </React.Fragment>
+          <DataTable
+            columnContentTypes={Array(3).fill('text')}
+            headings={[
+              <strong>Title</strong>,
+              <strong>Store Product</strong>,
+              <strong>Available</strong>,
+            ]}
+            rows={rows}
+          />
         );
       }}
     </Query>
   );
 }
+
+

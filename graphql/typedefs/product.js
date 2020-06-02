@@ -3,7 +3,7 @@ const { gql } = require("apollo-server-koa");
 const product = gql`
   type Product {
     id: ID!
-    name: String!
+    title: String!
     handle: String!
     available: Boolean!
     shopify_id: Int!
@@ -16,8 +16,7 @@ const product = gql`
   }
 
   input ProductInput {
-    id: ID
-    name: String!
+    title: String!
     handle: String!
     available: Boolean
     shopId: ID!

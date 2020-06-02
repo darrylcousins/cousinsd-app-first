@@ -9,7 +9,7 @@
     "dev": "node server.js",
     "build": "build",
     "start": "NODE_ENV=production node server.js",
-    "build-fragment" : "node schemaQuery.js"
+    "build-fragment": "node schemaQuery.js"
   },
   "keywords": [],
   "author": "darryljcousins@gmail.com",
@@ -31,6 +31,7 @@
     "easy-mysql-promise": "^0.1.2",
     "fs": "0.0.1-security",
     "graphql": "^14.6.0",
+    "graphql-bigint": "^1.0.0",
     "graphql-relay": "^0.6.0",
     "graphql-sequelize": "^9.4.0",
     "isomorphic-fetch": "^2.2.1",

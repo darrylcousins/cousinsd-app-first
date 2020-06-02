@@ -3,7 +3,7 @@ const { Shop } = require('./shop');
 
 module.exports = (sequelize, DataTypes) => {
   const Product = sequelize.define('Product', {
-    name: {
+    title: {
       type: DataTypes.STRING,
       unique: 'compositeIndex',
     },

@@ -31,7 +31,8 @@ export default function BoxAdd({ onComplete }) {
   const delivered = data && data.selectedDate ? data.selectedDate : dateToISOString(new Date());
 
   const updateCacheAfterAdd = (cache, { data }) => {
-    const variables = { shopId, delivered };
+    const input = { shopId, delivered };
+    const variables = { input};
     const query = GET_BOXES;
     const box = data.createBox;
     box.products = [];
@@ -42,6 +43,7 @@ export default function BoxAdd({ onComplete }) {
     cache.writeQuery({ query, variables, data });
   }
 
+  // update={updateCacheAfterAdd}
   return (
     <Mutation
       client={LocalClient}
@@ -58,8 +60,12 @@ export default function BoxAdd({ onComplete }) {
           const tempDate = selectedDate;
           tempDate.setDate(selectedDate.getDate() + 1); // correct for unfound day descrepency
           const delivered = dateToISOString(tempDate);
-          const storeProductId = storeProduct.id;
-          const input = { shopId, name, delivered, storeProductId };
+          console.log(storeProduct);
+          const shopify_gid = storeProduct.id;
+          const shopify_id = parseInt(storeProduct.id.split('/')[4]);
+          const handle = storeProduct.handle;
+          const title = name;
+          const input = { shopId, title, handle, delivered, shopify_gid, shopify_id };
           console.log('Box add: ', input);
           boxAdd({ variables: { input } }).then((value) => {
             console.log('then', value);

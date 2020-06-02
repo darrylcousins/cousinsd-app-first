@@ -6,7 +6,7 @@ import gql from 'graphql-tag';
 import { LocalClient } from '../../LocalClient';
 
 export const printCache = () => {
-  console.log(LocalClient.cache);
+  console.log(LocalClient.cache.data.data);
   const key = 'getBoxes({"delivered":"2020-05-28 00:00:00","shopId":1})';
   //console.log(LocalClient.getData(key));
 

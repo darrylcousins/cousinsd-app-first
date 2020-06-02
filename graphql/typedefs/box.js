@@ -3,9 +3,10 @@ const { gql } = require("apollo-server-koa");
 const box = gql`
   type Box {
     id: ID!
+    title: String!
     handle: String!
     delivered: String!
-    shopify_id: Int!
+    shopify_id: BigInt!
     shopify_gid: String!
     shopId: Int!
     createdAt: String!
@@ -20,11 +21,11 @@ const box = gql`
   }
 
   input BoxInput {
-    id: ID
+    title: String!
     handle: String!
     delivered: String
     shopId: ID!
-    shopify_id: Int!
+    shopify_id: BigInt!
     shopify_gid: String!
   }
 

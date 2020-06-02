@@ -5,28 +5,23 @@ const { dateToISOString, getFieldsFromInfo } = require('../../lib');
 
 const resolvers = {
   Shop: {
-    async boxes(shopObj) {
-      return await shopObj.getBoxes();
+    async boxes(instance, arguments, context, info) {
+      return await instance.getBoxes();
     },
-    async products(shopObj) {
-      return await shopObj.getProducts();
+    async products(instance, arguments, context, info) {
+      return await instance.getProducts();
     },
   },
   Query: {
     async getShop(root, { input }, { models }, info) {
-      const fields = getFieldsFromInfo(info);
       const { id } = input;
       const shop = await Shop.findOne({ 
         where: { id },
-        attributes: fields,
       });
       return shop;
     },
     async getShops(root, args, { models }, info) {
-      const fields = getFieldsFromInfo(info);
-      return Shop.findAll({
-        attributes: fields
-      });
+      return Shop.findAll();
     },
   },
   Mutation: {
@@ -41,10 +36,8 @@ const resolvers = {
         props,
         { where: { id } }
       );
-      const fields = getFieldsFromInfo(info);
       return Shop.findOne({ 
         where: { id },
-        attributes: fields,
       });
     },
     async deleteShop (root, { input }, { models }, info) {

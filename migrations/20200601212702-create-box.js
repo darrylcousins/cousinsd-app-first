@@ -8,6 +8,9 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
+      title: {
+        type: Sequelize.STRING,
+      },
       handle: {
         type: Sequelize.STRING,
         unique: true,
@@ -15,6 +18,9 @@ module.exports = {
       delivered: {
         type: Sequelize.DATE,
         defaultValue: Sequelize.NOW,
+      },
+      shopify_title: {
+        type: Sequelize.STRING,
       },
       shopify_id: {
         type: Sequelize.BIGINT,

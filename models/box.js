@@ -3,14 +3,22 @@ const { Shop } = require('./shop');
 
 module.exports = (sequelize, DataTypes) => {
   const Box = sequelize.define('Box', {
+    title: {
+      type: DataTypes.STRING,
+      unique: 'compositeIndex',
+    },
     handle: {
       type: DataTypes.STRING,
       unique: 'compositeIndex',
+    },
+    shopify_title: {
+      type: DataTypes.STRING,
     },
     shopify_id: {
       type: DataTypes.BIGINT,
       allowNull: false,
       unique: 'compositeIndex',
+      validate: { isInt: true },
     },
     shopify_gid: {
       type: DataTypes.STRING,

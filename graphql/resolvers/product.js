@@ -5,31 +5,34 @@ const { dateToISOString, getFieldsFromInfo } = require('../../lib');
 
 const resolvers = {
   Product: {
-    async boxes(productObj) {
-      return await productObj.getBoxes();
+    async boxes(instance, arguments, context, info) {
+      return await instance.getBoxes();
     },
-    async shop(boxObj) {
-      return await boxObj.getShop();
+    async shop(instance, arguments, context, info) {
+      return await instance.getShop();
     },
   },
   Query: {
     async getProduct(root, { input }, { models }, info){
       const { id } = input;
-      const fields = getFieldsFromInfo(info);
       return Product.findOne({ 
         where: { id },
-        attributes: fields,
       });
     },
     async getProducts(root, { input }, { models }, info) {
       const { shopId, available } = input;
       const where = typeof(available) == 'undefined' ? [true, false] : [available];
-      const fields = getFieldsFromInfo(info);
+      console.log('Where?', where);
       const products = await Product.findAll({
-        attributes: fields,
-        where: { shopId: shopId, available: Op.in(where) },
-        order: [['name', 'ASC']],
+        where: {
+          shopId: shopId,
+          available: {
+            [Op.in]: where
+          }
+        },
+        order: [['title', 'ASC']],
       });
+      console.log('got these:', products);
       return products
     },
   },
@@ -45,10 +48,8 @@ const resolvers = {
         props,
         { where: { id } }
       );
-      const fields = getFieldsFromInfo(info);
       return Product.findOne({ 
         where: { id },
-        attributes: fields,
       });
     },
     async deleteProduct (root, { input }, { models }, info) {

@@ -8,15 +8,15 @@ export const FRAGMENT_PRODUCT_AVAILABLE = gql`
 
 export const FRAGMENT_PRODUCT_NAME = gql`
   fragment productName on Product {
-    name
+    title
   }
 `;
 
 export const GET_PRODUCTS = gql`
-  query getProducts($shopId: Int!) {
-    getProducts(shopId: $shopId) {
-      id
-      name
+  query getProducts($input: ProductSearchInput!) {
+    getProducts(input: $input) {
+      title
+      shopify_gid
       available
     }
   }
@@ -26,7 +26,7 @@ export const CREATE_PRODUCT = gql`
   mutation createProduct($input: ProductCreateInput!) {
     createProduct(input: $input) {
       id
-      name
+      title
       available
     }
   }
@@ -36,7 +36,7 @@ export const BOX_ADD_PRODUCT = gql`
   mutation boxAddCreateProduct($input: BoxCreateProductInput!) {
     boxAddCreateProduct(input: $input) {
       id
-      name
+      title
       available
     }
   }
@@ -46,7 +46,7 @@ export const BOX_GET_DESELECTED_PRODUCTS = gql`
   query boxGetDeselectedProducts($boxId: Int!) {
     boxGetDeselectedProducts(boxId: $boxId) {
       id
-      name
+      title
       available
     }
   }
@@ -64,7 +64,7 @@ export const PRODUCT_UPDATE_NAME = gql`
   mutation productUpdateName($input: ProductLooseInput!) {
     productUpdateName(input: $input) {
       id
-      name
+      title
       available
     }
   }
