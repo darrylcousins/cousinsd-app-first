@@ -5,7 +5,7 @@ import {
 } from '@shopify/polaris';
 import { Query, Mutation } from 'react-apollo';
 import { useQuery, useMutation } from '@apollo/react-hooks';
-import { LocalClient } from '../../LocalClient';
+import { LocalApolloClient } from '../graphql/local-client';
 import { 
 } from './queries';
 

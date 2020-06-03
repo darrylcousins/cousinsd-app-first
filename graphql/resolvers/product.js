@@ -22,7 +22,6 @@ const resolvers = {
     async getProducts(root, { input }, { models }, info) {
       const { shopId, available } = input;
       const where = typeof(available) == 'undefined' ? [true, false] : [available];
-      console.log('Where?', where);
       const products = await Product.findAll({
         where: {
           shopId: shopId,
@@ -32,7 +31,6 @@ const resolvers = {
         },
         order: [['title', 'ASC']],
       });
-      console.log('got these:', products);
       return products
     },
   },
@@ -55,7 +53,18 @@ const resolvers = {
     async deleteProduct (root, { input }, { models }, info) {
       /* id */
       const { id } = input;
-      return Product.destroy({ where: { id } });
+      Product.destroy({ where: { id } });
+      return id;
+    },
+    async toggleProductAvailable (root, { input }, { models }, info) {
+      const { id, ...props } = input;
+      await Product.update(
+        props,
+        { where: { id } }
+      );
+      return Product.findOne({ 
+        where: { id },
+      });
     },
   },
 };

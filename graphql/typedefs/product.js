@@ -6,7 +6,7 @@ const product = gql`
     title: String!
     handle: String!
     available: Boolean!
-    shopify_id: Int!
+    shopify_id: BigInt!
     shopify_gid: String!
     createdAt: String!
     updatedAt: String!
@@ -20,8 +20,18 @@ const product = gql`
     handle: String!
     available: Boolean
     shopId: ID!
-    shopify_id: Int!
+    shopify_id: BigInt!
     shopify_gid: String!
+  }
+
+  input ProductUpdateInput {
+    id: ID!
+    title: String
+    handle: String
+    available: Boolean
+    shopId: ID
+    shopify_id: BigInt
+    shopify_gid: String
   }
 
   input ProductIdInput{
@@ -32,6 +42,11 @@ const product = gql`
     shopId: ID!
   }
 
+  input ProductAvailableInput {
+    id: ID!
+    available: Boolean!
+  }
+
   extend type Query {
     getProduct(input: ProductIdInput!): Product
     getProducts(input: ProductSearchInput!): [Product]
@@ -39,8 +54,9 @@ const product = gql`
 
   extend type Mutation {
     createProduct(input: ProductInput!): Product
-    updateProduct(input: ProductInput!): Product
+    updateProduct(input: ProductUpdateInput!): Product
     deleteProduct(input: ProductIdInput!): Int
+    toggleProductAvailable(input: ProductAvailableInput!): Product
   }
 `;
 

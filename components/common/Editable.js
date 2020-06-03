@@ -4,29 +4,39 @@ import {
   Banner,
   Button,
   Loading,
+  Spinner,
   TextField,
   TextStyle,
 } from '@shopify/polaris';
 import { Mutation } from 'react-apollo';
-import { LocalClient } from '../../LocalClient';
 
-export default function Editable(props) {
+export function Editable(props) {
 
-  const {id, name, mutation, update, textStyle, ...args} = props;
+  const {id, fieldName, title, client, mutation, update, textStyle, type, ...args} = props;
 
-  const [value, setValue] = useState(name);
+  let fieldType = 'text';
+  if (type) fieldType = type;
+
+  const [value, setValue] = useState(title);
   const handleValue = useCallback((value) => setValue(value), []);
 
   const [editing, setEditing] = useState(false);
 
   return (
     <Mutation
-      client={LocalClient}
+      client={client}
       mutation={mutation}
       update={update}
     >
-      {(handleNameChange, { loading, error, data }) => {
-        if (loading) { return <Loading />; }
+      {(handleTitleChange, { loading, error, data }) => {
+        if (loading) { 
+          return (
+            <React.Fragment>
+              <Loading />
+              <Spinner size='small' />
+            </React.Fragment>
+          );
+        }
 
         if (error) { return (
           <Banner status="critical">{error.message}</Banner>
@@ -36,11 +46,10 @@ export default function Editable(props) {
           const enterKeyPressed = event.keyCode === 13;
           if (enterKeyPressed) {
             event.preventDefault();
-            const input = { 
-              id: parseInt(id),
-              name: value
-            };
-            handleNameChange({ variables: { input } })
+            const input = { id };
+            input[fieldName] = value;
+            console.log(input);
+            handleTitleChange({ variables: { input } })
               .then((value) => setEditing(false));
           }
         }
@@ -54,6 +63,7 @@ export default function Editable(props) {
                 focused
                 clearButton
                 value={value}
+                type={fieldType}
                 onChange={handleValue}
                 onClearButtonClick={() => setEditing(false)}
               />

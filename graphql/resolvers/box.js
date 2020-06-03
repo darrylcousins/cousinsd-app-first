@@ -26,7 +26,7 @@ const resolvers = {
       if (!delivered) delivered = dateToISOString(new Date());
       const boxes = await Box.findAll({
         where: { shopId: shopId, delivered: {[Op.gt]: delivered} },
-        order: [['delivered', 'ASC']],
+        order: [['shopify_gid', 'ASC']],
       });
       return boxes
     },
@@ -53,7 +53,8 @@ const resolvers = {
     async deleteBox (root, { input }, { models }, info) {
       /* id */
       const { id } = input;
-      return Box.destroy({ where: { id } });
+      Box.destroy({ where: { id } });
+      return id;
     },
   },
 };

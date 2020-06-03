@@ -1,45 +1,5 @@
 import gql from 'graphql-tag';
 
-export const GET_SHOPIFY_PRODUCT = gql`
-  query product($id: ID!) {
-    product(id: $id) {
-      id
-      title
-      handle
-    }
-  }
-`;
-
-export const FRAGMENT_BOX_NAME = gql`
-  fragment boxName on Box {
-    title
-  }
-`;
-
-export const FRAGMENT_BOX_PRODUCTGID = gql`
-  fragment boxProductGid on Box {
-    shopify_gid
-  }
-`;
-
-export const SET_SELECTED_BOX = gql`
-  mutation setSelectedBox($id: Int!) {
-    setSelectedBox(id: $id) @client
-  }
-`;
-
-export const GET_SELECTED_BOX = gql`
-  query selectedBox {
-    selectedBox @client
-  }
-`;
-
-export const SET_SELECTED_DATE = gql`
-  mutation setSelectedDate($delivered: String!) {
-    setSelectedDate(delivered: $delivered) @client
-  }
-`;
-
 export const GET_SELECTED_DATE = gql`
   query selectedDate {
     selectedDate @client
@@ -52,6 +12,9 @@ export const FRAGMENT_PRODUCT_ARRAY = gql`
       id
       title
       available
+      handle
+      shopify_gid
+      shopify_id
     }
 }`
 
@@ -61,56 +24,35 @@ export const GET_BOXES = gql`
       id
       title
       delivered
+      handle
+      shopify_title
       shopify_gid
+      shopify_id
       ...productArray
     }
   }${FRAGMENT_PRODUCT_ARRAY}
 `;
 
-export const BOX_UPDATE_DELIVERED = gql`
-  mutation boxUpdateDelivered($input: BoxDeliveredInput!) {
-    boxUpdateDelivered(input: $input) {
-      id
-      title
-      shopify_gid
-      delivered
-    }
-  }
-`
-
-export const BOX_UPDATE_NAME = gql`
-  mutation boxUpdateName($input: BoxLooseInput!) {
-    boxUpdateName(input: $input) {
-      id
-      title
-    }
-  }
-`
-
-export const BOX_UPDATE_PRODUCTGID = gql`
-  mutation boxUpdateProductGid($input: BoxProductGidInput!) {
-    boxUpdateProductGid(input: $input) {
-      id
-      shopify_gid
-    }
-  }
-`
-
-export const DUPLICATE_BOX = gql`
-  mutation duplicateBox($input: BoxDuplicateInput!) {
-    duplicateBox(input: $input) {
+export const CREATE_BOX = gql`
+  mutation createBox($input: BoxInput!) {
+    createBox(input: $input) {
       id
       title
       delivered
+      handle
+      shopify_title
       shopify_gid
+      shopify_id
+      shopify_id
       ...productArray
     }
   }${FRAGMENT_PRODUCT_ARRAY}
 `
 
-export const CREATE_BOX = gql`
-  mutation createBox($input: BoxInput!) {
-    createBox(input: $input) {
+export const UPDATE_BOX = gql`
+  mutation updateBox($input: BoxUpdateInput!) {
+    updateBox(input: $input) {
+      id
       title
       handle
     }
@@ -118,7 +60,8 @@ export const CREATE_BOX = gql`
 `
 
 export const DELETE_BOX = gql`
-  mutation deleteBox($input: BoxDeleteInput!) {
+  mutation deleteBox($input: BoxIdInput!) {
     deleteBox(input: $input)
   }
 `
+/* SEE bak/queries.js */

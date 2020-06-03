@@ -5,13 +5,14 @@ import {
   TextContainer,
   SkeletonDisplayText,
   SkeletonBodyText,
+  Spinner,
 } from '@shopify/polaris';
 
-export default function LoadingPageMarkup() {
+export function LoadingPageMarkup() {
   return (
     <Layout>
       <Layout.Section>
-        <Card sectioned>
+        <Card sectioned subdued >
           <TextContainer>
             <SkeletonDisplayText size="small" />
             <SkeletonBodyText lines={9} />

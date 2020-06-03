@@ -5,15 +5,9 @@ import Head from 'next/head';
 import { AppProvider } from '@shopify/polaris';
 import { Provider } from '@shopify/app-bridge-react';
 import Cookies from 'js-cookie';
-import ApolloClient from 'apollo-boost';
 import { ApolloProvider } from 'react-apollo';
 import translations from '@shopify/polaris/locales/en.json';
-
-const client = new ApolloClient({
-  fetchOptions: {
-    credentials: 'include'
-  },
-});
+import { ShopifyApolloClient } from '../graphql/shopify-client';
 
 class MyApp extends App {
 
@@ -32,7 +26,7 @@ class MyApp extends App {
         </Head>
         <Provider config={config}>
           <AppProvider i18n={translations}>
-            <ApolloProvider client={client}>
+            <ApolloProvider client={ShopifyApolloClient}>
               <Component {...pageProps} />
             </ApolloProvider>
           </AppProvider>

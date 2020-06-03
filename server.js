@@ -102,6 +102,13 @@ app.prepare().then(() => {
     shopRedact(ctx.state.webhook);
   });
 
+  /* Headers are:
+  X-Shopify-Topic: orders/create
+  X-Shopify-Hmac-Sha256: XWmrwMey6OsLMeiZKwP4FppHH3cmAiiJJAweH5Jo4bM=
+  X-Shopify-Shop-Domain: johns-apparel.myshopify.com
+  X-Shopify-API-Version: 2019-04
+  */
+
   // product webhooks
   router.post('/webhooks/products/create', webhook, (ctx) => {
     productCreate(ctx.state.webhook, ENV.SHOP_ID);

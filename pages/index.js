@@ -20,19 +20,26 @@ import {
   TextStyle,
 } from '@shopify/polaris';
 import {
+  TitleBar,
+} from '@shopify/app-bridge-react';
+import {
   MobileCancelMajorMonotone,
 } from '@shopify/polaris-icons';
 import { Query, Mutation } from 'react-apollo';
 import { useQuery, useMutation } from '@apollo/react-hooks';
-import { LocalClient } from '../LocalClient';
+import { LocalApolloClient } from '../graphql/local-client';
 import { printCache } from '../components/common/ShowCache';
-import SheetHelper from '../components/common/SheetHelper';
 import ProductList from '../components/products/ProductList';
 import BoxList from '../components/boxes/BoxList';
-import BoxAdd from '../components/boxes/BoxAdd';
+import {
+  GET_SHOP,
+} from '../components/shop/queries';
 
 export default function Index() {
 
+  const shopId = SHOP_ID;
+  const [addBox, setAddBox] = useState(false);
+  const toggleAddBox = useCallback(() => setAddBox(!addBox), [addBox]);
   const [tabSelected, setTabSelected] = useState(0);
   const handleTabChange = useCallback(
         (selectedTabIndex) => setTabSelected(selectedTabIndex),
@@ -55,43 +62,45 @@ export default function Index() {
   ];
   /* end tab stuff */
 
-  /* sheet stuff */
-  const [sheetActive, setSheetActive] = useState(false);
-  const toggleSheetActive = useCallback(() => setSheetActive(!sheetActive), [sheetActive]);
-
-  const toggleSheet = (title) => {
-    toggleSheetActive();
-  }
-  /* end sheet stuff */
-
-
+  const input = { id: shopId };
   return (
     <Frame>
-      <Page
-        title={tabs[tabSelected].content}
-        primaryAction={{
-          content: 'Add Box',
-          onAction: () => toggleSheetActive(),
-        }}
-        secondaryActions={[
-          {
-            content: 'Show Cache',
-            onAction: () => printCache(),
-          },
-        ]}
-      >
-        <Sheet open={sheetActive} onClose={toggleSheetActive}>
-          <SheetHelper title='Add Box' toggle={toggleSheetActive}>
-            <BoxAdd onComplete={toggleSheetActive} />
-          </SheetHelper>
-        </Sheet>
-        <Card>
-          <Tabs tabs={tabs} selected={tabSelected} onSelect={handleTabChange}>
-            { tabSelected === 0 && <BoxList /> }
-            { tabSelected === 1 && <ProductList /> }
-          </Tabs>
-        </Card>
-      </Page>
+        <TitleBar
+          title={tabs[tabSelected].content}
+          primaryAction={{
+            content: 'Add Box',
+            onAction: () => toggleAddBox(),
+          }}
+          secondaryActions={[
+            {
+              content: 'Show Cache',
+              onAction: () => printCache(),
+            },
+          ]}
+        />
+        <div style={{margin: '2.6rem 3.6rem'}}>
+          <Card>
+            <Query
+              query={GET_SHOP}
+              variables={{ input }}
+              client={LocalApolloClient}
+            >
+              {({ loading, error, data }) => {
+                if (loading) { return <Loading />; }
+                if (error) { return (
+                  <Banner status="critical">{error.message}</Banner>
+                )}
+                const { url } = data.getShop;
+                return (
+                  <Tabs tabs={tabs} selected={tabSelected} onSelect={handleTabChange}>
+                    { tabSelected === 0 && <BoxList shopUrl={url} addBox={addBox} toggleAddBox={toggleAddBox}/> }
+                    { tabSelected === 1 && <ProductList shopUrl={url} /> }
+                  </Tabs>
+                )
+              }}
+            </Query>
+          </Card>
+        </div>
     </Frame>
   );
 }

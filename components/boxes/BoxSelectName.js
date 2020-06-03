@@ -2,7 +2,6 @@ import React, {useState, useCallback} from 'react';
 import {
   TextField,
 } from '@shopify/polaris';
-import { LocalClient } from '../../LocalClient';
 import { dateToISOString } from '../../lib';
 
 export default function BoxSelectName({ name, onSelect }) {

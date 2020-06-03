@@ -6,13 +6,16 @@ import {
   DatePicker,
   Loading,
   Popover,
+  Spinner,
+  TextStyle,
 } from '@shopify/polaris';
 import { Mutation } from 'react-apollo';
-import { LocalClient } from '../../LocalClient';
+import { LocalApolloClient } from '../../graphql/local-client';
+import { dateToISOString } from '../../lib';
 
 export default function ItemDatePicker(props) {
 
-  const {date, mutation, ...args} = props;
+  const {id, fieldName, date, mutation, refetch, ...args} = props;
 
   const [popoverActive, setPopoverActive] = useState(false);
 
@@ -36,57 +39,65 @@ export default function ItemDatePicker(props) {
   );
 
   return (
-      <Mutation
-        client={LocalClient}
-        mutation={mutation}
-      >
-        {(handleDateChange, { loading, error, data }) => {
-          if (loading) { return <Loading />; }
-
-          if (error) { return (
-            <Banner status="critical">{error.message}</Banner>
-          )}
-
-          const dateChange = () => {
-            const tempDate = selectedDate;
-            tempDate.setDate(selectedDate.getDate() + 1); // correct for unfound day descrepency
-            const delivered = tempDate.toISOString().slice(0, 10) + ' 00:00:00';
-            const input = { ...args, delivered };
-            handleDateChange({ variables: { input } });
-            togglePopoverActive();
-          }
-
-          const setSelectedDateChange = (date) => {
-            setSelectedDate(date.start);
-            setSaveActive(true);
-          }
-  
+    <Mutation
+      client={LocalApolloClient}
+      mutation={mutation}
+    >
+      {(handleDateChange, { loading, error, data }) => {
+        if (loading) {
           return (
-            <Popover fluidContent={true} active={popoverActive} onClose={togglePopoverActive} activator={(
-              <Button
-                onClick={togglePopoverActive}
-                disclosure={!popoverActive ? 'down' : 'up'}
-                >
-                  {date.toDateString()}
-              </Button>
-            )}>
-              <DatePicker
-                month={month}
-                year={year}
-                onMonthChange={handleMonthChange}
-                selected={selectedDate}
-                onChange={setSelectedDateChange}
-              />
-                <Button
-                  primary
-                  fullWidth
-                  disabled={ !saveActive }
-                  onClick={ dateChange }
-                >Save</Button>
-            </Popover>
+            <React.Fragment>
+              <Loading />
+              <Spinner size='small' />
+            </React.Fragment>
           );
         }
-      }
+
+        if (error) { return (
+          <Banner status="critical">{error.message}</Banner>
+        )}
+
+        const dateChange = () => {
+          const tempDate = selectedDate;
+          const delivered = dateToISOString(tempDate);
+          let input = { id };
+          input[fieldName] = delivered;
+          handleDateChange({ variables: { input } });
+          togglePopoverActive();
+          if (refetch) refetch();
+        }
+
+        const setSelectedDateChange = (date) => {
+          setSelectedDate(date.start);
+          setSaveActive(true);
+        }
+
+        return (
+          <Popover fluidContent={true} active={popoverActive} onClose={togglePopoverActive} activator={(
+            <Button
+              plain
+              onClick={togglePopoverActive}
+              disclosure={!popoverActive ? 'down' : 'up'}
+              >
+                <TextStyle variation='subdued'>{date.toDateString()}</TextStyle>
+            </Button>
+          )}>
+            <DatePicker
+              month={month}
+              year={year}
+              onMonthChange={handleMonthChange}
+              selected={selectedDate}
+              onChange={setSelectedDateChange}
+            />
+              <Button
+                primary
+                fullWidth
+                disabled={ !saveActive }
+                onClick={ dateChange }
+              >Save</Button>
+          </Popover>
+        );
+      }}
     </Mutation>
   )
 }
