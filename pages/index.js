@@ -1,23 +1,11 @@
 import React, { useState, useCallback } from 'react';
 import {
   Banner,
-  Button,
   Card,
-  DataTable,
-  DatePicker,
-  EmptyState,
   Frame,
-  Heading,
-  Popover,
-  Layout,
   Loading,
   Page,
-  Stack,
-  Sheet,
-  Icon,
   Tabs,
-  TextContainer,
-  TextStyle,
 } from '@shopify/polaris';
 import {
   TitleBar,
@@ -25,8 +13,7 @@ import {
 import {
   MobileCancelMajorMonotone,
 } from '@shopify/polaris-icons';
-import { Query, Mutation } from 'react-apollo';
-import { useQuery, useMutation } from '@apollo/react-hooks';
+import { Query } from 'react-apollo';
 import { LocalApolloClient } from '../graphql/local-client';
 import { printCache } from '../components/common/ShowCache';
 import ProductList from '../components/products/ProductList';

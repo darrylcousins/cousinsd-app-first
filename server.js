@@ -128,6 +128,7 @@ app.prepare().then(() => {
     await handle(ctx.req, ctx.res);
     ctx.respond = false;
     ctx.res.statusCode = 200;
+    console.log(JSON.stringify(ctx, null, 2));
   });
 
   server.use(router.allowedMethods());
