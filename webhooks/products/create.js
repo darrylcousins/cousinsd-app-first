@@ -11,13 +11,12 @@ const productCreate = (webhook, shopId) => {
       shopify_id: parseInt(payload.id),
       shopify_gid: payload.admin_graphql_api_id,
       available: true,
-      handle: payload.handle,
       shopId,
     };
 
     console.log(input);
     const product = Product.create(input)
-      .then((value) => console.log('created product', value.name))
+      .then((value) => console.log('created product', value.title))
       .catch((error) => console.log('got error', error)
     );
   }

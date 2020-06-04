@@ -6,10 +6,9 @@ import {
 } from '@shopify/polaris';
 import { ResourcePicker } from '@shopify/app-bridge-react';
 
-export default function BoxSelectProduct({ product, onSelect }) {
+export default function BoxAddSelectProduct({ product, onSelect }) {
 
   const [pickerActive, setPickerActive] = useState(false);
-
   const handleResourcePickerClose = useCallback(() => setPickerActive(false), []);
   const toggleResourcePicker = useCallback(() => setPickerActive(!pickerActive), [pickerActive]);
 
@@ -33,13 +32,13 @@ export default function BoxSelectProduct({ product, onSelect }) {
       >
         { !storeProduct ?
           <TextStyle>Select store product</TextStyle>
-          :
+        :
           <TextStyle variation="strong">{storeProduct.title}</TextStyle>
         }
-        </Button>
-        { !storeProduct &&
-          <InlineError message="Store product is required" />
-        }
+      </Button>
+      { !storeProduct &&
+        <InlineError message="Store product is required" />
+      }
       <ResourcePicker
         resourceType="Product"
         open={pickerActive}

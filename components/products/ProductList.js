@@ -3,6 +3,8 @@ import {
   Banner,
   Button,
   DataTable,
+  EmptyState,
+  Layout,
   Loading,
   TextStyle,
 } from '@shopify/polaris';
@@ -32,28 +34,24 @@ export default function ProductList({ shopUrl }) {
     <Query
       client={LocalApolloClient}
       query={GET_PRODUCTS}
-      fetchPolicy='network-only'
+      fetchPolicy='no-cache'
       variables={ { input } }
-    >
-      {({ loading, error, data }) => {
-        if (loading) {
-          return (
-            <React.Fragment>
-              <Loading />
-              <LoadingPageMarkup />
-            </React.Fragment>
-          )
-        }
-        if (error) {
-          console.log(error);
-          return (
-            <Banner status="critical">{error.message}</Banner>
-          )
-        }
-        console.log(data);
+      notifyOnNetworkStatusChange
+      >
+      {({ loading, error, data, refetch, networkStatus }) => {
+        //console.log('GetBox Network status:', networkStatus);
+        const isError = error && (
+          <Banner status="critical">{error.message}</Banner>
+        );
+        const isLoading = loading && (
+          <React.Fragment>
+            <Loading />
+            <LoadingPageMarkup />
+          </React.Fragment>
+        );
 
         /* datatable stuff */
-        const rows = data.getProducts.map((product) => (
+        const rows = isLoading ? Array(3) : data.getProducts.map((product) => (
           [
             (
               <Editable 
@@ -78,15 +76,6 @@ export default function ProductList({ shopUrl }) {
               />
             ),
             (
-              <Button 
-                plain
-                external
-                url={`${adminUrl}${product.shopify_id}`}
-              >
-                <TextStyle variation='subdued'>{ product.handle }</TextStyle>
-              </Button>
-            ),
-            (
               <ProductShopPrice
                 id={product.shopify_gid}
                 adminUrl={adminUrl}
@@ -98,20 +87,39 @@ export default function ProductList({ shopUrl }) {
         /* end datatable stuff */
 
         return (
-          <DataTable
-            columnContentTypes={Array(3).fill('text').concat(['number'])}
-            headings={[
-              <strong>Title</strong>,
-              <strong>Available</strong>,
-              <strong>Store Product Handle</strong>,
-              <strong>Store Product Price</strong>,
-            ]}
-            rows={rows}
-          />
+          <React.Fragment>
+            { isError && isError } 
+            { isLoading ? isLoading :
+              <DataTable
+                columnContentTypes={Array(2).fill('text').concat(['number'])}
+                headings={[
+                  <strong>Title</strong>,
+                  <strong>Available</strong>,
+                  <strong>Store Product Price</strong>,
+                ]}
+                rows={rows}
+              />
+            }
+            { data && data.getProducts.length == 0 &&
+              <Layout>
+                <Layout.Section>
+                  <EmptyState
+                    heading="Manage your veggie box produce"
+                    secondaryAction={{content: 'Learn more', url: 'http://cousinsd.net/'}}
+                  >
+                      <p style={{ textAlign: 'left' }}>
+                        Add products on your store, be sure to set<br />
+                        <strong>Product Type</strong> as <strong>"Box Produce"</strong>,<br />
+                        <strong>Vendor</strong> as <strong>"Spring Collective"</strong> and<br />
+                        <strong>"Unavailable"</strong> on store.
+                      </p>
+                  </EmptyState>
+                </Layout.Section>
+              </Layout>
+            }
+          </React.Fragment>
         );
       }}
     </Query>
   );
 }
-
-

@@ -3,86 +3,91 @@ import {
   Banner,
   Button,
   Loading,
+  Modal,
   Spinner,
+  TextContainer,
 } from '@shopify/polaris';
 import { Query, Mutation } from 'react-apollo';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { dateToISOString } from '../../lib';
 import { LocalApolloClient } from '../../graphql/local-client';
+import { LoadingPageMarkup } from '../common/LoadingPageMarkup';
 import { 
   DELETE_BOX, 
   GET_BOXES,
   GET_SELECTED_DATE,
 } from './queries';
 
-export default function BoxDelete({ checked, checkedId, onComplete }) {
-
-  const shopId = SHOP_ID;
+export default function BoxDelete({ open, box, onComplete, onCancel }) {
 
   /* checkbox stuff */
-  const [active, setActive] = useState(checked);
-  const [id, setId] = useState(checkedId);
+  const [instance, setInstance] = useState(box);
+  const [modalOpen, setModalOpen] = useState(open);
 
   useEffect(() => {
-    setActive(checked);
-    setId(checkedId);
-  }, [checked, checkedId])
+    setModalOpen(open);
+    setInstance(box);
+  }, [open, box])
   /* end checkbox stuff */
 
-  /* update cache stuff */
-  const { data } = useQuery(GET_SELECTED_DATE, { client: LocalApolloClient });
-  const delivered = data && data.selectedDate ? data.selectedDate : dateToISOString(new Date());
-
-  const updateCacheAfterDelete = (cache, { data } ) => {
-    const query = GET_BOXES;
-    //const boxId = `Box.${data.deleteBox}`;
-    const boxId = data.deleteBox;
-    const input = { shopId, delivered };
-    const variables = { input };
-    console.log('got this id back', boxId);
-    console.log(input);
-
-    const getBoxes = cache.readQuery({ query, variables }).getBoxes.filter((box) => parseInt(box.id) !== boxId)
-    data = { getBoxes };
-
-    cache.writeQuery({ query, variables, data });
-    onComplete();
-  }
-  /* end cache stuff */
+  const toggleModalOpen = useCallback(() => setModalOpen(!modalOpen), [modalOpen]);
 
   return (
     <Mutation
       client={LocalApolloClient}
       mutation={DELETE_BOX}
-      update={updateCacheAfterDelete}
     >
       {(boxDelete, { loading, error, data }) => {
-        if (loading) { 
-          return (
-            <React.Fragment>
-              <Loading />
-              <Spinner size='small' />
-            </React.Fragment>
-          );
-        }
-
-        if (error) { return (
+        const isError = error && (
           <Banner status="critical">{error.message}</Banner>
-        )}
+        );
+        const isLoading = loading && (
+          <React.Fragment>
+            <Loading />
+            <Spinner />
+          </React.Fragment>
+        );
 
         const deleteBox = () => {
-          const input = { id }
+          const input = { id: instance.id }
           console.log('deleting', input);
-          boxDelete({ variables: { input } });
+          boxDelete({ variables: { input } })
+            .then((value) => {
+              onComplete();
+          }).catch((error) => {
+            console.log('error', error);
+          });
         }
 
         return (
-          <Button
-            disabled={!(active && id)}
-            onClick={deleteBox}
+          <Modal
+            open={modalOpen}
+            onClose={toggleModalOpen}
+            title={`Are you sure you want to delete ${instance.title}?`}
+            primaryAction={{
+              content: "Yes, I'm sure",
+              onAction: deleteBox,
+              destructive: true,
+            }}
+            secondaryActions={[
+              {
+                content: 'Cancel',
+                onAction: onCancel,
+              },
+            ]}
           >
-            { active && id && 'Delete' }
-          </Button>
+            <Modal.Section>
+              { isError && isError } 
+              { isLoading ? isLoading :
+                <TextContainer>
+                  <p>
+                    Deleting { instance.title }. 
+                    This action cannot be undone.
+                  </p>
+                </TextContainer>
+              }
+            </Modal.Section>
+          </Modal>
         );
       }}
     </Mutation>

@@ -12,11 +12,23 @@ export const FRAGMENT_PRODUCT_ARRAY = gql`
       id
       title
       available
-      handle
       shopify_gid
       shopify_id
     }
 }`
+
+export const GET_BOX = gql`
+  query getBox($input: BoxIdInput!) {
+    getBox(input: $input) {
+      id
+      title
+      delivered
+      shopify_title
+      shopify_gid
+      shopify_id
+    }
+  }
+`;
 
 export const GET_BOXES = gql`
   query getBoxes($input: BoxSearchInput!) {
@@ -24,10 +36,17 @@ export const GET_BOXES = gql`
       id
       title
       delivered
-      handle
       shopify_title
       shopify_gid
       shopify_id
+    }
+  }
+`;
+
+/* returns box with products */
+export const GET_BOX_PRODUCTS = gql`
+  query getBoxProducts($input: BoxIdInput!) {
+    getBoxProducts(input: $input) {
       ...productArray
     }
   }${FRAGMENT_PRODUCT_ARRAY}
@@ -39,14 +58,12 @@ export const CREATE_BOX = gql`
       id
       title
       delivered
-      handle
       shopify_title
       shopify_gid
       shopify_id
       shopify_id
-      ...productArray
     }
-  }${FRAGMENT_PRODUCT_ARRAY}
+  }
 `
 
 export const UPDATE_BOX = gql`
@@ -54,7 +71,6 @@ export const UPDATE_BOX = gql`
     updateBox(input: $input) {
       id
       title
-      handle
     }
   }
 `
@@ -62,6 +78,18 @@ export const UPDATE_BOX = gql`
 export const DELETE_BOX = gql`
   mutation deleteBox($input: BoxIdInput!) {
     deleteBox(input: $input)
+  }
+`
+
+export const BOX_ADD_PRODUCTS = gql`
+  mutation addBoxProducts($input: BoxProductGidsInput!) {
+    addBoxProducts(input: $input)
+  }
+`
+
+export const BOX_REMOVE_PRODUCT = gql`
+  mutation removeBoxProduct($input: BoxProductInput!) {
+    removeBoxProduct(input: $input)
   }
 `
 /* SEE bak/queries.js */

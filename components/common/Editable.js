@@ -3,12 +3,14 @@ import PropTypes from 'prop-types';
 import {
   Banner,
   Button,
+  InlineError,
   Loading,
   Spinner,
   TextField,
   TextStyle,
 } from '@shopify/polaris';
 import { Mutation } from 'react-apollo';
+import { findErrorMessage } from '../../lib';
 
 export function Editable(props) {
 
@@ -38,9 +40,9 @@ export function Editable(props) {
           );
         }
 
-        if (error) { return (
-          <Banner status="critical">{error.message}</Banner>
-        )}
+        const isError = error && (
+          <InlineError message={ findErrorMessage(error) }  />
+        );
 
         const handleKeyPress = (event) => {
           const enterKeyPressed = event.keyCode === 13;
@@ -75,11 +77,11 @@ export function Editable(props) {
               { textStyle === "button" ?
                 <Button
                   primary
-                  fullWidth
                 >{ value }</Button>
                   :
                 <TextStyle variation={textStyle}>{ value }</TextStyle>
               }
+            { isError && isError } 
           </div>
         );
       }}

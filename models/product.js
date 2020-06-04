@@ -7,10 +7,6 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       unique: 'compositeIndex',
     },
-    handle: {
-      type: DataTypes.STRING,
-      unique: 'compositeIndex',
-    },
     shopify_id: {
       type: DataTypes.BIGINT,
       allowNull: false,

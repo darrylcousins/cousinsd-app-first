@@ -5,11 +5,6 @@ module.exports = (sequelize, DataTypes) => {
   const Box = sequelize.define('Box', {
     title: {
       type: DataTypes.STRING,
-      unique: 'compositeIndex',
-    },
-    handle: {
-      type: DataTypes.STRING,
-      unique: 'compositeIndex',
     },
     shopify_title: {
       type: DataTypes.STRING,
@@ -17,13 +12,12 @@ module.exports = (sequelize, DataTypes) => {
     shopify_id: {
       type: DataTypes.BIGINT,
       allowNull: false,
-      unique: 'compositeIndex',
       validate: { isInt: true },
+      unique: 'compositeIndex',
     },
     shopify_gid: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: 'compositeIndex',
     },
     delivered: {
       type: DataTypes.DATE,
@@ -38,6 +32,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       onUpdate: 'CASCADE',
       onDelete: 'SET NULL',
+      unique: 'compositeIndex',
     },
   }, {});
   Box.associate = function(models) {

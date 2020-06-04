@@ -31,6 +31,7 @@ export function ProductShopPrice({ id, adminUrl, productId }) {
       query={GET_PRODUCT_PRICE}
       variables={{ id }}
       client={ShopifyApolloClient}
+      fetchPolicy='no-cache'
     >
       {({ loading, error, data }) => {
         if (loading) { return <Spinner size='small' />; }

@@ -57,9 +57,10 @@ export default function ItemDatePicker(props) {
           <Banner status="critical">{error.message}</Banner>
         )}
 
-        const dateChange = () => {
-          const tempDate = selectedDate;
+        const dateChange = (tempDate) => {
+          //const tempDate = selectedDate;
           const delivered = dateToISOString(tempDate);
+          console.log(delivered);
           let input = { id };
           input[fieldName] = delivered;
           handleDateChange({ variables: { input } });
@@ -69,6 +70,7 @@ export default function ItemDatePicker(props) {
 
         const setSelectedDateChange = (date) => {
           setSelectedDate(date.start);
+          dateChange(date.start);
           setSaveActive(true);
         }
 
@@ -89,12 +91,6 @@ export default function ItemDatePicker(props) {
               selected={selectedDate}
               onChange={setSelectedDateChange}
             />
-              <Button
-                primary
-                fullWidth
-                disabled={ !saveActive }
-                onClick={ dateChange }
-              >Save</Button>
           </Popover>
         );
       }}
@@ -102,8 +98,16 @@ export default function ItemDatePicker(props) {
   )
 }
 
+  /*
+              <Button
+                primary
+                fullWidth
+                disabled={ !saveActive }
+                onClick={ dateChange }
+              >Save</Button>
 ItemDatePicker.propTypes = {
   date: PropTypes.object,
 }
+*/
 
 

@@ -62,6 +62,15 @@ export default function Index() {
   ];
   /* end tab stuff */
 
+/*
+secondaryActions={[
+  {
+    content: 'Show Cache',
+    onAction: () => printCache(),
+  },
+]}
+*/
+
   const input = { id: shopId };
   return (
     <Frame>
@@ -71,12 +80,6 @@ export default function Index() {
             content: 'Add Box',
             onAction: () => toggleAddBox(),
           }}
-          secondaryActions={[
-            {
-              content: 'Show Cache',
-              onAction: () => printCache(),
-            },
-          ]}
         />
         <div style={{margin: '2.6rem 3.6rem'}}>
           <Card>
@@ -87,15 +90,18 @@ export default function Index() {
             >
               {({ loading, error, data }) => {
                 if (loading) { return <Loading />; }
-                if (error) { return (
+                const isError = error && (
                   <Banner status="critical">{error.message}</Banner>
-                )}
+                );
                 const { url } = data.getShop;
                 return (
-                  <Tabs tabs={tabs} selected={tabSelected} onSelect={handleTabChange}>
-                    { tabSelected === 0 && <BoxList shopUrl={url} addBox={addBox} toggleAddBox={toggleAddBox}/> }
-                    { tabSelected === 1 && <ProductList shopUrl={url} /> }
-                  </Tabs>
+                  <React.Fragment>
+                    { isError && isError }
+                    <Tabs tabs={tabs} selected={tabSelected} onSelect={handleTabChange}>
+                      { tabSelected === 0 && <BoxList shopUrl={url} addBox={addBox} toggleAddBox={toggleAddBox}/> }
+                      { tabSelected === 1 && <ProductList shopUrl={url} /> }
+                    </Tabs>
+                  </React.Fragment>
                 )
               }}
             </Query>

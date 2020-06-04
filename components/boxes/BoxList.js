@@ -4,8 +4,10 @@ import {
   Button,
   ButtonGroup,
   Checkbox,
+  EmptyState,
   DataTable,
   Icon,
+  Layout,
   Loading,
   Sheet,
   TextStyle,
@@ -22,8 +24,10 @@ import DateRangeSelector from '../common/DateRangeSelector';
 import ItemDatePicker from '../common/ItemDatePicker';
 import SheetHelper from '../common/SheetHelper';
 import BoxShopTitle from './BoxShopTitle';
+import BoxProductList from './BoxProductList';
 import BoxDelete from './BoxDelete';
 import BoxAdd from './BoxAdd';
+import BoxActions from './BoxActions';
 import { 
   GET_BOXES,
   GET_SELECTED_DATE,
@@ -69,11 +73,12 @@ export default function BoxList({ shopUrl, addBox, toggleAddBox }) {
       <Query
         client={LocalApolloClient}
         query={GET_BOXES}
-        fetchPolicy='network-only'
+        fetchPolicy='no-cache'
         variables={ { input } }
+        notifyOnNetworkStatusChange
       >
-        {({ loading, error, data, refetch }) => {
-          //console.log('Network status:', networkStatus);
+        {({ loading, error, data, refetch, networkStatus }) => {
+          //console.log('GetBox Network status:', networkStatus);
           const isError = error && (
             <Banner status="critical">{error.message}</Banner>
           );
@@ -89,7 +94,7 @@ export default function BoxList({ shopUrl, addBox, toggleAddBox }) {
               (
                 <Checkbox 
                   id={box.id}
-                  label={box.handle}
+                  label={box.title}
                   labelHidden={true}
                   onChange={handleCheckedChange}
                   checked={checked && checkedId == box.id}
@@ -117,10 +122,14 @@ export default function BoxList({ shopUrl, addBox, toggleAddBox }) {
                 date={new Date(parseInt(box.delivered))}
                 fieldName='delivered'
               />,
-              'the product list'
+              <BoxProductList
+                id={parseInt(box.id)}
+              />,
             ]
           ));
           /* end datatable stuff */
+
+          const refetchQuery = () => refetch({ input });
 
           return (
             <React.Fragment>
@@ -128,15 +137,17 @@ export default function BoxList({ shopUrl, addBox, toggleAddBox }) {
                 <SheetHelper title='Add Box' toggle={toggleAddBox}>
                   <BoxAdd
                     onComplete={toggleAddBox}
+                    refetch={refetchQuery}
                   />
                 </SheetHelper>
               </Sheet>
               <div style={{ padding: '1.6rem' }}>
                 <ButtonGroup segmented >
-                  <BoxDelete
+                  <BoxActions
                     checked={checked}
                     checkedId={checkedId}
                     onComplete={clearChecked}
+                    refetch={refetchQuery}
                   />
                   <DateRangeSelector refetch={refetch} disabled={ Boolean(isLoading) } />
                 </ButtonGroup>
@@ -171,6 +182,17 @@ export default function BoxList({ shopUrl, addBox, toggleAddBox }) {
                   ]}
                   rows={rows}
                 />
+              }
+              { data && data.getBoxes.length == 0 &&
+                <EmptyState
+                  heading="Manage your vege boxes"
+                  action={{content: 'Add box', onAction: toggleAddBox}}
+                  secondaryAction={{content: 'Learn more', url: 'http://cousinsd.net/'}}
+                >
+                  <p style={{ textAlign: 'left' }}>
+                    Add boxes with products and link to your products on your store
+                  </p>
+                </EmptyState>
               }
             </React.Fragment>
           );

@@ -4,7 +4,7 @@ import {
 } from '@shopify/polaris';
 import { dateToISOString } from '../../lib';
 
-export default function BoxSelectName({ name, onSelect }) {
+export default function BoxAddSelectName({ name, onSelect }) {
 
   const [value, setValue] = useState(name);
 

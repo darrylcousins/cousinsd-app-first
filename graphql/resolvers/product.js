@@ -36,11 +36,11 @@ const resolvers = {
   },
   Mutation: {
     async createProduct (root, { input }, { models }, info) {
-      /* name, handle, shopId, shopify_id, shopify_gid, available */
+      /* title, shopId, shopify_id, shopify_gid, available */
       return Product.create(input);
     },
     async updateProduct (root, { input }, { models }, info) {
-      /* name, id, handle, shopId, shopify_id, shopify_gid, available */
+      /* name, id, title, shopId, shopify_id, shopify_gid, available */
       const { id, ...props } = input;
       await Product.update(
         props,

@@ -4,7 +4,6 @@ const product = gql`
   type Product {
     id: ID!
     title: String!
-    handle: String!
     available: Boolean!
     shopify_id: BigInt!
     shopify_gid: String!
@@ -17,7 +16,6 @@ const product = gql`
 
   input ProductInput {
     title: String!
-    handle: String!
     available: Boolean
     shopId: ID!
     shopify_id: BigInt!
@@ -27,7 +25,6 @@ const product = gql`
   input ProductUpdateInput {
     id: ID!
     title: String
-    handle: String
     available: Boolean
     shopId: ID
     shopify_id: BigInt

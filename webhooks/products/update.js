@@ -11,7 +11,6 @@ const productUpdate = (webhook, shopId) => {
       shopify_id: parseInt(payload.id),
       shopify_gid: payload.admin_graphql_api_id,
       available: true,
-      handle: payload.handle,
       shopId,
     };
 
@@ -29,7 +28,6 @@ const productUpdate = (webhook, shopId) => {
       shopify_title: payload.title,
       shopify_id: parseInt(payload.id),
       shopify_gid: payload.admin_graphql_api_id,
-      handle: payload.handle,
       shopId,
     };
 

@@ -15,7 +15,6 @@ const resolvers = {
   Query: {
     async getBox(root, { input }, { models }, info){
       const { id } = input;
-      const fields = getFieldsFromInfo(info);
       const box = await Box.findOne({ 
         where: { id },
       });
@@ -30,17 +29,22 @@ const resolvers = {
       });
       return boxes
     },
+    async getBoxProducts(root, { input }, { models }, info){
+      const { id } = input;
+      const box = await Box.findOne({ 
+        where: { id },
+      });
+      return box;
+    },
   },
   Mutation: {
     async createBox (root, { input }, { models }, info) {
       console.log('got this in createBox', input);
-      /* title handle, shopId, shopify_id, shopify_gid, delivered */
-      return Box.create(input)
-        .then(value => value)
-        .catch(error => error);
+      /* title, shopId, shopify_id, shopify_gid, delivered */
+      return Box.create(input);
     },
     async updateBox (root, { input }, { models }, info) {
-      /* id, handle, shopId, shopify_id, shopify_gid, delivered */
+      /* id, title, shopId, shopify_id, shopify_gid, delivered */
       const { id, ...props } = input;
       await Box.update(
         props,
@@ -53,6 +57,8 @@ const resolvers = {
     async deleteBox (root, { input }, { models }, info) {
       /* id */
       const { id } = input;
+      const box = await Box.findByPk(id);
+      box.setProducts([]);
       Box.destroy({ where: { id } });
       return id;
     },

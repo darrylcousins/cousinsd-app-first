@@ -2,20 +2,26 @@ import React, {useState, useCallback} from 'react';
 import {
   Banner,
   Button,
-  InlineError,
+  Icon,
   Loading,
   Spinner,
   TextStyle,
 } from '@shopify/polaris';
+import {
+  CirclePlusOutlineMinor
+} from '@shopify/polaris-icons';
 import { ResourcePicker } from '@shopify/app-bridge-react';
 import { Mutation } from 'react-apollo';
 import { LocalApolloClient } from '../../graphql/local-client';
-import { findErrorMessage } from '../../lib';
-import { UPDATE_BOX } from './queries';
+import {
+  BOX_ADD_PRODUCTS,
+} from './queries';
 
-export default function BoxShopTitle({ id, title }) {
+/*
+ * Add product to a box
+*/
+export default function BoxProductAdd({ boxId, refetch }) {
 
-  const [value, setValue] = useState(title);
   const [pickerActive, setPickerActive] = useState(false);
 
   const handleResourcePickerClose = useCallback(() => setPickerActive(false), []);
@@ -24,9 +30,10 @@ export default function BoxShopTitle({ id, title }) {
   return (
     <Mutation
       client={LocalApolloClient}
-      mutation={UPDATE_BOX}
+      mutation={BOX_ADD_PRODUCTS}
+      fetchPolicy='no-cache'
     >
-      {(handleUpdate, { loading, error, data }) => {
+      {(handleAdd, { loading, error, data }) => {
         if (loading) { 
           return (
             <React.Fragment>
@@ -35,23 +42,26 @@ export default function BoxShopTitle({ id, title }) {
             </React.Fragment>
           );
         }
-        const isError = error && (
-          <InlineError message={ findErrorMessage(error) }  />
-        );
+
+        if (error) { return (
+          <Banner status="critical">{error.message}</Banner>
+        )}
 
         const handleResourceSelection = ({ selection }) => {
           handleResourcePickerClose();
-          const storeProduct = selection[0];
-          const input = { 
-            id: parseInt(id),
-            shopify_gid: storeProduct.id,
-            shopify_title: storeProduct.title,
-            shopify_id: parseInt(storeProduct.id.split('/')[4]),
+          const productGids = selection
+            .filter((item) => item.productType == 'Box Produce')
+            .map((item) => item.id);
+          const input = {
+            boxId,
+            productGids,
           };
-          handleUpdate({ variables: { input } })
+          handleAdd({ variables: { input } })
             .then((value) => {
-              setValue(storeProduct.title);
-            })
+              refetch();
+          }).catch((error) => {
+            console.log('error', error);
+          });
         };
 
         return (
@@ -59,16 +69,18 @@ export default function BoxShopTitle({ id, title }) {
             <Button
               plain
               onClick={toggleResourcePicker}
-              disclosure={!pickerActive ? 'down' : 'up'}
             >
-              <TextStyle variation="subdued">{value}</TextStyle>
+              <TextStyle variation="subdued">
+                <Icon 
+                  color='inkLightest'
+                  source={CirclePlusOutlineMinor} />
+              </TextStyle>
             </Button>
-            { isError && isError } 
             <ResourcePicker
               resourceType="Product"
               open={pickerActive}
-              allowMultiple={false}
-              showHidden={false}
+              allowMultiple={true}
+              showHidden={true}
               onSelection={handleResourceSelection}
               onCancel={handleResourcePickerClose}
             />
@@ -77,7 +89,5 @@ export default function BoxShopTitle({ id, title }) {
       }}
     </Mutation>
   );
-
-  }
-
+}
 

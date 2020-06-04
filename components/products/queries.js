@@ -5,7 +5,6 @@ export const GET_PRODUCTS = gql`
     getProducts(input: $input) {
       id
       title
-      handle
       shopify_gid
       shopify_id
       available

@@ -3,7 +3,7 @@ import {
   DatePicker,
 } from '@shopify/polaris';
 
-export default function BoxSelectDate({ date, onSelect }) {
+export default function BoxAddSelectDate({ date, onSelect }) {
 
   const [selectedDate, setSelectedDate] = useState(date);
 
