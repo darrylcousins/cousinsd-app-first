@@ -10,14 +10,6 @@ module.exports = {
           primaryKey: true,
           type: Sequelize.INTEGER
         },
-        createdAt: {
-          allowNull: false,
-          type: Sequelize.DATE,
-        },
-        updatedAt: {
-          allowNull: false,
-          type: Sequelize.DATE,
-        },
         BoxId: {
           type: Sequelize.INTEGER,
           primaryKey: true,
@@ -25,6 +17,18 @@ module.exports = {
         ProductId: {
           type: Sequelize.INTEGER,
           primaryKey: true,
+        },
+        isAddOn: {
+          type: Sequelize.BOOLEAN,
+          defaultValue: false,
+        },
+        createdAt: {
+          allowNull: false,
+          type: Sequelize.DATE,
+        },
+        updatedAt: {
+          allowNull: false,
+          type: Sequelize.DATE,
         },
       }
     );

@@ -17,7 +17,7 @@ import {
   GET_BOX_PRODUCTS
 } from './queries';
 
-export default function BoxProductList({ id }) {
+export default function BoxProductList({ id, isAddOn }) {
 
   const input = { id };
   const [showProducts, setShowProducts] = useState(false);
@@ -42,7 +42,7 @@ export default function BoxProductList({ id }) {
         if (error) { return (
           <Banner status="critical">{error.message}</Banner>
         )}
-        const products = data.getBoxProducts.products;
+        const products = isAddOn ? data.getBoxProducts.addOnProducts : data.getBoxProducts.products;
         const doRefetch = () => refetch({ input });
         return (
             <Stack>
@@ -78,7 +78,7 @@ export default function BoxProductList({ id }) {
               </Stack>
               : <TextStyle variation="subdued">No products</TextStyle>
             }
-              <BoxProductAdd boxId={ parseInt(id) } refetch={doRefetch} />
+              <BoxProductAdd boxId={ parseInt(id) } refetch={doRefetch} isAddOn={isAddOn} />
             </Stack>
         )
       }}

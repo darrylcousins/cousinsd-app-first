@@ -17,6 +17,17 @@ export const FRAGMENT_PRODUCT_ARRAY = gql`
     }
 }`
 
+export const FRAGMENT_ADDONS_ARRAY = gql`
+  fragment addOnProductArray on Box {
+    addOnProducts {
+      id
+      title
+      available
+      shopify_gid
+      shopify_id
+    }
+}`
+
 export const GET_BOX = gql`
   query getBox($input: BoxIdInput!) {
     getBox(input: $input) {
@@ -48,8 +59,11 @@ export const GET_BOX_PRODUCTS = gql`
   query getBoxProducts($input: BoxIdInput!) {
     getBoxProducts(input: $input) {
       ...productArray
+      ...addOnProductArray
     }
-  }${FRAGMENT_PRODUCT_ARRAY}
+  }
+  ${FRAGMENT_PRODUCT_ARRAY}
+  ${FRAGMENT_ADDONS_ARRAY}
 `;
 
 export const CREATE_BOX = gql`

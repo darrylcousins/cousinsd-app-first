@@ -46,6 +46,8 @@ app.prepare().then(() => {
       scopes: [
         'read_products',
         'write_products',
+        'read_customers',
+        'write_customers',
         'read_script_tags',
         'write_script_tags',
       ],
@@ -128,7 +130,6 @@ app.prepare().then(() => {
     await handle(ctx.req, ctx.res);
     ctx.respond = false;
     ctx.res.statusCode = 200;
-    console.log(JSON.stringify(ctx, null, 2));
   });
 
   server.use(router.allowedMethods());

@@ -20,7 +20,7 @@ import {
 /*
  * Add product to a box
 */
-export default function BoxProductAdd({ boxId, refetch }) {
+export default function BoxProductAdd({ boxId, isAddOn, refetch }) {
 
   const [pickerActive, setPickerActive] = useState(false);
 
@@ -55,6 +55,7 @@ export default function BoxProductAdd({ boxId, refetch }) {
           const input = {
             boxId,
             productGids,
+            isAddOn
           };
           handleAdd({ variables: { input } })
             .then((value) => {

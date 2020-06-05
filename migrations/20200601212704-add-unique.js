@@ -12,7 +12,7 @@ module.exports = {
     ).then(() => {
       return queryInterface.addConstraint(
         'BoxProducts', // name of Source model
-        ['BoxId', 'ProductId'],
+        ['BoxId', 'ProductId', 'isAddOn'],
         {
           type: 'unique',
           name: 'boxproduct_unique',

@@ -22,6 +22,10 @@ module.exports = (sequelize, DataTypes) => {
       onUpdate: 'CASCADE',
       onDelete: 'SET NULL',
     },
+    isAddOn: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
   }, {});
   BoxProduct.associate = function(models) {
     // associations can be defined here

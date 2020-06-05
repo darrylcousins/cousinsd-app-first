@@ -12,6 +12,7 @@ const box = gql`
     createdAt: String!
     updatedAt: String!
     products: [Product]
+    addOnProducts: [Product]
     shop: Shop
   }
 
@@ -43,10 +44,15 @@ const box = gql`
     id: ID!
   }
 
+  input BoxShopifyIdInput {
+    shopify_id: BigInt
+  }
+
   extend type Query {
     getBox(input: BoxIdInput!): Box
     getBoxes(input: BoxSearchInput!): [Box]
     getBoxProducts(input: BoxIdInput!): Box
+    getBoxByShopifyId(input: BoxShopifyIdInput!): Box
   }
 
   extend type Mutation {

@@ -10,9 +10,16 @@ const resolvers = {
       let { productGids, boxId } = input;
       const box = await Box.findByPk(boxId);
 
+      // array of { shopify_id, isAddOn }
+      const productGids = inputs.map(item => item.shopify_id);
+
       const products = await Product.findAll(
         { where: { shopify_gid: { [Op.in]: productGids }} }
       );
+
+      inputs.forEach((prod) => {
+
+      });
       try {
         await box.addProducts(products);
         return true;

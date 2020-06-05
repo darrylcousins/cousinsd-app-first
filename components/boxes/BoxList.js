@@ -124,6 +124,11 @@ export default function BoxList({ shopUrl, addBox, toggleAddBox }) {
               />,
               <BoxProductList
                 id={parseInt(box.id)}
+                isAddOn={false}
+              />,
+              <BoxProductList
+                id={parseInt(box.id)}
+                isAddOn={true}
               />,
             ]
           ));
@@ -155,7 +160,7 @@ export default function BoxList({ shopUrl, addBox, toggleAddBox }) {
               { isError && isError } 
               { isLoading ? isLoading :
                 <DataTable
-                  columnContentTypes={Array(4).fill('text')}
+                  columnContentTypes={Array(5).fill('text')}
                   headings={[
                     ( checked ? (
                       <Button 
@@ -178,7 +183,8 @@ export default function BoxList({ shopUrl, addBox, toggleAddBox }) {
                     <strong>Title</strong>,
                     <strong>Store Product</strong>,
                     <strong>Delivery Date</strong>,
-                    <strong>Produce</strong>,
+                    <strong>Included Produce</strong>,
+                    <strong>Add On Produce</strong>,
                   ]}
                   rows={rows}
                 />

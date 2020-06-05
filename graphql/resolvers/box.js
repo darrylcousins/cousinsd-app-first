@@ -1,12 +1,17 @@
 const { UserInputError } = require("apollo-server-koa");
 const { Op } = require("sequelize");
-const { Shop, Product, Box } = require('../../models');
-const { dateToISOString, getFieldsFromInfo } = require('../../lib');
+const { Shop, Product, Box, BoxProduct } = require('../../models');
+const { dateToISOString, getFieldsFromInfo, titleSort } = require('../../lib');
 
 const resolvers = {
   Box: {
     async products(instance, arguments, context, info) {
-      return await instance.getProducts();
+      const prods = await instance.getProducts();
+      return prods.filter(product => !product.BoxProduct.isAddOn);
+    },
+    async addOnProducts(instance, arguments, context, info) {
+      const prods = await instance.getProducts();
+      return prods.filter(product => product.BoxProduct.isAddOn);
     },
     async shop(instance, arguments, context, info) {
       return await instance.getShop();
@@ -14,6 +19,7 @@ const resolvers = {
   },
   Query: {
     async getBox(root, { input }, { models }, info){
+      // graphql does not include products
       const { id } = input;
       const box = await Box.findOne({ 
         where: { id },
@@ -30,9 +36,17 @@ const resolvers = {
       return boxes
     },
     async getBoxProducts(root, { input }, { models }, info){
+      // graphql includes products
       const { id } = input;
       const box = await Box.findOne({ 
         where: { id },
+      });
+      return box;
+    },
+    async getBoxByShopifyId(root, { input }, { models }, info){
+      const { shopify_id } = input;
+      const box = await Box.findOne({ 
+        where: { shopify_id },
       });
       return box;
     },
