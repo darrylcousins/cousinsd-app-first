@@ -24,7 +24,7 @@
     "@zeit/next-css": "^1.0.1",
     "apollo-boost": "^0.4.7",
     "apollo-server": "^2.13.0",
-    "apollo-server-koa": "^2.13.0",
+    "apollo-server-koa": "^2.14.2",
     "await-to-js": "^2.1.1",
     "dataloader-sequelize": "^2.1.2",
     "dotenv": "^8.2.0",
