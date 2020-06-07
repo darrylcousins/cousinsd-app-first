@@ -42,9 +42,10 @@ export default function BoxAdd({ onComplete, refetch }) {
           const delivered = dateToISOString(tempDate);
           const shopify_gid = storeProduct.id;
           const shopify_title = storeProduct.title;
+          const shopify_handle = storeProduct.handle;
           const shopify_id = parseInt(storeProduct.id.split('/')[4]);
           const title = name;
-          const input = { shopId, title, delivered, shopify_title, shopify_gid, shopify_id };
+          const input = { shopId, title, shopify_handle, delivered, shopify_title, shopify_gid, shopify_id };
           boxAdd({ variables: { input } }).then((value) => {
             onComplete();
             refetch();

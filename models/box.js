@@ -6,6 +6,9 @@ module.exports = (sequelize, DataTypes) => {
     title: {
       type: DataTypes.STRING,
     },
+    shopify_handle: {
+      type: DataTypes.STRING,
+    },
     shopify_title: {
       type: DataTypes.STRING,
     },

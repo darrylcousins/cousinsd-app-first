@@ -21,7 +21,7 @@ import {
  * Remove a product from a box with id
  */
 
-export default function BoxProductRemove({ boxId, product, refetch }) {
+export default function BoxProductRemove({ boxId, product, refetch, isAddOn }) {
 
   return (
     <Mutation
@@ -43,7 +43,7 @@ export default function BoxProductRemove({ boxId, product, refetch }) {
 
         const handleProductRemove = () => {
           const productId = parseInt(product.id);
-          const input = { boxId, productId };
+          const input = { boxId, productId, isAddOn };
           console.log('handleRemove', input);
           productRemove({ variables: { input } })
             .then((value) => {

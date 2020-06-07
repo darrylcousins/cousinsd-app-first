@@ -8,6 +8,7 @@ const box = gql`
     shopify_id: BigInt!
     shopify_gid: String!
     shopify_title: String!
+    shopify_handle: String!
     shopId: Int!
     createdAt: String!
     updatedAt: String!
@@ -23,6 +24,7 @@ const box = gql`
     shopify_id: BigInt!
     shopify_gid: String!
     shopify_title: String!
+    shopify_handle: String!
   }
 
   input BoxUpdateInput {
@@ -33,6 +35,7 @@ const box = gql`
     shopify_id: BigInt
     shopify_gid: String
     shopify_title: String
+    shopify_handle: String
   }
 
   input BoxSearchInput {
@@ -45,14 +48,15 @@ const box = gql`
   }
 
   input BoxShopifyIdInput {
-    shopify_id: BigInt
+    shopify_id: BigInt!
+    shopId: Int!
   }
 
   extend type Query {
     getBox(input: BoxIdInput!): Box
     getBoxes(input: BoxSearchInput!): [Box]
     getBoxProducts(input: BoxIdInput!): Box
-    getBoxByShopifyId(input: BoxShopifyIdInput!): Box
+    getBoxesByShopifyId(input: BoxShopifyIdInput!): [Box]
   }
 
   extend type Mutation {

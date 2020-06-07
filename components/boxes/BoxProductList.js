@@ -69,6 +69,7 @@ export default function BoxProductList({ id, isAddOn }) {
                         vertical
                         key={product.id}>
                         <BoxProductRemove
+                          isAddOn={isAddOn}
                           product={product}
                           boxId={ parseInt(id) }
                           refetch={doRefetch} />
@@ -78,7 +79,10 @@ export default function BoxProductList({ id, isAddOn }) {
               </Stack>
               : <TextStyle variation="subdued">No products</TextStyle>
             }
-              <BoxProductAdd boxId={ parseInt(id) } refetch={doRefetch} isAddOn={isAddOn} />
+              <BoxProductAdd
+                boxId={ parseInt(id) }
+                refetch={doRefetch}
+                isAddOn={isAddOn} />
             </Stack>
         )
       }}

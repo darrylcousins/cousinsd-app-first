@@ -12,11 +12,13 @@ const boxproduct = gql`
   input BoxProductInput {
     boxId: ID!
     productId: ID!
+    isAddOn: Boolean!
   }
 
   input BoxProductGidsInput {
     boxId: ID!
     productGids: [String!]!
+    isAddOn: Boolean!
   }
 
   extend type Mutation {

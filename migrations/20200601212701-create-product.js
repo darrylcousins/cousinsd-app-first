@@ -25,6 +25,10 @@ module.exports = {
         primaryKey: true,
         unique: true,
       },
+      shopify_handle: {
+        type: Sequelize.STRING,
+        unique: true,
+      },
       shopId: {
         type: Sequelize.INTEGER,
       },

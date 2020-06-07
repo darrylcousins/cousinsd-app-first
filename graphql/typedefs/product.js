@@ -7,6 +7,7 @@ const product = gql`
     available: Boolean!
     shopify_id: BigInt!
     shopify_gid: String!
+    shopify_handle: String!
     createdAt: String!
     updatedAt: String!
     shopId: Int!
@@ -20,6 +21,7 @@ const product = gql`
     shopId: ID!
     shopify_id: BigInt!
     shopify_gid: String!
+    shopify_handle: String!
   }
 
   input ProductUpdateInput {
@@ -29,6 +31,7 @@ const product = gql`
     shopId: ID
     shopify_id: BigInt
     shopify_gid: String
+    shopify_handle: String!
   }
 
   input ProductIdInput{

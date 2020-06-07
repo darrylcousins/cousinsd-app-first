@@ -11,13 +11,12 @@ module.exports = {
       title: {
         type: Sequelize.STRING,
       },
-      handle: {
-        type: Sequelize.STRING,
-        unique: true,
-      },
       delivered: {
         type: Sequelize.DATE,
         defaultValue: Sequelize.NOW,
+      },
+      shopify_handle: {
+        type: Sequelize.STRING,
       },
       shopify_title: {
         type: Sequelize.STRING,
@@ -25,12 +24,10 @@ module.exports = {
       shopify_id: {
         type: Sequelize.BIGINT,
         primaryKey: true,
-        unique: true,
       },
       shopify_gid: {
         type: Sequelize.STRING,
         primaryKey: true,
-        unique: true,
       },
       shopId: {
         type: Sequelize.INTEGER,

@@ -17,6 +17,9 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       unique: 'compositeIndex',
     },
+    shopify_handle: {
+      type: DataTypes.STRING,
+    },
     available: {
       type: DataTypes.BOOLEAN,
       defaultValue: true,
