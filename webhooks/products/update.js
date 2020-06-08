@@ -10,6 +10,8 @@ const productUpdate = (webhook, shopId) => {
       title: payload.title,
       shopify_id: parseInt(payload.id),
       shopify_gid: payload.admin_graphql_api_id,
+      shopify_handle: payload.handle,
+      shopify_price: payload.variants[0].price,
       available: true,
       shopId,
     };
@@ -26,9 +28,10 @@ const productUpdate = (webhook, shopId) => {
   if (payload.product_type === 'Veggie Box') {
     const input = {
       shopify_title: payload.title,
-      shopify_handle: payload.handle,
       shopify_id: parseInt(payload.id),
       shopify_gid: payload.admin_graphql_api_id,
+      shopify_handle: payload.handle,
+      shopify_price: payload.variants[0].price,
       shopId,
     };
 

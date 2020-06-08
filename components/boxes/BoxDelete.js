@@ -21,8 +21,8 @@ import {
 export default function BoxDelete({ open, box, onComplete, onCancel }) {
 
   /* checkbox stuff */
-  const [instance, setInstance] = useState(box);
   const [modalOpen, setModalOpen] = useState(open);
+  const [instance, setInstance] = useState(box);
 
   useEffect(() => {
     setModalOpen(open);

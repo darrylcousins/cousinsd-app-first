@@ -29,6 +29,9 @@ module.exports = {
         type: Sequelize.STRING,
         unique: true,
       },
+      shopify_price: {
+        type: Sequelize.FLOAT,
+      },
       shopId: {
         type: Sequelize.INTEGER,
       },

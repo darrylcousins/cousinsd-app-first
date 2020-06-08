@@ -67,6 +67,7 @@ export default function BoxShopTitle({ id, title }) {
             <ResourcePicker
               resourceType="Product"
               open={pickerActive}
+              initialQuery='Veg'
               allowMultiple={false}
               showHidden={false}
               onSelection={handleResourceSelection}

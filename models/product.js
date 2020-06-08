@@ -20,6 +20,9 @@ module.exports = (sequelize, DataTypes) => {
     shopify_handle: {
       type: DataTypes.STRING,
     },
+    shopify_price: {
+      type: DataTypes.FLOAT,
+    },
     available: {
       type: DataTypes.BOOLEAN,
       defaultValue: true,

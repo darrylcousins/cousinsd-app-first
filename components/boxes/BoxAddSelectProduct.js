@@ -43,6 +43,7 @@ export default function BoxAddSelectProduct({ product, onSelect }) {
         resourceType="Product"
         open={pickerActive}
         allowMultiple={false}
+        initialQuery='Veg'
         showHidden={false}
         onSelection={handleResourceSelection}
         onCancel={handleResourcePickerClose}

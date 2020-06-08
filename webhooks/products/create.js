@@ -11,6 +11,7 @@ const productCreate = (webhook, shopId) => {
       shopify_id: parseInt(payload.id),
       shopify_gid: payload.admin_graphql_api_id,
       shopify_handle: payload.handle,
+      shopify_price: payload.variants[0].price,
       available: true,
       shopId,
     };
