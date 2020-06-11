@@ -8,7 +8,7 @@ import {
   Spinner,
 } from '@shopify/polaris';
 
-export default function LoadingPageMarkup() {
+export function LoadingPageMarkup() {
   return (
     <Layout>
       <Layout.Section>
