@@ -8,7 +8,6 @@ const product = gql`
     shopify_id: BigInt!
     shopify_gid: String!
     shopify_handle: String!
-    shopify_price: Float!
     createdAt: String!
     updatedAt: String!
     shopId: Int!
@@ -23,7 +22,6 @@ const product = gql`
     shopify_id: BigInt!
     shopify_gid: String!
     shopify_handle: String!
-    shopify_price: Float!
   }
 
   input ProductUpdateInput {
@@ -34,7 +32,6 @@ const product = gql`
     shopify_id: BigInt
     shopify_gid: String
     shopify_handle: String!
-    shopify_price: Float!
   }
 
   input ProductIdInput{
