@@ -3,11 +3,14 @@
   "version": "1.0.0",
   "description": "First try at a shopify app",
   "main": "index.js",
+  "engines": {
+    "node": "14.x"
+  },
   "repository": "https://github.com/darrylcousins/cousinsd-app-first",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "node server.js",
-    "build": "build",
+    "build": "next build",
     "start": "NODE_ENV=production node server.js",
     "build-fragment": "node schemaQuery.js"
   },
@@ -58,11 +61,14 @@
     "eslint": "^7.0.0",
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-react": "^7.20.0",
-    "ngrok": "^3.2.7",
+    
     "npx": "^10.2.2",
     "prettier": "^2.0.5",
     "sequelize-cli": "^5.5.1",
     "typescript": "^3.8.3",
     "webpack-merge": "^4.2.2"
+  },
+  "comments": {
+    "ngrok": "^3.2.7"
   }
 }
