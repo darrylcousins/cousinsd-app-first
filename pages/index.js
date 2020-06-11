@@ -24,7 +24,7 @@ import {
 
 export default function Index() {
 
-  const shopId = SHOP_ID;
+  const ShopId = SHOP_ID;
   const [addBox, setAddBox] = useState(false);
   const toggleAddBox = useCallback(() => setAddBox(!addBox), [addBox]);
   const [tabSelected, setTabSelected] = useState(0);
@@ -58,7 +58,8 @@ secondaryActions={[
 ]}
 */
 
-  const input = { id: shopId };
+  const input = { id: ShopId };
+  console.log('index.js', ShopId);
   return (
     <Frame>
         <TitleBar

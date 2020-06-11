@@ -3,6 +3,7 @@ const path = require("path")
 const withCSS = require('@zeit/next-css');
 const webpack = require('webpack');
 const merge = require('webpack-merge');
+const fetch = require('node-fetch');
 
 const apiKey =  JSON.stringify(process.env.SHOPIFY_API_KEY);
 const shopID =  process.env.SHOP_ID;
@@ -16,6 +17,7 @@ module.exports = withCSS({
       API_KEY: apiKey,
       SHOP_ID: shopID,
       HOST: host,
+      fetch: fetch,
     };
     config.plugins.push(new webpack.DefinePlugin(env));
     return config;

@@ -1,5 +1,7 @@
 import ApolloClient from 'apollo-boost';
 import gql from 'graphql-tag';
+import fetch from 'node-fetch';
+import { createHttpLink } from 'apollo-link-http';
 import { dateToISOString } from '../lib';
 
 const HOST = 'https://b75aca9bdbd8.ngrok.io';
@@ -17,6 +19,7 @@ const resolvers = {
 
 export const LocalApolloClient = new ApolloClient({
   uri: `${HOST}/local_graphql`,
+  fetch: fetch,
   resolvers,
   onError: ({ networkError, graphQLErrors }) => {
     console.log('graphQLError', JSON.stringify(graphQLErrors, null, 2))

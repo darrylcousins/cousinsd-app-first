@@ -15,8 +15,8 @@ import { Query } from 'react-apollo';
 import { LocalApolloClient } from '../graphql/local-client';
 
 const GET_SHOP = gql`
-  query getShop($id: Int!) {
-    getShop(id: $id) {
+  query getShop($input: ShopIdInput!) {
+    getShop(input: $input) {
       name
       email
       url
@@ -36,10 +36,12 @@ const GET_SHOPIFY = gql`
   }
 `;
 
+const ShopId = SHOP_ID;
+const input = { id: ShopId };
+
 class ConnTest extends React.Component {
 
   render() {
-    const shop_id = SHOP_ID;
     return (
       <Frame>
         <Page>
@@ -50,7 +52,7 @@ class ConnTest extends React.Component {
                   Connection Test
                 </Heading>
 
-                <Query client={LocalApolloClient} query={GET_SHOP} variables={{ id: shop_id }}>
+                <Query client={LocalApolloClient} query={GET_SHOP} variables={{ input }}>
                   {({ loading, error, data }) => {
                     if (loading) { return <Loading />; }
                     if (error) { return (
