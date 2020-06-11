@@ -1,7 +1,7 @@
 const { Op } = require("sequelize");
 const { Shop, Product, Box } = require('../../models');
 
-const productUpdate = (webhook, shopId) => {
+const productUpdate = (webhook, ShopId) => {
   const payload = webhook.payload;
   console.log('Received Product:', payload.title, payload.product_type);
 
@@ -11,8 +11,8 @@ const productUpdate = (webhook, shopId) => {
       shopify_id: parseInt(payload.id),
       shopify_gid: payload.admin_graphql_api_id,
       shopify_handle: payload.handle,
-      available: true,
-      shopId,
+      //available: true,
+      ShopId,
     };
 
     console.log(input);
@@ -30,7 +30,7 @@ const productUpdate = (webhook, shopId) => {
       shopify_id: parseInt(payload.id),
       shopify_gid: payload.admin_graphql_api_id,
       shopify_handle: payload.handle,
-      shopId,
+      ShopId,
     };
 
     console.log(input);

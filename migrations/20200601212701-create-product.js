@@ -29,7 +29,7 @@ module.exports = {
         type: Sequelize.STRING,
         unique: true,
       },
-      shopId: {
+      ShopId: {
         type: Sequelize.INTEGER,
       },
       createdAt: {

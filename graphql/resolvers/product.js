@@ -20,11 +20,11 @@ const resolvers = {
       });
     },
     async getProducts(root, { input }, { models }, info) {
-      const { shopId, available } = input;
+      const { ShopId, available } = input;
       const where = typeof(available) == 'undefined' ? [true, false] : [available];
       const products = await Product.findAll({
         where: {
-          shopId: shopId,
+          ShopId: ShopId,
           available: {
             [Op.in]: where
           }
@@ -36,11 +36,11 @@ const resolvers = {
   },
   Mutation: {
     async createProduct (root, { input }, { models }, info) {
-      /* title, shopId, shopify_id, shopify_gid, available */
+      /* title, ShopId, shopify_id, shopify_gid, available */
       return Product.create(input);
     },
     async updateProduct (root, { input }, { models }, info) {
-      /* name, id, title, shopId, shopify_id, shopify_gid, available */
+      /* name, id, title, ShopId, shopify_id, shopify_gid, available */
       const { id, ...props } = input;
       await Product.update(
         props,

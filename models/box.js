@@ -27,6 +27,7 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: DataTypes.NOW,
       unique: 'compositeIndex',
     },
+    /*
     shopId: {
       type: DataTypes.INTEGER,
       references: {
@@ -37,6 +38,7 @@ module.exports = (sequelize, DataTypes) => {
       onDelete: 'SET NULL',
       unique: 'compositeIndex',
     },
+    */
   }, {});
   Box.associate = function(models) {
     // associations can be defined here

@@ -19,7 +19,7 @@ import {
 
 export default function BoxAdd({ onComplete, refetch }) {
 
-  const shopId = SHOP_ID;
+  const ShopId = SHOP_ID;
 
   const [storeProduct, setStoreProduct] = useState(null);
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -45,7 +45,7 @@ export default function BoxAdd({ onComplete, refetch }) {
           const shopify_handle = storeProduct.handle;
           const shopify_id = parseInt(storeProduct.id.split('/')[4]);
           const title = name;
-          const input = { shopId, title, shopify_handle, delivered, shopify_title, shopify_gid, shopify_id };
+          const input = { ShopId, title, shopify_handle, delivered, shopify_title, shopify_gid, shopify_id };
           boxAdd({ variables: { input } }).then((value) => {
             onComplete();
             refetch();

@@ -26,8 +26,8 @@ import {
 
 export default function ProductList({ shopUrl }) {
 
-  const shopId = SHOP_ID;
-  const input = { shopId };
+  const ShopId = SHOP_ID;
+  const input = { ShopId };
   const adminUrl = `${shopUrl}/admin/products/`;
 
   return (

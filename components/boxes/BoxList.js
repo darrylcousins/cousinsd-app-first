@@ -36,14 +36,14 @@ import {
 
 export default function BoxList({ shopUrl, addBox, toggleAddBox }) {
 
-  const shopId = SHOP_ID;
+  const ShopId = SHOP_ID;
   const adminUrl = `${shopUrl}/admin/products/`;
 
   /* boxes datatable stuff */
   const { data } = useQuery(GET_SELECTED_DATE, { client: LocalApolloClient });
   const [delivered, setDelivered] = useState(data.selectedDate);
   const [selectedDate, setSelectedDate] = useState(new Date(Date.parse(delivered)));
-  const [input, setInput] = useState({ delivered, shopId });
+  const [input, setInput] = useState({ delivered, ShopId });
   /* end boxes datatable stuff */
 
   /* sheet stuff */

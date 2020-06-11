@@ -27,10 +27,10 @@ const resolvers = {
       return box;
     },
     async getBoxes(root, { input }, { models }, info) {
-      let { shopId, delivered } = input;
+      let { ShopId, delivered } = input;
       if (!delivered) delivered = dateToISOString(new Date());
       const boxes = await Box.findAll({
-        where: { shopId: shopId, delivered: {[Op.gt]: delivered} },
+        where: { ShopId, delivered: {[Op.gt]: delivered} },
         order: [['shopify_gid', 'ASC']],
       });
       return boxes
@@ -44,9 +44,9 @@ const resolvers = {
       return box;
     },
     async getBoxesByShopifyId(root, { input }, { models }, info){
-      const { shopify_id, shopId } = input;
+      const { shopify_id, ShopId } = input;
       const boxes = await Box.findAll({ 
-        where: { shopify_id, shopId },
+        where: { shopify_id, ShopId },
         order: [['delivered', 'ASC']],
       });
       return boxes;
@@ -55,11 +55,11 @@ const resolvers = {
   Mutation: {
     async createBox (root, { input }, { models }, info) {
       console.log('got this in createBox', input);
-      /* title, shopId, shopify_id, shopify_gid, shopify_title, shopify_handle, delivered */
+      /* title, ShopId, shopify_id, shopify_gid, shopify_title, shopify_handle, delivered */
       return Box.create(input);
     },
     async updateBox (root, { input }, { models }, info) {
-      /* id, title, shopId, shopify_id, shopify_gid, delivered */
+      /* id, title, ShopId, shopify_id, shopify_gid, delivered */
       const { id, ...props } = input;
       await Box.update(
         props,

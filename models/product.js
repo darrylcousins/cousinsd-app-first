@@ -24,6 +24,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.BOOLEAN,
       defaultValue: true,
     },
+    /*
     shopId: {
       type: DataTypes.INTEGER,
       references: {
@@ -33,6 +34,7 @@ module.exports = (sequelize, DataTypes) => {
       onUpdate: 'CASCADE',
       onDelete: 'SET NULL',
     },
+    */
   }, {});
   Product.associate = function(models) {
     // associations can be defined here

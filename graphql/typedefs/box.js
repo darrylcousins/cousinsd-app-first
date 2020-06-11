@@ -9,7 +9,7 @@ const box = gql`
     shopify_gid: String!
     shopify_title: String!
     shopify_handle: String!
-    shopId: Int!
+    ShopId: Int!
     createdAt: String!
     updatedAt: String!
     products: [Product]
@@ -20,7 +20,7 @@ const box = gql`
   input BoxInput {
     title: String!
     delivered: String
-    shopId: ID!
+    ShopId: ID!
     shopify_id: BigInt!
     shopify_gid: String!
     shopify_title: String!
@@ -31,7 +31,7 @@ const box = gql`
     id: ID!
     title: String
     delivered: String
-    shopId: ID
+    ShopId: ID
     shopify_id: BigInt
     shopify_gid: String
     shopify_title: String
@@ -39,7 +39,7 @@ const box = gql`
   }
 
   input BoxSearchInput {
-    shopId: ID!
+    ShopId: ID!
     delivered: String
   }
 
@@ -49,7 +49,7 @@ const box = gql`
 
   input BoxShopifyIdInput {
     shopify_id: BigInt!
-    shopId: Int!
+    ShopId: Int!
   }
 
   extend type Query {
