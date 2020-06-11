@@ -8,7 +8,7 @@ import {
   Spinner,
 } from '@shopify/polaris';
 
-export const LoadingPageMarkup () => {
+export const LoadingPageMarkup = () => {
   return (
     <Layout>
       <Layout.Section>
