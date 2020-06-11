@@ -9,9 +9,7 @@ import {
 } from './queries';
 
 export default function Template() {
-
-  return (
-  );
+  return null;
 }
 
 
