@@ -17,7 +17,6 @@ import {
 import {
   MobileCancelMajorMonotone,
 } from '@shopify/polaris-icons';
-import { LocalClient } from '../LocalClient';
 import { printCache } from '../components/common/ShowCache';
 import SheetHelper from '../components/common/SheetHelper';
 import BoxList from '../components/boxes/BoxList';

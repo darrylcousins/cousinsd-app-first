@@ -12,7 +12,7 @@ import {
 } from '@shopify/polaris';
 import gql from 'graphql-tag';
 import { Query } from 'react-apollo';
-import LocalClient from '../LocalClient';
+import { LocalApolloClient } from '../graphql/local-client';
 
 const GET_SHOP = gql`
   query getShop($id: Int!) {
@@ -50,7 +50,7 @@ class ConnTest extends React.Component {
                   Connection Test
                 </Heading>
 
-                <Query client={LocalClient} query={GET_SHOP} variables={{ id: shop_id }}>
+                <Query client={LocalApolloClient} query={GET_SHOP} variables={{ id: shop_id }}>
                   {({ loading, error, data }) => {
                     if (loading) { return <Loading />; }
                     if (error) { return (
