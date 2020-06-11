@@ -52,7 +52,8 @@
     "react-dom": "^16.13.1",
     "schemaglue": "^4.0.4",
     "sequelize": "^4.44.4",
-    "store-js": "^2.0.4"
+    "store-js": "^2.0.4",
+    "webpack-merge": "^4.2.2"
   },
   "devDependencies": {
     "@types/node": "^13.13.5",
@@ -61,12 +62,10 @@
     "eslint": "^7.0.0",
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-react": "^7.20.0",
-    
     "npx": "^10.2.2",
     "prettier": "^2.0.5",
     "sequelize-cli": "^5.5.1",
-    "typescript": "^3.8.3",
-    "webpack-merge": "^4.2.2"
+    "typescript": "^3.8.3"
   },
   "comments": {
     "ngrok": "^3.2.7"
