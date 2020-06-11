@@ -12,6 +12,7 @@
     "dev": "node server.js",
     "build": "next build",
     "start": "NODE_ENV=production node server.js",
+    "local": "NODE_ENV=local node server.js",
     "build-fragment": "node schemaQuery.js"
   },
   "keywords": [],
