@@ -4,12 +4,10 @@ import {
   SkeletonBodyText,
 } from '@shopify/polaris';
 
-const LoadingTextMarkup = () => (
+export const LoadingTextMarkup = () => (
   <Card sectioned>
     <TextContainer>
       <SkeletonBodyText lines={4} />
     </TextContainer>
   </Card>
 );
-
-export default LoadingTextMarkup;

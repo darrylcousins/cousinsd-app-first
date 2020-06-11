@@ -13,7 +13,7 @@ import {
   ButtonGroup,
 } from '@shopify/polaris';
 import { Mutation } from 'react-apollo';
-import LoadingPageMarkup from '../common/LoadingPageMarkup';
+import { LoadingPageMarkup } from '../common/LoadingPageMarkup';
 import { INSTALL_SCRIPTTAG, GET_SCRIPTTAGS } from './queries';
 
 const propTypes = {

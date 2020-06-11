@@ -13,7 +13,7 @@ import {
 } from '@shopify/polaris';
 import { Query } from 'react-apollo';
 import { Mutation } from 'react-apollo';
-import LoadingTextMarkup from '../common/LoadingTextMarkup';
+import { LoadingTextMarkup } from '../common/LoadingTextMarkup';
 import { UPDATE_SCRIPTTAG, GET_SCRIPTTAGS, GET_SCRIPTTAG } from './queries';
 
 const propTypes = {

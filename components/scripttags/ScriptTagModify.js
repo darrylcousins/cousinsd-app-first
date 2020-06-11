@@ -13,8 +13,8 @@ import {
 } from '@shopify/polaris';
 import { Query } from 'react-apollo';
 import { Mutation } from 'react-apollo';
-import LoadingTextMarkup from '../common/LoadingTextMarkup';
-import LoadingPageMarkup from '../common/LoadingPageMarkup';
+import { LoadingTextMarkup } from '../common/LoadingTextMarkup';
+import { LoadingPageMarkup } from '../common/LoadingPageMarkup';
 import ScriptTagUpdate from './ScriptTagUpdate';
 import ScriptTagCreate from './ScriptTagCreate';
 import { DELETE_SCRIPTTAG, GET_SCRIPTTAGS } from './queries';
