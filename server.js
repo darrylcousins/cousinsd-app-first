@@ -88,6 +88,7 @@ app.prepare().then(() => {
         });
 
         //await getSubscriptionUrl(ctx, accessToken, shop);
+        ctx.redirect("/");
       }
     })
   );

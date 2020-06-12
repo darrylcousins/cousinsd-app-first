@@ -4,8 +4,6 @@ import fetch from 'node-fetch';
 import { createHttpLink } from 'apollo-link-http';
 import { dateToISOString } from '../lib';
 
-const HOST = 'https://b75aca9bdbd8.ngrok.io';
-
 const resolvers = {
   Mutation: {
     // selected box for collapsible on box list
