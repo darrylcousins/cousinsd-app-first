@@ -18,6 +18,7 @@ import { LocalApolloClient } from '../graphql/local-client';
 import { printCache } from '../components/common/ShowCache';
 import ProductList from '../components/products/ProductList';
 import BoxList from '../components/boxes/BoxList';
+import OrderList from '../components/orders/OrderList';
 import {
   GET_SHOP,
 } from '../components/shop/queries';
@@ -34,6 +35,12 @@ export default function Index() {
       );
 
   const tabs = [
+    {
+      id: 'orders',
+      content: 'Orders',
+      accessibilityLabel: 'Orders',
+      panelID: 'orders',
+    },
     {
       id: 'boxes',
       content: 'Boxes',
@@ -59,7 +66,6 @@ secondaryActions={[
 */
 
   const input = { id: ShopId };
-  console.log('index.js', ShopId);
   return (
     <Frame>
         <TitleBar
@@ -86,8 +92,9 @@ secondaryActions={[
                   <React.Fragment>
                     { isError && isError }
                     <Tabs tabs={tabs} selected={tabSelected} onSelect={handleTabChange}>
-                      { tabSelected === 0 && <BoxList shopUrl={url} addBox={addBox} toggleAddBox={toggleAddBox}/> }
-                      { tabSelected === 1 && <ProductList shopUrl={url} /> }
+                      { tabSelected === 0 && <OrderList shopUrl={url} /> }
+                      { tabSelected === 1 && <BoxList shopUrl={url} addBox={addBox} toggleAddBox={toggleAddBox}/> }
+                      { tabSelected === 2 && <ProductList shopUrl={url} /> }
                     </Tabs>
                   </React.Fragment>
                 )

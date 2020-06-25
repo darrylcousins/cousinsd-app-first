@@ -14,6 +14,8 @@ First crack at a shopify app
   npx ngrok http 3000
 ```
 
+Check .env for correct tunnel url, i.e. HOST variable.
+
 And in second terminal:
 
 ```bash

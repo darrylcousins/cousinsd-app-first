@@ -9,3 +9,5 @@ Drop and recreate the database with ``pg:reset``. Push local database data with 
 heroku pg:reset DATABASE_URL
 PGUSER=cousinsd PGPASSWORD=******** heroku pg:push shopify_app DATABASE_URL
 ```
+
+process.ENV variables are set up with heroku dashboard.

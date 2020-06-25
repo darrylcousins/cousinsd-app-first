@@ -110,8 +110,7 @@ export default function ProductList({ shopUrl }) {
                       <p style={{ textAlign: 'left' }}>
                         Add products on your store, be sure to set<br />
                         <strong>Product Type</strong> as <strong>"Box Produce"</strong>,<br />
-                        <strong>Vendor</strong> as <strong>"Spring Collective"</strong> and<br />
-                        <strong>"Unavailable"</strong> on store.
+                        <strong>Vendor</strong> as <strong>"Spring Collective"</strong>
                       </p>
                   </EmptyState>
                 </Layout.Section>

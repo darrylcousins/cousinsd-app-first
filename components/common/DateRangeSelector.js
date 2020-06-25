@@ -14,9 +14,9 @@ import {
   GET_SELECTED_DATE,
 } from '../boxes/queries';
 
-export default function DateRangeSelector({ refetch, disabled }) {
+export default function DateRangeSelector({ handleDateChange, disabled }) {
 
-  const shopId = SHOP_ID;
+  const ShopId = SHOP_ID;
   const [popoverActive, setPopoverActive] = useState(false);
   const togglePopoverActive = useCallback(
     () => setPopoverActive((popoverActive) => !popoverActive),
@@ -46,8 +46,7 @@ export default function DateRangeSelector({ refetch, disabled }) {
     setDelivered(dateString);
     LocalApolloClient.writeData({ data: { selectedDate: dateString }})
     togglePopoverActive();
-    const input = { shopId, delivered: dateString };
-    refetch({ input });
+    handleDateChange(dateString);
   }
 
   return (

@@ -42,7 +42,6 @@ export default function BoxList({ shopUrl, addBox, toggleAddBox }) {
   /* boxes datatable stuff */
   const { data } = useQuery(GET_SELECTED_DATE, { client: LocalApolloClient });
   const [delivered, setDelivered] = useState(data.selectedDate);
-  const [selectedDate, setSelectedDate] = useState(new Date(Date.parse(delivered)));
   const [input, setInput] = useState({ delivered, ShopId });
   /* end boxes datatable stuff */
 
@@ -136,6 +135,12 @@ export default function BoxList({ shopUrl, addBox, toggleAddBox }) {
 
           const refetchQuery = () => refetch({ input });
 
+          const handleDateChange = (date) => {
+            const input = { ShopId, delivered: date};
+            refetch({ input });
+          };
+
+
           return (
             <React.Fragment>
               <Sheet open={addBox} onClose={toggleAddBox}>
@@ -154,7 +159,9 @@ export default function BoxList({ shopUrl, addBox, toggleAddBox }) {
                     onComplete={clearChecked}
                     refetch={refetchQuery}
                   />
-                  <DateRangeSelector refetch={refetch} disabled={ Boolean(isLoading) } />
+                  <DateRangeSelector
+                    handleDateChange={handleDateChange}
+                    disabled={ Boolean(isLoading) } />
                 </ButtonGroup>
               </div>
               { isError && isError } 

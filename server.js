@@ -9,6 +9,7 @@ const session = require('koa-session');
 const Router = require('koa-router');
 const {receiveWebhook, registerWebhook} = require('@shopify/koa-shopify-webhooks');
 const graphiql = require("koa-graphiql").default;
+const bodyParser = require('koa-body');
 
 const ENV = require('./config');
 const { graphQLServer } = require('./graphql');
@@ -19,6 +20,8 @@ const productUpdate = require('./webhooks/products/update');
 const shopRedact = require('./webhooks/shops/redact');
 const customerRedact = require('./webhooks/customers/redact');
 const customerDataRequest = require('./webhooks/customers/data-request');
+const authCallback = require('./webhooks/auth/callback');
+const createPdfLabels = require('./webhooks/pdf');
 
 const port = parseInt(ENV.PORT, 10) || 3000;
 const dev = ENV.NODE_ENV !== 'production';
@@ -93,7 +96,6 @@ app.prepare().then(() => {
     })
   );
 
-
   const webhook = receiveWebhook({ secret: ENV.SHOPIFY_API_SECRET_KEY });
 
   // mandatory webhooks
@@ -107,6 +109,10 @@ app.prepare().then(() => {
 
   router.post('/webhooks/shops/redact', webhook, (ctx) => {
     shopRedact(ctx.state.webhook);
+  });
+
+  router.post('/webhooks/auth/callback', webhook, (ctx) => {
+    authCallback(ctx.state.webhook);
   });
 
   /* Headers are:
@@ -127,6 +133,11 @@ app.prepare().then(() => {
 
   router.post('/webhooks/products/delete', webhook, (ctx) => {
     productDelete(ctx.state.webhook);
+  });
+
+  // pdf document generation
+  router.post('/pdf', (ctx, next) => {
+    createPdfLabels(ctx, next);
   });
 
   server.use(graphQLProxy({version: ApiVersion.October19}))
