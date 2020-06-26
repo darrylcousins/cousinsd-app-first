@@ -8,8 +8,7 @@ import {
   Loading,
   TextStyle,
 } from '@shopify/polaris';
-import { Query, Mutation } from 'react-apollo';
-import { useQuery, useMutation } from '@apollo/react-hooks';
+import { Query } from 'react-apollo';
 import { ShopifyApolloClient } from '../../graphql/shopify-client';
 import { LocalApolloClient } from '../../graphql/local-client';
 import { LoadingPageMarkup } from '../common/LoadingPageMarkup';

@@ -12,15 +12,19 @@ import {
   TextStyle,
 } from '@shopify/polaris';
 import { Query, Mutation } from 'react-apollo';
+import { execute, makePromise } from 'apollo-link';
 import { useQuery, useMutation } from '@apollo/react-hooks';
-import { ShopifyApolloClient } from '../../graphql/shopify-client';
+import { ShopifyApolloClient, ShopifyHttpLink } from '../../graphql/shopify-client';
 import { LocalApolloClient } from '../../graphql/local-client';
 import { LoadingPageMarkup } from '../common/LoadingPageMarkup';
+import { dateToISOString } from '../../lib';
 import DateRangeSelector from '../common/DateRangeSelector';
 import OrderAddress from './OrderAddress';
 import LineItemProductList from './LineItemProductList';
+import createDocDefinition from './docdefinition';
 import { 
   GET_ORDERS,
+  getQuery,
 } from './shopify-queries';
 import { 
   GET_SELECTED_DATE,
@@ -31,15 +35,12 @@ export default function OrderList({ shopUrl }) {
   const { data } = useQuery(GET_SELECTED_DATE, { client: LocalApolloClient });
   const [date, setDate] = useState(data.selectedDate);
 
-  const first = 10;
-  const query = 'fulfillment_status:UNFULFILLED AND created_date:>';
-
-  const input = { first, query: `${query}${date}` };
   const adminUrl = `${shopUrl}/admin/orders/`;
 
   /* checkbox stuff */
   let ids = Array();
   const [checkedIds, setCheckedIds] = useState([]);
+
   const handleCheckedChange = useCallback((newChecked, id) => {
     if (newChecked) {
       setCheckedIds(checkedIds.concat([id]));
@@ -48,27 +49,50 @@ export default function OrderList({ shopUrl }) {
     }
     }, [checkedIds]
   );
+
   const handleCheckAll = (checked, value) => {
-    console.log(checked, value);
     if (checked) setCheckedIds(ids);
     if (!checked) setCheckedIds([]);
   }
   /* end checkbox stuff */
 
-  /* pdf labels maybe */
-  /* pdf labels maybe */
-  async function getSomething() {
-    const response = await fetch(`${HOST}/pdf`, {
+  const [labelLoading, setLabelLoading] = useState(false);
+  const [including, addons, removed] = ['Including', 'Add on items', 'Removed items'];
+
+  const first = 10;
+  const query = 'fulfillment_status:UNFULFILLED AND created_date:>';
+
+  const input = { first, query: `${query}${date}` };
+
+  const getPdf = (dd) => {
+    return fetch(`${HOST}/pdf`, {
       method: 'POST',
       credentials: 'include',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ answer: 42 }),
-    });
-    console.log('got 1', response);
+      body: JSON.stringify(dd),
+    })
   };
-  getSomething();
+
+  /* pdf labels maybe */
+  const getSomething = () => {
+    setLabelLoading(true);
+    const query = getQuery(checkedIds);
+    makePromise(execute(ShopifyHttpLink, { query }))
+      .then(data => createDocDefinition({ data, including, addons, removed }))
+      .then(dd => getPdf(dd))
+      .then(response => response.blob())
+      .then(blob => URL.createObjectURL(blob))
+      .then(url => {
+        var link = document.createElement('a');
+        link.href = url;
+        link.download = `labels-${dateToISOString(new Date())}.pdf`;
+        link.click();
+        setLabelLoading(false);
+      })
+      .catch(err => console.log(err));
+  };
 
   return (
     <Query
@@ -103,9 +127,6 @@ export default function OrderList({ shopUrl }) {
                   var customAttributes = lineItems[i].node.customAttributes.reduce(
                     (acc, curr) => Object.assign(acc, { [`${curr.key}`]: curr.value }),
                     {});
-                  customAttributes = lineItems[i].node.customAttributes.reduce(
-                    (acc, curr) => Object.assign(acc, { [`${curr.key}`]: curr.value }),
-                    {});
                   rows.push([
                     i == 0 ? 
                       <Checkbox 
@@ -124,9 +145,9 @@ export default function OrderList({ shopUrl }) {
                       </Button> : '',
                     lineItems[i].node.name,
                     customAttributes['Delivery Date'],
-                    <LineItemProductList list={customAttributes['Including']} />,
-                    <LineItemProductList list={customAttributes['Add on items']} />,
-                    <LineItemProductList list={customAttributes['Removed items']} />,
+                    <LineItemProductList list={customAttributes[including]} />,
+                    <LineItemProductList list={customAttributes[addons]} />,
+                    <LineItemProductList list={customAttributes[removed]} />,
                     <OrderAddress address={node.shippingAddress} />,
                   ]);
                 }
@@ -146,6 +167,8 @@ export default function OrderList({ shopUrl }) {
               <ButtonGroup segmented >
                 <Button
                   disabled={checkedIds.length == 0}
+                  onClick={getSomething}
+                  loading={ labelLoading }
                 >
                   Labels
                 </Button>

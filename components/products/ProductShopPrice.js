@@ -5,8 +5,7 @@ import {
   Spinner,
   TextStyle,
 } from '@shopify/polaris';
-import { Query, Mutation } from 'react-apollo';
-import { useQuery, useMutation } from '@apollo/react-hooks';
+import { Query } from 'react-apollo';
 import { ShopifyApolloClient } from '../../graphql/shopify-client';
 import { 
   GET_PRODUCT_PRICE,

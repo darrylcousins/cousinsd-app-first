@@ -8,8 +8,8 @@ const { verifyRequest } = require('@shopify/koa-shopify-auth');
 const session = require('koa-session');
 const Router = require('koa-router');
 const {receiveWebhook, registerWebhook} = require('@shopify/koa-shopify-webhooks');
-const graphiql = require("koa-graphiql").default;
 const bodyParser = require('koa-body');
+const pdfMakePrinter = require('pdfmake/src/printer');
 
 const ENV = require('./config');
 const { graphQLServer } = require('./graphql');
@@ -21,7 +21,7 @@ const shopRedact = require('./webhooks/shops/redact');
 const customerRedact = require('./webhooks/customers/redact');
 const customerDataRequest = require('./webhooks/customers/data-request');
 const authCallback = require('./webhooks/auth/callback');
-const createPdfLabels = require('./webhooks/pdf');
+const generatePdf = require('./webhooks/pdf');
 
 const port = parseInt(ENV.PORT, 10) || 3000;
 const dev = ENV.NODE_ENV !== 'production';
@@ -96,6 +96,8 @@ app.prepare().then(() => {
     })
   );
 
+  server.use(graphQLProxy({version: ApiVersion.October19}))
+
   const webhook = receiveWebhook({ secret: ENV.SHOPIFY_API_SECRET_KEY });
 
   // mandatory webhooks
@@ -135,12 +137,35 @@ app.prepare().then(() => {
     productDelete(ctx.state.webhook);
   });
 
-  // pdf document generation
-  router.post('/pdf', (ctx, next) => {
-    createPdfLabels(ctx, next);
-  });
+  server.use(bodyParser());
 
-  server.use(graphQLProxy({version: ApiVersion.October19}))
+  router.post('/pdf', verifyRequest(), async (ctx) => {
+    const dd = ctx.request.body;
+
+    const fonts = {
+      Roboto: {
+        normal: './fonts/Lato-Regular.ttf',
+        bold: './fonts/Lato-Medium.ttf',
+        italics: './fonts/Lato-Italic.ttf',
+        bolditalics: './fonts/Lato-MediumItalic.ttf'
+      }
+    };
+    const printer = new pdfMakePrinter(fonts);
+    const doc = printer.createPdfKitDocument(dd);
+
+    doc.pipe(ctx.res);
+    doc.end();
+
+    console.log(doc);
+
+    ctx.set('Content-Type', 'application/pdf');
+    ctx.set('Content-Disposition', 'application; filename=labels.pdf');
+    ctx.respond = true;
+    ctx.res.statusCode = 200;
+
+    return new Promise(resolve => ctx.res.on('finish', resolve));
+
+  });
 
   router.get('*', verifyRequest(), async (ctx) => {
     await handle(ctx.req, ctx.res);

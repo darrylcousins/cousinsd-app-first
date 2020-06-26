@@ -1,58 +1,30 @@
 const pdfMakePrinter = require('pdfmake/src/printer');
 
-function generatePdf(docDefinition, callback) {
-  try {
-    const fonts = {
-      Roboto: {
-        normal: 'fonts/Roboto-Regular.ttf',
-        bold: 'fonts/Roboto-Medium.ttf',
-        italics: 'fonts/Roboto-Italic.ttf',
-        bolditalics: 'fonts/Roboto-MediumItalic.ttf'
-      }
-    };
-    const printer = new pdfMakePrinter(fonts);
-    const doc = printer.createPdfKitDocument(docDefinition);
+async function generatePdf(docDefinition, callback) {
+  const fonts = {
+    Roboto: {
+      normal: './fonts/Lato-Regular.ttf',
+      bold: './fonts/Lato-Medium.ttf',
+      italics: './fonts/Lato-Italic.ttf',
+      bolditalics: './fonts/Lato-MediumItalic.ttf'
+    }
+  };
+  const printer = new pdfMakePrinter(fonts);
+  const doc = printer.createPdfKitDocument(docDefinition);
 
-    let chunks = [];
+  let chunks = [];
+  let result;
 
-    doc.on('data', (chunk) => {
-      chunks.push(chunk);
-    });
+  doc.on('data', (chunk) => {
+    chunks.push(chunk);
+  });
 
-    doc.on('end', () => {
-      callback(Buffer.concat(chunks));
-    });
-    doc.end();
-
-  } catch(err) {
-    throw(err);
-  }
+  await doc.on('end', () => {
+    result = Buffer.concat(chunks);
+    callback('data:application/pdf;base64,' + result.toString('base64'));
+  });
+  doc.end();
 };
 
-const docDefinition = {
-  content: ['This will show up in the file created']
-};
-
-const createPdfLabels = (ctx, next) => {
-  //const docDefinition = webhook.payload
-  
-  console.log('\n------ post:/pdf ------');
-  var dd = '';
-  ctx.req.on('data', function (chunk) {
-    dd += chunk;
-  })
-  ctx.req.on('end', function (chunk) {
-    ctx.res.statusCode = 200;
-    ctx.set('Content-Type', 'application/json');
-    ctx.body = {message: 'hello', received: JSON.stringify(dd)};
-  })
-  ctx.req.end();
-
-  //generatePdf(docDefinition, (response) => {
-  //  res.setHeader('Content-Type', 'application/pdf');
-  //  res.send(response); // Buffer data
-  //});
-};
-
-module.exports = createPdfLabels;
+module.exports = generatePdf;
 

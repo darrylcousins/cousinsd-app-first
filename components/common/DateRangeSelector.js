@@ -7,7 +7,7 @@ import {
   Popover,
 } from '@shopify/polaris';
 import { Query, Mutation } from 'react-apollo';
-import { useQuery, useMutation } from '@apollo/react-hooks';
+import { useQuery } from '@apollo/react-hooks';
 import { LocalApolloClient, resetStore } from '../../graphql/local-client';
 import { dateToISOString } from '../../lib';
 import { 
