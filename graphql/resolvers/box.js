@@ -31,7 +31,7 @@ const resolvers = {
       if (!delivered) delivered = dateToISOString(new Date());
       const boxes = await Box.findAll({
         where: { ShopId, delivered: {[Op.gt]: delivered} },
-        order: [['shopify_gid', 'ASC']],
+        order: [['delivered', 'ASC'], ['shopify_gid', 'ASC']],
       });
       return boxes
     },

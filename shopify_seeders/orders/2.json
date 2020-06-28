@@ -1,0 +1,55 @@
+{
+  "order": {
+    "email": "jean.smith@example.com",
+    "gateway": "bogus",
+    "test": true,
+    "total_price": "59.00",
+    "user_id": 3142646497338,
+    "line_items": [
+      {
+        "variant_id": 31712535314490,
+        "quantity": 1,
+        "properties": [
+          {
+            "name": "Delivery Date",
+            "value": "Wed Jul 08 2020"
+          },
+          {
+            "name": "Including",
+            "value": "Agria Potato, Beetroot, Brocolli, Onions Brown, Radishes, Silverbeet, Turnips"
+          },
+          {
+            "name": "Add on items",
+            "value": "Spinach, Zucchini"
+          },
+          {
+            "name": "Removed items",
+            "value": "Red Chard"
+          }
+        ]
+      },
+      {
+        "variant_id": 31712601407546,
+        "quantity": 1
+      },
+      {
+        "variant_id": 31712602062906,
+        "quantity": 1
+      }
+    ],
+    "shipping_address": {
+      "address1": "12 Beech St",
+      "city": "Leeston",
+      "phone": "",
+      "zip": "7061",
+      "last_name": "Smith",
+      "first_name": "Jean",
+      "name": "Jean Smith",
+      "province": "Canterbury",
+      "country": "New Zealand",
+      "country_code": "NZ",
+      "province_code": "CAN"
+    }
+  }
+}
+

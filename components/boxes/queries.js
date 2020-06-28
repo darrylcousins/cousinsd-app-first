@@ -35,6 +35,7 @@ export const GET_BOX = gql`
       title
       delivered
       shopify_title
+      shopify_handle
       shopify_gid
       shopify_id
     }
@@ -75,7 +76,7 @@ export const CREATE_BOX = gql`
       shopify_title
       shopify_gid
       shopify_id
-      shopify_id
+      shopify_handle
     }
   }
 `

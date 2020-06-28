@@ -76,7 +76,7 @@ export default function OrderList({ shopUrl }) {
   };
 
   /* pdf labels maybe */
-  const getSomething = () => {
+  const createPdf = () => {
     setLabelLoading(true);
     const query = getQuery(checkedIds);
     makePromise(execute(ShopifyHttpLink, { query }))
@@ -92,6 +92,10 @@ export default function OrderList({ shopUrl }) {
         setLabelLoading(false);
       })
       .catch(err => console.log(err));
+  };
+
+  const onHoverRow = (e) => {
+    console.log('hover', e.target);
   };
 
   return (
@@ -128,27 +132,27 @@ export default function OrderList({ shopUrl }) {
                     (acc, curr) => Object.assign(acc, { [`${curr.key}`]: curr.value }),
                     {});
                   rows.push([
-                    i == 0 ? 
-                      <Checkbox 
-                        id={id}
-                        label={node.name}
-                        labelHidden={true}
-                        onChange={handleCheckedChange}
-                        checked={checkedIds.indexOf(id) > -1}
-                      /> : '',
-                    i == 0 ? 
-                      <Button 
-                        plain
-                        url={`${adminUrl}${id}`}
-                      >
-                        {node.name}
-                      </Button> : '',
-                    lineItems[i].node.name,
-                    customAttributes['Delivery Date'],
-                    <LineItemProductList list={customAttributes[including]} />,
-                    <LineItemProductList list={customAttributes[addons]} />,
-                    <LineItemProductList list={customAttributes[removed]} />,
-                    <OrderAddress address={node.shippingAddress} />,
+                      i == 0 ? 
+                        <Checkbox 
+                          id={id}
+                          label={node.name}
+                          labelHidden={true}
+                          onChange={handleCheckedChange}
+                          checked={checkedIds.indexOf(id) > -1}
+                        /> : '',
+                      i == 0 ? 
+                        <Button 
+                          plain
+                          url={`${adminUrl}${id}`}
+                        >
+                          {node.name}
+                        </Button> : '',
+                      lineItems[i].node.name,
+                      customAttributes['Delivery Date'],
+                      <LineItemProductList list={customAttributes[including]} />,
+                      <LineItemProductList list={customAttributes[addons]} />,
+                      <LineItemProductList list={customAttributes[removed]} />,
+                      <OrderAddress address={node.shippingAddress} />,
                   ]);
                 }
               }
@@ -161,13 +165,29 @@ export default function OrderList({ shopUrl }) {
           refetch(input);
         }
 
+        const headers = [
+          <Checkbox 
+            id='all'
+            label='Select/deselect all'
+            labelHidden={true}
+            onChange={handleCheckAll}
+            checked={checkedIds.length > 0}
+          />,
+          'Box',
+          'Delivery',
+          'Including',
+          'Extras',
+          'Removed',
+          'Address',
+        ];
+
         return (
           <React.Fragment>
             <div style={{ padding: '1.6rem' }}>
               <ButtonGroup segmented >
                 <Button
                   disabled={checkedIds.length == 0}
-                  onClick={getSomething}
+                  onClick={createPdf}
                   loading={ labelLoading }
                 >
                   Labels
@@ -177,6 +197,17 @@ export default function OrderList({ shopUrl }) {
             </div>
             { isError && isError } 
             { isLoading ? isLoading :
+              <React.Fragment>
+              <table style={{ width: '100%', borderTop: '0.1rem solid rgb(196, 205, 213)' }}>
+                <thead style={{ borderBottom: '0.1rem solid rgb(196, 205, 213)' }}>
+                  <tr style={{ borderBottom: '0.1rem solid rgb(196, 205, 213)' }}>
+                    { headers.map(cell => <th style={{ borderBottom: '0.1rem solid rgb(196, 205, 213)' }}>{ cell }</th>) }
+                  </tr>
+                </thead>
+                <tbody>
+                  { rows.map((row) => <tr>{ row.map(cell => <td>{ cell }</td>) }</tr> )}
+                </tbody>
+              </table>
               <DataTable
                 columnContentTypes={Array(8).fill('text')}
                 headings={[
@@ -197,6 +228,7 @@ export default function OrderList({ shopUrl }) {
                 ]}
                 rows={rows}
               />
+              </React.Fragment>
             }
             { data && data.orders.edges.length == 0 &&
               <Layout>

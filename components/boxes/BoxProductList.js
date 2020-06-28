@@ -56,7 +56,7 @@ export default function BoxProductList({ id, isAddOn }) {
                   disclosure={!showProducts ? 'down' : 'up'}
                 >
                   <TextStyle variation='subdued'>
-                    Products
+                    { isAddOn ? 'Add ons' : 'Included' }
                   </TextStyle>
                 </Button>
                   <Collapsible

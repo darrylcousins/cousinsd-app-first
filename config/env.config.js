@@ -8,6 +8,9 @@ const ENV = {
   PORT: process.env.PORT,
 
   SHOP_ID: process.env.SHOP_ID,
+  SHOP_NAME: process.env.SHOP_NAME,
+  SHOP_USERNAME: process.env.SHOP_USERNAME,
+  SHOP_PASSWORD: process.env.SHOP_PASSWORD,
 
   DB_HOSTNAME: process.env.DB_HOSTNAME,
   DB_PORT: process.env.DB_PORT,

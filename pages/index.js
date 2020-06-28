@@ -70,10 +70,10 @@ secondaryActions={[
     <Frame>
         <TitleBar
           title={tabs[tabSelected].content}
-          primaryAction={{
+          primaryAction={ tabSelected === 1 ? ({
             content: 'Add Box',
             onAction: () => toggleAddBox(),
-          }}
+          }) : null}
         />
         <div style={{margin: '2.6rem 3.6rem'}}>
           <Card>

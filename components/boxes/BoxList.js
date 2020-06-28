@@ -46,11 +46,11 @@ export default function BoxList({ shopUrl, addBox, toggleAddBox }) {
   /* end boxes datatable stuff */
 
   /* sheet stuff */
-  const [sheetActive, setSheetActive] = useState(addBox);
-  const toggleSheetActive = useCallback(() => setSheetActive(!sheetActive), [sheetActive]);
-  const toggleSheet = (title) => {
-    toggleSheetActive();
-  }
+  //const [sheetActive, setSheetActive] = useState(addBox);
+  //const toggleSheetActive = useCallback(() => setSheetActive(!sheetActive), [sheetActive]);
+  //const toggleSheet = (title) => {
+  //  toggleSheetActive();
+  //}
   /* end sheet stuff */
 
   /* checkbox stuff */
@@ -120,6 +120,7 @@ export default function BoxList({ shopUrl, addBox, toggleAddBox }) {
                 mutation={UPDATE_BOX}
                 date={new Date(parseInt(box.delivered))}
                 fieldName='delivered'
+                variation='subdued'
               />,
               <BoxProductList
                 id={parseInt(box.id)}

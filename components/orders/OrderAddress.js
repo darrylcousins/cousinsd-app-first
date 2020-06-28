@@ -9,11 +9,13 @@ export default function OrderAddress({ address }) {
   }
 
   return (
-    <ul style={ ulStyle }>
-      <li>{ address.name }</li>
-      <li>{ address.address1 } { address.address2 }</li>
-      <li>{ address.city } { address.zip }</li>
-    </ul>
+    address ? (
+        <ul style={ ulStyle }>
+          <li>{ address.name }</li>
+          <li>{ address.address1 } { address.address2 }</li>
+          <li>{ address.city } { address.zip }</li>
+        </ul>
+      ) : <p>No shipping</p>
   );
 }
 

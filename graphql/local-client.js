@@ -25,6 +25,14 @@ export const LocalApolloClient = new ApolloClient({
   }
 });
 
+export const LocalHttpLink = createHttpLink({
+  uri: `${HOST}/local_graphql`,
+  fetch: fetch,
+  fetchOptions: {
+    credentials: 'include'
+  },
+});
+
 const initState = (date) => {
   if (!date) date = new Date();
   LocalApolloClient.writeData({ data: { selectedDate: dateToISOString(date) }})

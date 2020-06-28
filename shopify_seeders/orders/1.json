@@ -1,0 +1,48 @@
+{
+  "order": {
+    "email": "steve.smith@example.com",
+    "gateway": "bogus",
+    "test": true,
+    "total_price": "50.00",
+    "user_id": 3142607470650,
+    "line_items": [
+      {
+        "variant_id": 31712535314490,
+        "quantity": 1,
+        "properties": [
+          {
+            "name": "Delivery Date",
+            "value": "Wed Jul 01 2020"
+          },
+          {
+            "name": "Including",
+            "value": "Agria Potato, Beetroot, Brocolli, Onions Brown, Radishes, Red Chard, Silverbeet, Turnips"
+          },
+          {
+            "name": "Add on items",
+            "value": ""
+          },
+          {
+            "name": "Removed items",
+            "value": ""
+          }
+        ]
+      }
+    ],
+    "shipping_address": {
+      "first_name": "Steve",
+      "address1": "123",
+      "phone": null,
+      "city": "Leeston",
+      "zip": "7602",
+      "province": "Canterbury",
+      "country": "New Zealand",
+      "last_name": "Smith",
+      "address2": "Oak St",
+      "company": null,
+      "name": "Steve Smith",
+      "country_code": "NZ",
+      "province_code": "CAN"
+    }
+  }
+}

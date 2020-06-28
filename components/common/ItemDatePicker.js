@@ -15,7 +15,7 @@ import { dateToISOString } from '../../lib';
 
 export default function ItemDatePicker(props) {
 
-  const {id, fieldName, date, mutation, refetch, ...args} = props;
+  const {id, fieldName, date, mutation, refetch, variation, ...args} = props;
 
   const [popoverActive, setPopoverActive] = useState(false);
 
@@ -81,7 +81,7 @@ export default function ItemDatePicker(props) {
               onClick={togglePopoverActive}
               disclosure={!popoverActive ? 'down' : 'up'}
               >
-                <TextStyle variation='subdued'>{date.toDateString()}</TextStyle>
+                <TextStyle variation={ variation }>{date.toDateString()}</TextStyle>
             </Button>
           )}>
             <DatePicker

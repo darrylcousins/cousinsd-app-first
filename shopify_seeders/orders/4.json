@@ -1,0 +1,53 @@
+{
+  "order": {
+    "email": "sarah.black@example.com",
+    "gateway": "bogus",
+    "test": true,
+    "total_price": "54.50",
+    "user_id": 3142646497338,
+    "line_items": [
+      {
+        "variant_id": 31712535314490,
+        "quantity": 1,
+        "properties": [
+          {
+            "name": "Delivery Date",
+            "value": "Wed Jul 08 2020"
+          },
+          {
+            "name": "Including",
+            "value": "Agria Potato, Beetroot, Brocolli, Onions Brown, Radishes, Red Chard, Silverbeet"
+          },
+          {
+            "name": "Add on items",
+            "value": "Cavolonero Kale"
+          },
+          {
+            "name": "Removed items",
+            "value": "Turnips"
+          }
+        ]
+      },
+      {
+        "variant_id": 31712599507002,
+        "quantity": 1
+      }
+    ],
+    "shipping_address": {
+      "address1": "32 Kowhai Rd",
+      "city": "Leeston",
+      "phone": "",
+      "zip": "7061",
+      "last_name": "Black",
+      "first_name": "Sarah",
+      "name": "Sarah Black",
+      "province": "Canterbury",
+      "country": "New Zealand",
+      "country_code": "NZ",
+      "province_code": "CAN"
+    }
+  }
+}
+
+
+

@@ -1,0 +1,24 @@
+{
+  "customer": {
+    "first_name": "Steve",
+    "last_name": "Smith",
+    "email": "steve.smith@example.com",
+    "phone": "+642242546011",
+    "verified_email": true,
+    "addresses": [
+      {
+        "address1": "123 Oak St",
+        "city": "Leeston",
+        "province": "CAN",
+        "phone": "",
+        "zip": "7061",
+        "last_name": "Smith",
+        "first_name": "Steve",
+        "country": "NZ"
+      }
+    ],
+    "password": "password",
+    "password_confirmation": "password",
+    "send_email_welcome": false
+  }
+}

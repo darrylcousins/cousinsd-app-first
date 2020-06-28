@@ -5,18 +5,18 @@ const webpack = require('webpack');
 const merge = require('webpack-merge');
 const fetch = require('node-fetch');
 
-const apiKey =  JSON.stringify(process.env.SHOPIFY_API_KEY);
-const shopID =  process.env.SHOP_ID;
-const host =  JSON.stringify(process.env.HOST);
-
 // next-css needed for polaris to load css files
+// XXX next now has another way of creating globals - catch up!
 
 module.exports = withCSS({
   webpack: (config, options) => {
     const env = { 
-      API_KEY: apiKey,
-      SHOP_ID: shopID,
-      HOST: host,
+      API_KEY: JSON.stringify(process.env.SHOPIFY_API_KEY),
+      SHOP_ID: JSON.stringify(process.env.SHOP_ID),
+      SHOP_PASSWORD: JSON.stringify(process.env.SHOP_PASSWORD),
+      SHOP_USERNAME: JSON.stringify(process.env.SHOP_USERNAME),
+      SHOP_NAME: JSON.stringify(process.env.SHOP_NAME),
+      HOST: JSON.stringify(process.env.HOST),
       fetch: fetch,
     };
     config.plugins.push(new webpack.DefinePlugin(env));

@@ -31,19 +31,20 @@ const createDocDefinition = ({ data, including, addons, removed }) => {
     var order = orders[`order${i}`];
     var address = order.shippingAddress;
     var products;
-    var stack = [];
-    var column1 = [];
-    var column2 = [];
     const lineItems = order.lineItems.edges;
     const itemsLength = lineItems.length;
+    const isNull = (el) => el === null ? '' : el;
     for (let i = 0; i < itemsLength; i++) {
-      if (i%2 != 0) console.log('odd');
+      var stack = [];
+      var column1 = [];
+      var column2 = [];
+      if (i%4 === 0) console.log('got to fourth?', i);
       if (lineItems[i].node.product.productType == 'Veggie Box') {
         var customAttributes = lineItems[i].node.customAttributes.reduce(
           (acc, curr) => Object.assign(acc, { [`${curr.key}`]: curr.value }),
           {});
         stack.push(address.name);
-        stack.push(`${address.address1} ${address.address2}`);
+        stack.push(`${address.address1} ${isNull(address.address2)}`);
         stack.push(`${address.city} ${address.zip}`);
         stack.push(`\nOrder ${order.name}`);
 
@@ -60,7 +61,6 @@ const createDocDefinition = ({ data, including, addons, removed }) => {
         column2.push({ style: 'product', text: products.join('\n') });
 
         dd.content[0].table.body.push([{ stack }]);
-
         dd.content[0].table.body.push(
           [{ 
             table: {
@@ -72,7 +72,7 @@ const createDocDefinition = ({ data, including, addons, removed }) => {
             layout: 'noBorders',
           }]
         );
-
+        dd.content[0].table.body.push(['\n\n']);
       }
     }
   }

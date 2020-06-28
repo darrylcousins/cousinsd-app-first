@@ -23,13 +23,15 @@ export default function BoxAddSelectDate({ date, onSelect }) {
   }
 
   return (
-    <DatePicker
-      month={month}
-      year={year}
-      onMonthChange={handleMonth}
-      selected={selectedDate}
-      onChange={setSelectedDateChange}
-    />
+    <div onClick={(e) => { e.stopPropagation(); }}>
+      <DatePicker
+        month={month}
+        year={year}
+        onMonthChange={handleMonth}
+        selected={selectedDate}
+        onChange={setSelectedDateChange}
+      />
+    </div>
   );
 }
 
