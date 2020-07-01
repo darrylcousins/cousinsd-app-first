@@ -19,6 +19,7 @@ import { printCache } from '../components/common/ShowCache';
 import ProductList from '../components/products/ProductList';
 import BoxList from '../components/boxes/BoxList';
 import OrderListWrapper from '../components/orders/OrderListWrapper';
+import SubscriptionList from '../components/subscriptions/SubscriptionList';
 import {
   GET_SHOP,
 } from '../components/shop/queries';
@@ -47,11 +48,17 @@ export default function Index() {
       accessibilityLabel: 'Boxes',
       panelID: 'boxes',
     },
-    {
+    { 
       id: 'products',
       content: 'Produce',
       accessibilityLabel: 'Produce',
       panelID: 'products',
+    },
+    { 
+      id: 'subscriptions',
+      content: 'Subscriptions',
+      accessibilityLabel: 'Subscriptions',
+      panelID: 'subscriptions',
     },
   ];
   /* end tab stuff */
@@ -95,6 +102,7 @@ secondaryActions={[
                       { tabSelected === 0 && <OrderListWrapper shopUrl={url} /> }
                       { tabSelected === 1 && <BoxList shopUrl={url} addBox={addBox} toggleAddBox={toggleAddBox}/> }
                       { tabSelected === 2 && <ProductList shopUrl={url} /> }
+                      { tabSelected === 3 && <SubscriptionList shopUrl={url} /> }
                     </Tabs>
                   </React.Fragment>
                 )

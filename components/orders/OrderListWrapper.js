@@ -103,7 +103,6 @@ export default function OrderListWrapper({ shopUrl }) {
 
   const createPdf = () => {
     setLabelLoading(true);
-    console.log('ids', checkedIds);
     const query = getQuery(checkedIds);
     makePromise(execute(ShopifyHttpLink, { query }))
       .then(data => createDocDefinition({ data, delivered }))
