@@ -2,6 +2,7 @@ const { UserInputError } = require("apollo-server-koa");
 const { Op } = require("sequelize");
 const { Shop, Product, Box, BoxProduct } = require('../../models');
 const { dateToISOString, getFieldsFromInfo, titleSort } = require('../../lib');
+const sequelize = require('sequelize');
 
 const resolvers = {
   Box: {
@@ -30,7 +31,7 @@ const resolvers = {
       let { ShopId, delivered } = input;
       if (!delivered) delivered = dateToISOString(new Date());
       const boxes = await Box.findAll({
-        where: { ShopId, delivered: {[Op.gt]: delivered} },
+        where: { ShopId, delivered: {[Op.eq]: delivered} },
         order: [['delivered', 'ASC'], ['shopify_gid', 'ASC']],
       });
       return boxes
@@ -50,6 +51,19 @@ const resolvers = {
         order: [['delivered', 'ASC']],
       });
       return boxes;
+    },
+    async getBoxDates(root, { input }, { models }, info){
+      const dates = await Box.findAll({
+        attributes: ['delivered', [sequelize.fn('count', sequelize.col('id')), 'count']],
+        group: ['delivered'],
+        order: [['delivered', 'ASC']],
+      });
+      // coerce from array of Orders to simple json
+      const data = []
+      dates.map((date) => {
+          data.push(date.toJSON())
+      })
+      return data;
     },
   },
   Mutation: {

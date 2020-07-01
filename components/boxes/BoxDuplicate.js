@@ -105,7 +105,7 @@ export default function BoxDuplicate({ open, box, onComplete, onCancel }) {
                 return false;
               };
               const tempDate = selectedDate;
-              const delivered = dateToISOString(tempDate);
+              const delivered = tempDate.toDateString();
               const shopify_gid = instance.shopify_gid;
               const shopify_title = instance.shopify_title;
               const shopify_handle = instance.shopify_handle;

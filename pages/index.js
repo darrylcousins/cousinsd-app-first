@@ -18,7 +18,7 @@ import { LocalApolloClient } from '../graphql/local-client';
 import { printCache } from '../components/common/ShowCache';
 import ProductList from '../components/products/ProductList';
 import BoxList from '../components/boxes/BoxList';
-import OrderList from '../components/orders/OrderList';
+import OrderListWrapper from '../components/orders/OrderListWrapper';
 import {
   GET_SHOP,
 } from '../components/shop/queries';
@@ -92,7 +92,7 @@ secondaryActions={[
                   <React.Fragment>
                     { isError && isError }
                     <Tabs tabs={tabs} selected={tabSelected} onSelect={handleTabChange}>
-                      { tabSelected === 0 && <OrderList shopUrl={url} /> }
+                      { tabSelected === 0 && <OrderListWrapper shopUrl={url} /> }
                       { tabSelected === 1 && <BoxList shopUrl={url} addBox={addBox} toggleAddBox={toggleAddBox}/> }
                       { tabSelected === 2 && <ProductList shopUrl={url} /> }
                     </Tabs>

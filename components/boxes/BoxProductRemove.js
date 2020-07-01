@@ -44,7 +44,6 @@ export default function BoxProductRemove({ boxId, product, refetch, isAddOn }) {
         const handleProductRemove = () => {
           const productId = parseInt(product.id);
           const input = { boxId, productId, isAddOn };
-          console.log('handleRemove', input);
           productRemove({ variables: { input } })
             .then((value) => {
               refetch();

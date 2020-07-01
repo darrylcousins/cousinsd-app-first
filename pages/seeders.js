@@ -20,14 +20,38 @@ export default function Index() {
   const [customerLoading, setCustomerLoading] = useState(false);
   const [orderLoading, setOrderLoading] = useState(false);
   const [getCustomerLoading, setGetCustomerLoading] = useState(false);
+  const [getWebhooksLoading, setGetWebhooksLoading] = useState(false);
   const [getOrderLoading, setGetOrderLoading] = useState(false);
+  const [deleteOrdersLoading, setDeleteOrdersLoading] = useState(false);
+  const [getOrderIdLoading, setGetOrderIdLoading] = useState(false);
   const [deleteOrderLoading, setDeleteOrderLoading] = useState(false);
   const [orderId, setOrderId] = useState('');
+  const [getOrderId, setGetOrderId] = useState('');
 
-  const postDelete = ({ data, url }) => {
+  const handleOrderIdChange = useCallback((value) => setOrderId(value), []);
+  const handleGetOrderIdChange = useCallback((value) => setGetOrderId(value), []);
+
+  const postDelete = ({url }) => {
     return fetch(url, {
       method: 'DELETE',
       credentials: 'include',
+    })
+  };
+
+  const getFetch = ({ url }) => {
+    return fetch(url, {
+      credentials: 'include',
+    })
+  };
+
+  const postFetch = ({ data, url }) => {
+    return fetch(url, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: data,
     })
   };
 
@@ -45,6 +69,7 @@ export default function Index() {
       .then(json => {
         console.log(json);
         setDeleteOrderLoading(false);
+        setOrderId('');
       })
       .catch(err => {
         console.log(err);
@@ -52,18 +77,24 @@ export default function Index() {
       })
   };
 
-
-  const handleOrderIdChange = useCallback((value) => setOrderId(value), []);
-
-  const postFetch = ({ data, url }) => {
-    return fetch(url, {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: data,
-    })
+  const handleOrderGet = (e) => {
+    setGetOrderLoading(true);
+    console.log(getOrderId);
+    const url = `${HOST}/api/orders/${getOrderId}`;
+    console.log(url);
+    getFetch({ url })
+      .then(res => {
+        console.log(res.status, res.statusText);
+        return res.json();
+      })
+      .then(json => {
+        console.log(JSON.stringify(json, null, 2));
+        setGetOrderLoading(false);
+      })
+      .catch(err => {
+        console.log(err);
+        setGetOrderLoading(false);
+      })
   };
 
   const seedCustomers = () => {
@@ -90,7 +121,7 @@ export default function Index() {
   };
 
   const seedOrders = () => {
-    for (let i=2; i<=2; i++) {
+    for (let i=1; i<=5; i++) {
       setOrderLoading(true);
       let data = require(`../shopify_seeders/orders/${i}.json`);
       data = JSON.stringify(data);
@@ -112,11 +143,24 @@ export default function Index() {
     return false;
   };
 
-  const getFetch = ({ url }) => {
-    return fetch(url, {
-      method: 'GET',
-      credentials: 'include',
-    })
+  const deleteOrders = () => {
+    return false;
+  };
+
+  const getWebhooks = () => {
+    setGetWebhooksLoading(true);
+    const url = `${HOST}/api/webhooks`;
+    getFetch({ url })
+      .then(res => res.json())
+      .then(json => {
+        console.log(JSON.stringify(json, null, 2));
+        setGetWebhooksLoading(false);
+      })
+      .catch(err => {
+        console.log(err);
+        setGetWebhooksLoading(false);
+      })
+    return false;
   };
 
   const getCustomers = () => {
@@ -166,6 +210,10 @@ export default function Index() {
                 onClick={getOrders}
                 loading={getOrderLoading}
               >Get orders</Button>
+              <Button
+                onClick={getWebhooks}
+                loading={getWebhooksLoading}
+              >Get webhooks</Button>
             </ButtonGroup>
           </div>
           <div style={{ padding: '1em' }}>
@@ -181,6 +229,39 @@ export default function Index() {
                 loading={orderLoading}
               >Seed orders</Button>
             </ButtonGroup>
+          </div>
+          <div style={{ padding: '1em' }}>
+            <Heading>Delete all</Heading>
+            <ButtonGroup segmented>
+              <Button
+                disabled
+                onClick={deleteOrders}
+                loading={deleteOrdersLoading}
+              >Delete all orders</Button>
+            </ButtonGroup>
+          </div>
+          <div style={{ padding: '1em' }}>
+            <Form onSubmit={handleOrderGet}>
+              <FormLayout>
+                <Heading>Get Order</Heading>
+                <TextField
+                  value={getOrderId}
+                  placeholder='Order id to get'
+                  onChange={handleGetOrderIdChange}
+                  label="Order Id"
+                  type="number"
+                  helpText={
+                    <span>
+                      Enter order id to get
+                    </span>
+                  }
+                />
+                <Button
+                  submit
+                  loading={getOrderIdLoading}
+                >Get Order</Button>
+              </FormLayout>
+            </Form>
           </div>
           <div style={{ padding: '1em' }}>
             <Form onSubmit={handleOrderDelete}>

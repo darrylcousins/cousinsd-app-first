@@ -17,6 +17,11 @@ const box = gql`
     shop: Shop
   }
 
+  type BoxDate {
+    delivered: String
+    count: Int
+  }
+
   input BoxInput {
     title: String!
     delivered: String
@@ -53,6 +58,7 @@ const box = gql`
   }
 
   extend type Query {
+    getBoxDates: [BoxDate]
     getBox(input: BoxIdInput!): Box
     getBoxes(input: BoxSearchInput!): [Box]
     getBoxProducts(input: BoxIdInput!): Box

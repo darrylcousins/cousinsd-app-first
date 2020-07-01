@@ -1,6 +1,21 @@
 import gql from 'graphql-tag';
 
-export const GET_ORDERS= gql`
+// TODO this fails because a fulfillment service is required
+export const FULFILL_LINE_ITEMS = gql`
+  mutation fulfillmentCreateV2($fulfillment: FulfillmentV2Input!) {
+    fulfillmentCreateV2(fulfillment: $fulfillment) {
+      fulfillment {
+        id
+      }
+      userErrors {
+        field
+        message
+    }
+  }
+}
+`;
+
+export const GET_SHOPIFY_ORDERS= gql`
   query orders($first: Int!, $query: String) {
     orders(first: $first, query: $query) {
       edges {
@@ -19,6 +34,7 @@ export const GET_ORDERS= gql`
           lineItems(first: 5) {
             edges {
               node {
+                id
                 name
                 product {
                   id
@@ -42,6 +58,8 @@ const mainQuery = `
   order@idx: order(id: "@id") {
     id
     name
+    displayFinancialStatus
+    displayFulfillmentStatus
     shippingAddress {
       name
       address1
@@ -53,10 +71,13 @@ const mainQuery = `
     lineItems(first: 10) {
       edges {
         node {
+          id
           name
+          fulfillmentStatus
           product {
             id
             productType
+            handle
           }
           quantity
           customAttributes {

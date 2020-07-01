@@ -3,7 +3,7 @@ const { Shop, Product, Box } = require('../../models');
 
 const productCreate = (webhook, ShopId) => {
   const payload = webhook.payload;
-  console.log('Received Product:', payload.title, payload.product_type);
+  console.log('Received Create Product:', payload.title, payload.product_type);
 
   if (payload.product_type === 'Box Produce') {
     const input = {
@@ -12,7 +12,7 @@ const productCreate = (webhook, ShopId) => {
       shopify_gid: payload.admin_graphql_api_id,
       shopify_handle: payload.handle,
       available: true,
-      ShopId: ShopId,
+      ShopId: parseInt(ShopId),
     };
 
     console.log(input);

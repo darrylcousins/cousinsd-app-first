@@ -6,6 +6,15 @@ export const GET_SELECTED_DATE = gql`
   }
 `;
  
+export const GET_BOX_DATES = gql`
+  query getBoxDates {
+    getBoxDates {
+      delivered
+      count
+    }
+  }
+`;
+
 export const FRAGMENT_PRODUCT_ARRAY = gql`
   fragment productArray on Box {
     products {

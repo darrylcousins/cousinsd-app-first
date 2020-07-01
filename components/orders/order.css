@@ -1,0 +1,51 @@
+table {
+  width: 100%;
+}
+
+th, td {
+  border-bottom: 0.1rem solid rgb(196, 205, 213);
+  border-collapse: collapse;
+  vertical-align: top;
+}
+
+div.emptystate {
+  width: 100%;
+  text-align: center;
+  padding-right: 25%;
+  padding-top: 5rem;
+  padding-bottom: 5rem;
+}
+
+div.emptystate > h5 {
+  font-size: 1.5em;
+  font-weight: lighter;
+}
+
+div.emptystate > ul {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+ul.overflow {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+  max-height: 1.5em;
+  overflow: hidden;
+  position: relative;
+  transition: max-height 0.5s ease-out;
+  cursor: default;
+}
+
+ul.listed:before {
+  content: ' \21A9';
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+ul.overflow:hover {
+  max-height: var(--max-height);
+}
+

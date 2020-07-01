@@ -1,109 +1,56 @@
 import React, { useEffect, useState, useCallback } from 'react';
+import gql from 'graphql-tag';
 import fetch from 'node-fetch';
 import {
+  Badge,
   Banner,
   Button,
-  ButtonGroup,
-  Checkbox,
   DataTable,
   EmptyState,
   Layout,
   Loading,
-  TextStyle,
 } from '@shopify/polaris';
-import { Query, Mutation } from 'react-apollo';
-import { execute, makePromise } from 'apollo-link';
-import { useQuery, useMutation } from '@apollo/react-hooks';
-import { ShopifyApolloClient, ShopifyHttpLink } from '../../graphql/shopify-client';
-import { LocalApolloClient } from '../../graphql/local-client';
+import { Query } from 'react-apollo';
+import { ShopifyApolloClient } from '../../graphql/shopify-client';
 import { LoadingPageMarkup } from '../common/LoadingPageMarkup';
 import { dateToISOString } from '../../lib';
-import DateRangeSelector from '../common/DateRangeSelector';
 import OrderAddress from './OrderAddress';
 import LineItemProductList from './LineItemProductList';
-import createDocDefinition from './docdefinition';
-import { 
-  GET_ORDERS,
-  getQuery,
-} from './shopify-queries';
-import { 
-  GET_SELECTED_DATE,
-} from '../boxes/queries';
 
-export default function OrderList({ shopUrl }) {
+export default function OrderList({ query, shopUrl, input, checkbox, LineCheckbox }) {
 
-  const { data } = useQuery(GET_SELECTED_DATE, { client: LocalApolloClient });
-  const [date, setDate] = useState(data.selectedDate);
+  const ShopId = SHOP_ID;
 
   const adminUrl = `${shopUrl}/admin/orders/`;
+  const [delivery_date, including, addons, removed] = LABELKEYS;
 
-  /* checkbox stuff */
-  let ids = Array();
-  const [checkedIds, setCheckedIds] = useState([]);
-
-  const handleCheckedChange = useCallback((newChecked, id) => {
-    if (newChecked) {
-      setCheckedIds(checkedIds.concat([id]));
+  const getBadge = (text) => {
+    var progress = '';
+    var status = '';
+    if (text.toUpperCase().startsWith('UN')) {
+      progress = 'incomplete';
+      status = 'attention';
     } else {
-      setCheckedIds(checkedIds.filter(el => el != id));
+      progress = 'complete';
+      status = 'new';
     }
-    }, [checkedIds]
-  );
-
-  const handleCheckAll = (checked, value) => {
-    if (checked) setCheckedIds(ids);
-    if (!checked) setCheckedIds([]);
-  }
-  /* end checkbox stuff */
-
-  const [labelLoading, setLabelLoading] = useState(false);
-  const [including, addons, removed] = ['Including', 'Add on items', 'Removed items'];
-
-  const first = 10;
-  const query = 'fulfillment_status:UNFULFILLED AND created_date:>';
-
-  const input = { first, query: `${query}${date}` };
-
-  const getPdf = (dd) => {
-    return fetch(`${HOST}/pdf`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(dd),
-    })
-  };
-
-  /* pdf labels maybe */
-  const createPdf = () => {
-    setLabelLoading(true);
-    const query = getQuery(checkedIds);
-    makePromise(execute(ShopifyHttpLink, { query }))
-      .then(data => createDocDefinition({ data, including, addons, removed }))
-      .then(dd => getPdf(dd))
-      .then(response => response.blob())
-      .then(blob => URL.createObjectURL(blob))
-      .then(url => {
-        var link = document.createElement('a');
-        link.href = url;
-        link.download = `labels-${dateToISOString(new Date())}.pdf`;
-        link.click();
-        setLabelLoading(false);
-      })
-      .catch(err => console.log(err));
-  };
-
-  const onHoverRow = (e) => {
-    console.log('hover', e.target);
+    const finalText = text.toUpperCase()[0] + text.toLowerCase().slice(1);
+    return (
+      <Badge
+        progress={progress}
+        status={status}
+      >
+        { finalText }
+      </Badge>
+    );
   };
 
   return (
     <Query
       client={ShopifyApolloClient}
-      query={GET_ORDERS}
+      query={query}
       fetchPolicy='no-cache'
-      variables={ input }
+      variables={ { input } }
       notifyOnNetworkStatusChange
       >
       {({ loading, error, data, refetch, networkStatus }) => {
@@ -119,126 +66,95 @@ export default function OrderList({ shopUrl }) {
 
         /* datatable stuff */
         let rows = Array();
+
+        const checkAddons = (addons, lineItems) => {
+          console.log(lineItems);
+          console.log(addons);
+          return addons;
+        }
+
         if (!loading) {
-          data.orders.edges.forEach(({ node }) => {
-            if (!node.closed) {
-              const lineItems = node.lineItems.edges;
-              const itemsLength = lineItems.length;
-              const id = node.id.split('/').pop();
-              ids = ids.concat([id])
-              for (let i = 0; i < itemsLength; i++) {
-                if (lineItems[i].node.product.productType == 'Veggie Box') {
-                  var customAttributes = lineItems[i].node.customAttributes.reduce(
-                    (acc, curr) => Object.assign(acc, { [`${curr.key}`]: curr.value }),
-                    {});
-                  rows.push([
-                      i == 0 ? 
-                        <Checkbox 
-                          id={id}
-                          label={node.name}
-                          labelHidden={true}
-                          onChange={handleCheckedChange}
-                          checked={checkedIds.indexOf(id) > -1}
-                        /> : '',
-                      i == 0 ? 
-                        <Button 
-                          plain
-                          url={`${adminUrl}${id}`}
-                        >
-                          {node.name}
-                        </Button> : '',
-                      lineItems[i].node.name,
-                      customAttributes['Delivery Date'],
-                      <LineItemProductList list={customAttributes[including]} />,
-                      <LineItemProductList list={customAttributes[addons]} />,
-                      <LineItemProductList list={customAttributes[removed]} />,
-                      <OrderAddress address={node.shippingAddress} />,
-                  ]);
+          //console.log(query);
+          //console.log(data);
+          for (const [ key, order ] of Object.entries(data)) {
+            let row = Array();
+            let lineItems = order.lineItems.edges;
+            let id = order.id.split('/').pop();
+            let done = false;
+            //console.log(order);
+            let produce = Array();
+            const deliveryDate = new Date(input.delivered).toDateString();
+            // collect added items to check against attribute list
+            for (let i = 0; i < lineItems.length; i++) {
+              let node = lineItems[i].node;
+              if (node.product.productType == 'Box Produce') {
+                produce.push(node.product.handle);
+              };
+            };
+            for (let i = 0; i < lineItems.length; i++) {
+              let node = lineItems[i].node;
+              if (node.product.productType == 'Veggie Box') {
+                var attrs = node.customAttributes.reduce(
+                  (acc, curr) => Object.assign(acc, { [`${curr.key}`]: curr.value }),
+                  {});
+                if (new Date(attrs[delivery_date]).toDateString() == deliveryDate) {
+                  let lineid = node.id.split('/').pop();
+                  row.push(!done ? 
+                    <LineCheckbox id={id} name={order.name} />
+                    : ''
+                  );
+                  row.push(!done ? 
+                      <Button 
+                        plain
+                        url={`${adminUrl}${id}`}
+                      >
+                        {order.name}
+                      </Button> : '');
+                  row.push(
+                    <>
+                    <span>{ node.name }</span><br />
+                    { getBadge(order.displayFinancialStatus) }
+                    { getBadge(node.fulfillmentStatus) }<br />
+                    <input type='hidden' value={lineid} name={id} />
+                    <input type='hidden' value={node.quantity} name={lineid} />
+                    </>
+                  );
+                  row.push(node.quantity);
+                  row.push(attrs[delivery_date]);
+                  row.push(<LineItemProductList list={attrs[including]} />);
+                  row.push(<LineItemProductList list={attrs[addons]} produce={produce} />);
+                  row.push(<LineItemProductList list={attrs[removed]} />);
+                  row.push(<OrderAddress address={order.shippingAddress} />);
+                  done = true;
+                  rows.push(row);
+                  row = Array();
                 }
               }
             }
-          });
+          };
         };
-
-        const handleDateChange = (date) => {
-          const input = { first, query: `${query}${date}` };
-          refetch(input);
-        }
-
-        const headers = [
-          <Checkbox 
-            id='all'
-            label='Select/deselect all'
-            labelHidden={true}
-            onChange={handleCheckAll}
-            checked={checkedIds.length > 0}
-          />,
-          'Box',
-          'Delivery',
-          'Including',
-          'Extras',
-          'Removed',
-          'Address',
-        ];
 
         return (
           <React.Fragment>
-            <div style={{ padding: '1.6rem' }}>
-              <ButtonGroup segmented >
-                <Button
-                  disabled={checkedIds.length == 0}
-                  onClick={createPdf}
-                  loading={ labelLoading }
-                >
-                  Labels
-                </Button>
-                <DateRangeSelector handleDateChange={handleDateChange} disabled={ Boolean(isLoading) } />
-              </ButtonGroup>
-            </div>
             { isError && isError } 
             { isLoading ? isLoading :
               <React.Fragment>
-              <table style={{ width: '100%', borderTop: '0.1rem solid rgb(196, 205, 213)' }}>
-                <thead style={{ borderBottom: '0.1rem solid rgb(196, 205, 213)' }}>
-                  <tr style={{ borderBottom: '0.1rem solid rgb(196, 205, 213)' }}>
-                    { headers.map(cell => <th style={{ borderBottom: '0.1rem solid rgb(196, 205, 213)' }}>{ cell }</th>) }
-                  </tr>
-                </thead>
-                <tbody>
-                  { rows.map((row) => <tr>{ row.map(cell => <td>{ cell }</td>) }</tr> )}
-                </tbody>
-              </table>
-              <DataTable
-                columnContentTypes={Array(8).fill('text')}
-                headings={[
-                  <Checkbox 
-                    id='all'
-                    label='Select/deselect all'
-                    labelHidden={true}
-                    onChange={handleCheckAll}
-                    checked={checkedIds.length > 0}
-                  />,
-                  <strong>Order</strong>,
-                  <strong>Box</strong>,
-                  <strong>Delivery Date</strong>,
-                  <strong>Including</strong>,
-                  <strong>Extras</strong>,
-                  <strong>Removed</strong>,
-                  <strong>Address</strong>,
-                ]}
-                rows={rows}
-              />
+                <DataTable
+                  columnContentTypes={Array(8).fill('text')}
+                  headings={[
+                    checkbox,
+                    <strong>Order</strong>,
+                    <strong>Box</strong>,
+                    <strong>Qty</strong>,
+                    <strong>Delivery Date</strong>,
+                    <strong>Including</strong>,
+                    <strong>Extras</strong>,
+                    <strong>Removed</strong>,
+                    <strong>Address</strong>,
+                  ]}
+                  rows={rows}
+                />
               </React.Fragment>
-            }
-            { data && data.orders.edges.length == 0 &&
-              <Layout>
-                <Layout.Section>
-                  <EmptyState
-                    heading="No orders here"
-                  >
-                  </EmptyState>
-                </Layout.Section>
-              </Layout>
             }
           </React.Fragment>
         );

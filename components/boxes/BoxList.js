@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
   Banner,
   Button,
@@ -15,12 +15,14 @@ import {
 import {
     MinusMinor
 } from '@shopify/polaris-icons';
+import { execute, makePromise } from 'apollo-link';
 import { Query, Mutation } from 'react-apollo';
 import { useQuery, useMutation } from '@apollo/react-hooks';
-import { LocalApolloClient } from '../../graphql/local-client';
+import { LocalApolloClient, LocalHttpLink } from '../../graphql/local-client';
 import { LoadingPageMarkup } from '../common/LoadingPageMarkup';
 import { Editable } from '../common/Editable';
-import DateRangeSelector from '../common/DateRangeSelector';
+import { dateToISOString } from '../../lib';
+import DateSelector from '../common/DateSelector';
 import ItemDatePicker from '../common/ItemDatePicker';
 import SheetHelper from '../common/SheetHelper';
 import BoxShopTitle from './BoxShopTitle';
@@ -30,6 +32,7 @@ import BoxAdd from './BoxAdd';
 import BoxActions from './BoxActions';
 import { 
   GET_BOXES,
+  GET_BOX_DATES,
   GET_SELECTED_DATE,
   UPDATE_BOX,
 } from './queries';
@@ -43,15 +46,19 @@ export default function BoxList({ shopUrl, addBox, toggleAddBox }) {
   const { data } = useQuery(GET_SELECTED_DATE, { client: LocalApolloClient });
   const [delivered, setDelivered] = useState(data.selectedDate);
   const [input, setInput] = useState({ delivered, ShopId });
+  const [dates, setDates] = useState([]);
   /* end boxes datatable stuff */
 
-  /* sheet stuff */
-  //const [sheetActive, setSheetActive] = useState(addBox);
-  //const toggleSheetActive = useCallback(() => setSheetActive(!sheetActive), [sheetActive]);
-  //const toggleSheet = (title) => {
-  //  toggleSheetActive();
-  //}
-  /* end sheet stuff */
+  useEffect(() => {
+    makePromise(execute(LocalHttpLink, { query: GET_BOX_DATES }))
+      .then(async response => {
+        const res = await response;
+        setDates(res.data.getBoxDates.map(el => ({ delivered: el.delivered, count: el.count })));
+      })
+      .catch(error => {
+        console.log('get date errors:', error);
+      })
+  }, []);
 
   /* checkbox stuff */
   const [checkedId, setCheckedId] = useState(0);
@@ -138,6 +145,9 @@ export default function BoxList({ shopUrl, addBox, toggleAddBox }) {
 
           const handleDateChange = (date) => {
             const input = { ShopId, delivered: date};
+            console.log(date);
+            setDelivered(date);
+            setInput(input);
             refetch({ input });
           };
 
@@ -160,8 +170,9 @@ export default function BoxList({ shopUrl, addBox, toggleAddBox }) {
                     onComplete={clearChecked}
                     refetch={refetchQuery}
                   />
-                  <DateRangeSelector
+                  <DateSelector
                     handleDateChange={handleDateChange}
+                    dates={dates}
                     disabled={ Boolean(isLoading) } />
                 </ButtonGroup>
               </div>

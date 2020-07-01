@@ -5,6 +5,7 @@ const shop = require('./shop');
 const product = require('./product');
 const box = require('./box');
 const boxproduct = require('./boxproduct');
+const order = require('./order');
 
 const root = gql`
   scalar BigInt
@@ -18,6 +19,6 @@ const root = gql`
   }
 `;
 
-const typeDefs = [root, shop, product, box, boxproduct];
+const typeDefs = [root, shop, product, box, boxproduct, order];
 
 module.exports = typeDefs;

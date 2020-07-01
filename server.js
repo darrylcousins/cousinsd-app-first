@@ -17,16 +17,20 @@ const getSubscriptionUrl = require('./server/getSubscriptionUrl');
 const productCreate = require('./webhooks/products/create');
 const productDelete = require('./webhooks/products/delete');
 const productUpdate = require('./webhooks/products/update');
+const orderCreate = require('./webhooks/orders/create');
+const orderUpdated = require('./webhooks/orders/updated');
+const orderDelete = require('./webhooks/orders/delete');
 const shopRedact = require('./webhooks/shops/redact');
 const customerRedact = require('./webhooks/customers/redact');
 const customerDataRequest = require('./webhooks/customers/data-request');
 const authCallback = require('./webhooks/auth/callback');
-const generatePdf = require('./webhooks/pdf');
 
 const port = parseInt(ENV.PORT, 10) || 3000;
 const dev = ENV.NODE_ENV !== 'production';
 const app = next({ dev });
 const handle = app.getRequestHandler();
+
+const ApiVer = ApiVersion.April20;
 
 console.log('connecting as ', ENV.HOST, '\n');
 
@@ -71,7 +75,7 @@ app.prepare().then(() => {
           topic: 'PRODUCTS_CREATE',
           accessToken,
           shop,
-          apiVersion: ApiVersion.October19
+          apiVersion: ApiVer
         });
 
         await registerWebhook({
@@ -79,7 +83,7 @@ app.prepare().then(() => {
           topic: 'PRODUCTS_DELETE',
           accessToken,
           shop,
-          apiVersion: ApiVersion.October19
+          apiVersion: ApiVer
         });
 
         await registerWebhook({
@@ -87,7 +91,31 @@ app.prepare().then(() => {
           topic: 'PRODUCTS_UPDATE',
           accessToken,
           shop,
-          apiVersion: ApiVersion.October19
+          apiVersion: ApiVer
+        });
+
+        await registerWebhook({
+          address: `${ENV.HOST}/webhooks/orders/create`,
+          topic: 'ORDERS_CREATE',
+          accessToken,
+          shop,
+          apiVersion: ApiVer
+        });
+
+        await registerWebhook({
+          address: `${ENV.HOST}/webhooks/orders/delete`,
+          topic: 'ORDERS_DELETE',
+          accessToken,
+          shop,
+          apiVersion: ApiVer
+        });
+
+        await registerWebhook({
+          address: `${ENV.HOST}/webhooks/orders/updated`,
+          topic: 'ORDERS_UPDATED',
+          accessToken,
+          shop,
+          apiVersion: ApiVer
         });
 
         //await getSubscriptionUrl(ctx, accessToken, shop);
@@ -96,7 +124,15 @@ app.prepare().then(() => {
     })
   );
 
-  server.use(graphQLProxy({version: ApiVersion.October19}))
+  server.use(graphQLProxy({version: ApiVer}))
+
+  server.use(async (ctx, next) => {
+    if (ctx.path === '/graphql' || ctx.path.includes('/webhooks')) {
+      return await next();
+    }
+    await bodyParser()(ctx, next);
+  });
+
 
   const webhook = receiveWebhook({ secret: ENV.SHOPIFY_API_SECRET_KEY });
 
@@ -138,13 +174,24 @@ app.prepare().then(() => {
     productDelete(ctx.state.webhook);
   });
 
-  server.use(bodyParser());
+  // order webhooks
+  router.post('/webhooks/orders/create', webhook, (ctx) => {
+    orderCreate(ctx.state.webhook, ENV.SHOP_ID);
+  });
+
+  router.post('/webhooks/orders/update', webhook, (ctx) => {
+    orderUpdated(ctx.state.webhook, ENV.SHOP_ID);
+  });
+
+  router.post('/webhooks/orders/delete', webhook, (ctx) => {
+    orderDelete(ctx.state.webhook);
+  });
 
   /* handle object getters */
   router.get('/api/:object', verifyRequest(), async (ctx, next) => {
     const type = ctx.params.object;
     const { shop, accessToken } = ctx.session;
-    const url = `https://${shop}/admin/api/2020-04/${type}.json`;
+    const url = `https://${shop}/admin/api/${ApiVer}/${type}.json`;
     const result = await fetch(url, {
       headers: {
         'X-Shopify-Access-Token': accessToken,
@@ -165,7 +212,7 @@ app.prepare().then(() => {
     const type = ctx.params.object;
     const data = ctx.request.body;
     const { shop, accessToken } = ctx.session;
-    const url = `https://${shop}/admin/api/2020-04/${type}.json`;
+    const url = `https://${shop}/admin/api/${ApiVer}/${type}.json`;
     const result = await fetch(url, {
       method: 'POST',
       headers: {
@@ -184,13 +231,34 @@ app.prepare().then(() => {
   });
   /* end handle object create */
 
+  /* handle order get by id */
+  router.get('/api/:object/:id', verifyRequest(), async (ctx) => {
+    const id = ctx.params.id;
+    const type = ctx.params.object;
+    const { shop, accessToken } = ctx.session;
+    const url = `https://${shop}/admin/api/${ApiVer}/${type}/${id}.json`;
+    const result = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'X-Shopify-Access-Token': accessToken,
+      },
+    })
+    .then(response => response.json())
+    .catch(err => console.log(err));
+
+    ctx.body = result;
+    ctx.set('Content-Type', 'application/json');
+    ctx.respond = true;
+    ctx.res.statusCode = 200;
+  });
+  /* end handle order get by id */
+
   /* handle order delete */
   router.delete('/api/:object/:id', verifyRequest(), async (ctx) => {
     const id = ctx.params.id;
     const type = ctx.params.object;
     const { shop, accessToken } = ctx.session;
-    const url = `https://${shop}/admin/api/2020-04/${type}/${id}.json`;
-    console.log(url);
+    const url = `https://${shop}/admin/api/${ApiVer}/${type}/${id}.json`;
     const result = await fetch(url, {
       method: 'DELETE',
       headers: {
@@ -238,7 +306,6 @@ app.prepare().then(() => {
 
   server.use(router.allowedMethods());
   server.use(router.routes());
-
   server.listen(port, () => {
     console.log(`> Ready on http://localhost:${port}`);
   });

@@ -3,7 +3,7 @@
     "email": "sarah.black@example.com",
     "gateway": "bogus",
     "test": true,
-    "total_price": "54.50",
+    "total_price": "84.00",
     "user_id": 3142646497338,
     "line_items": [
       {
@@ -12,7 +12,7 @@
         "properties": [
           {
             "name": "Delivery Date",
-            "value": "Wed Jul 01 2020"
+            "value": "Wed Jul 08 2020"
           },
           {
             "name": "Including",
@@ -25,6 +25,32 @@
           {
             "name": "Removed items",
             "value": "Turnips"
+          }
+        ]
+      },
+      {
+        "variant_id": 31712599507002,
+        "quantity": 1
+      },
+      {
+        "variant_id": 31712538263610,
+        "quantity": 1,
+        "properties": [
+          {
+            "name": "Delivery Date",
+            "value": "Wed Jul 15 2020"
+          },
+          {
+            "name": "Including",
+            "value": "Agria Potato, Beetroot, Brocolli, Onions Brown, Radishes"
+          },
+          {
+            "name": "Add on items",
+            "value": "Cavolonero Kale"
+          },
+          {
+            "name": "Removed items",
+            "value": ""
           }
         ]
       },

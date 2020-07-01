@@ -39,7 +39,7 @@ export default function BoxAdd({ onComplete, refetch }) {
 
         const handleBoxAdd = () => {
           const tempDate = selectedDate;
-          const delivered = dateToISOString(tempDate);
+          const delivered = tempDate.toDateString();
           const shopify_gid = storeProduct.id;
           const shopify_title = storeProduct.title;
           const shopify_handle = storeProduct.handle;

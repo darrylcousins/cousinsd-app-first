@@ -3,7 +3,7 @@ const { Shop, Product, Box } = require('../../models');
 
 const productUpdate = (webhook, ShopId) => {
   const payload = webhook.payload;
-  console.log('Received Product:', payload.title, payload.product_type);
+  console.log('Received Update Product:', payload.title, payload.product_type);
 
   if (payload.product_type === 'Box Produce') {
     const input = {
