@@ -65,6 +65,7 @@ export default function OrderListWrapper({ shopUrl }) {
       .then(async response => {
         const res = await response;
         const orderids = res.data.getOrders.map(el => el.shopify_order_id);
+        console.log('got ids', orderids);
         if (orderids.length > 0) {
           setQuery(getQuery(orderids));
           setIds(orderids.map(el => el.toString()));
