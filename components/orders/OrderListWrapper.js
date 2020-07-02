@@ -61,7 +61,8 @@ export default function OrderListWrapper({ shopUrl }) {
   /* absolutely vital, collect this data before anything else */
   useEffect(() => {
     console.log('do we get here at all', input);
-    makePromise(execute(LocalHttpLink, { query: GET_ORDERS, variables: { input } }))
+    var tempinput = { ShopId: input.ShopId, delivered: new Date(input.delivered).getTime() };
+    makePromise(execute(LocalHttpLink, { query: GET_ORDERS, variables: { input: tempinput } }))
       .then(async response => {
         const res = await response;
         console.log(input);
