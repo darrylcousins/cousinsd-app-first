@@ -15,6 +15,7 @@ export default function LineItemProductList({ list, produce }) {
   */
 
   const products = list.split(',').filter(el => {
+    return true;
     if (!produce) return true;
     const handle = el.replace(' ', '_').toLowerCase();
     return (produce.indexOf(handle) > -1);
