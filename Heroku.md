@@ -6,7 +6,7 @@ database: Created postgresql-reticulated-46490 as ``DATABASE_URL``
 Drop and recreate the database with ``pg:reset``. Push local database data with ``pg:push``.
 
 ```bash
-heroku pg:reset DATABASE_URL
+heroku pg:reset --confirm fast-spire-96062 DATABASE_URL
 PGUSER=cousinsd PGPASSWORD=******** heroku pg:push shopify_app DATABASE_URL
 ```
 

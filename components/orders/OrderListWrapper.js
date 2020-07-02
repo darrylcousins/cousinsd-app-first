@@ -122,7 +122,8 @@ export default function OrderListWrapper({ shopUrl }) {
   /* end pdf labels */
 
   const handleDateChange = (date) => {
-    setDelivered(delivered);
+    console.log('handle date change', date)
+    setDelivered(date);
     setInput({ ShopId, delivered: date });
   };
 
