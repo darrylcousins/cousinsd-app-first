@@ -145,7 +145,7 @@ export default function BoxList({ shopUrl, addBox, toggleAddBox }) {
 
           const handleDateChange = (date) => {
             const input = { ShopId, delivered: date};
-            console.log(date);
+            console.log('box date change', date);
             setDelivered(date);
             setInput(input);
             refetch({ input });
