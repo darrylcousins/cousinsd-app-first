@@ -60,6 +60,7 @@ export default function OrderListWrapper({ shopUrl }) {
 
   /* absolutely vital, collect this data before anything else */
   useEffect(() => {
+    console.log('do we get here at all', input);
     makePromise(execute(LocalHttpLink, { query: GET_ORDERS, variables: { input } }))
       .then(async response => {
         const res = await response;
@@ -75,7 +76,7 @@ export default function OrderListWrapper({ shopUrl }) {
       .catch(error => {
         console.log('get orders errors:', error);
       });
-  }, [input]);
+  }, [input, delivered]);
 
   useEffect(() => {
     makePromise(execute(LocalHttpLink, { query: GET_ORDER_DATES }))
