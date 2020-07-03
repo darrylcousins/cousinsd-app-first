@@ -17,7 +17,7 @@ module.exports = withCSS({
       SHOP_USERNAME: JSON.stringify(process.env.SHOP_USERNAME),
       SHOP_NAME: JSON.stringify(process.env.SHOP_NAME),
       HOST: JSON.stringify(process.env.HOST),
-      LABELKEYS: JSON.stringify(['Delivery Date', 'Including', 'Add on items', 'Removed items']),
+      LABELKEYS: JSON.stringify(['Delivery Date', 'Including', 'Add on items', 'Removed items', 'Subscription']),
       fetch: fetch,
     };
     config.plugins.push(new webpack.DefinePlugin(env));

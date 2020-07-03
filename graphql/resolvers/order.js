@@ -25,6 +25,7 @@ const resolvers = {
         where: { ShopId, delivered: {[Op.eq]: delivered} },
         order: [['delivered', 'ASC']],
       });
+      console.log('these ordeers', orders);
       return orders
     },
     async getOrderDates(root, { input }, { models }, info){
