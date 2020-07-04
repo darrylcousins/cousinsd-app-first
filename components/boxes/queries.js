@@ -23,6 +23,8 @@ export const FRAGMENT_PRODUCT_ARRAY = gql`
       available
       shopify_gid
       shopify_id
+      shopify_variant_id
+      shopify_price
     }
 }`
 
@@ -34,6 +36,8 @@ export const FRAGMENT_ADDONS_ARRAY = gql`
       available
       shopify_gid
       shopify_id
+      shopify_variant_id
+      shopify_price
     }
 }`
 

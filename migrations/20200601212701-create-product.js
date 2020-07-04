@@ -29,6 +29,12 @@ module.exports = {
         type: Sequelize.STRING,
         unique: true,
       },
+      shopify_variant_id: {
+        type: Sequelize.BIGINT,
+      },
+      shopify_price: {
+        type: Sequelize.INTEGER,
+      },
       ShopId: {
         type: Sequelize.INTEGER,
       },

@@ -20,6 +20,12 @@ module.exports = (sequelize, DataTypes) => {
     shopify_handle: {
       type: DataTypes.STRING,
     },
+    shopify_variant_id: {
+      type: DataTypes.BIGINT,
+    },
+    shopify_price: {
+      type: DataTypes.INTEGER,
+    },
     available: {
       type: DataTypes.BOOLEAN,
       defaultValue: true,
