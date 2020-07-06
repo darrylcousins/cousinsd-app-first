@@ -5,7 +5,7 @@ import {
   ButtonGroup,
   Checkbox,
 } from '@shopify/polaris';
-import { useQuery, execute, makePromise } from '@apollo/client';
+import { useQuery, execute } from '@apollo/client';
 import { ShopifyHttpLink } from '../../graphql/shopify-client';
 import { LocalApolloClient, LocalHttpLink } from '../../graphql/local-client';
 import { dateToISOString } from '../../lib';
@@ -50,6 +50,7 @@ export default function OrderListWrapper({ shopUrl }) {
 
   /* absolutely vital, collect this data before anything else */
   useEffect(() => {
+    /*
     makePromise(execute(LocalHttpLink, { query: GET_ORDERS, variables: { input } }))
       .then(async response => {
         const res = await response;
@@ -65,6 +66,16 @@ export default function OrderListWrapper({ shopUrl }) {
       .catch(error => {
         console.log('get orders errors:', error);
       });
+      */
+    const res = useQuery(GET_BOX_DATES, { client: LocalApolloClient });
+    const orderids = res.data.getOrders.map(el => el.shopify_order_id);
+    if (orderids.length > 0) {
+      setQuery(getQuery(orderids));
+      setIds(orderids.map(el => el.toString()));
+    } else {
+      setQuery(null);
+      setIds([]);
+    }
   }, [input, delivered]);
 
   useEffect(() => {

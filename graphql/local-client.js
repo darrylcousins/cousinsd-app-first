@@ -1,6 +1,10 @@
-import { gql, ApolloClient, createHttpLink } from '@apollo/client';
+import { gql, ApolloClient, createHttpLink, inMemoryCache } from '@apollo/client';
 import fetch from 'isomorphic-fetch';
 import { dateToISOString } from '../lib';
+
+const cache = new InMemoryCache({
+  dataIdFromObject: object => object.id,
+});
 
 const resolvers = {
   Mutation: {
@@ -14,9 +18,10 @@ const resolvers = {
 };
 
 export const LocalApolloClient = new ApolloClient({
-  uri: `${HOST}/local_graphql`,
-  fetch: fetch,
+  cache,
+  fetch,
   resolvers,
+  uri: `${HOST}/local_graphql`,
   onError: ({ networkError, graphQLErrors }) => {
     console.log('graphQLError', JSON.stringify(graphQLErrors, null, 2))
     console.log('networkError', JSON.stringify(networkError, null, 2))

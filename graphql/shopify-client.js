@@ -1,9 +1,14 @@
-import { ApolloClient, createHttpLink } from '@apollo/client';
+import { ApolloClient, createHttpLink, InMemoryCache } from '@apollo/client';
 import fetch from 'isomorphic-fetch';
 
+const cache = new InMemoryCache({
+  dataIdFromObject: object => object.id,
+});
+
 export const ShopifyApolloClient = new ApolloClient({
+  fetch,
+  cache,
   uri: `${HOST}/graphql`,
-  fetch: fetch,
   fetchOptions: {
     credentials: 'include'
   },
