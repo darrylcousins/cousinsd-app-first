@@ -4,7 +4,7 @@ import {
   Loading,
   Spinner,
 } from '@shopify/polaris';
-import { Mutation } from 'react-apollo';
+import { Mutation } from '@apollo/react-components';
 
 const inputStyle = {
   height: 0,
@@ -53,7 +53,7 @@ const checkedStyle = {
 
 export const Switch = (props) => {
 
-  const {id, fieldName, selected, client, mutation, update, onChange, ...args} = props;
+  const {id, fieldName, selected, client, mutation, update, onChange} = props;
 
   const [checked, setChecked] = useState(selected);
   const toggleChecked = useCallback(
@@ -86,7 +86,7 @@ export const Switch = (props) => {
           <Banner status="critical">{error.message}</Banner>
         )}
 
-        const handleOnChange = (e) => {
+        const handleOnChange = () => {
           onChange(!checked, id); // note it isn't changed yet
           const input = { id: parseInt(id) };
           input[fieldName] = !checked;
@@ -95,6 +95,8 @@ export const Switch = (props) => {
               () => setTimeout(() => handleSwitch({ variables: { input } }), 200)
             );
         };
+
+        console.log(data);
 
         return (
           <React.Fragment>

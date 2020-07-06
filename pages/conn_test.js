@@ -10,8 +10,8 @@ import {
   Page,
   DataTable,
 } from '@shopify/polaris';
-import gql from 'graphql-tag';
-import { Query } from 'react-apollo';
+import { gql } from '@apollo/client';
+import { Query } from '@apollo/react-components';
 import { LocalApolloClient } from '../graphql/local-client';
 
 const GET_SHOP = gql`

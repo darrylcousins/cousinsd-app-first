@@ -7,7 +7,7 @@ module.exports = {
     "database": process.env.DB_NAME,
     "host": process.env.DB_HOSTNAME,
     "dialect": process.env.DB_DIALECT,
-    "operatorsAliases": false
+    "operatorsAliases": '0'
   },
   "local": {
     "username": process.env.DB_USERNAME,
@@ -15,7 +15,7 @@ module.exports = {
     "database": process.env.DB_NAME,
     "host": process.env.DB_HOSTNAME,
     "dialect": process.env.DB_DIALECT,
-    "operatorsAliases": false
+    "operatorsAliases": '0'
   },
   "test": {
     "username": "root",
@@ -23,7 +23,7 @@ module.exports = {
     "database": "database_test",
     "host": "127.0.0.1",
     "dialect": "mysql",
-    "operatorsAliases": false
+    "operatorsAliases": '0'
   },
   "production": {
     "username": process.env.DB_USERNAME,

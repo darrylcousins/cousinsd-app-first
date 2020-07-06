@@ -1,6 +1,5 @@
 import React, {useState, useCallback} from 'react';
 import {
-  Banner,
   Button,
   InlineError,
   Loading,
@@ -8,7 +7,7 @@ import {
   TextStyle,
 } from '@shopify/polaris';
 import { ResourcePicker } from '@shopify/app-bridge-react';
-import { Mutation } from 'react-apollo';
+import { Mutation } from '@apollo/react-components';
 import { LocalApolloClient } from '../../graphql/local-client';
 import { findErrorMessage } from '../../lib';
 import { UPDATE_BOX } from './queries';
@@ -26,7 +25,7 @@ export default function BoxShopTitle({ id, title }) {
       client={LocalApolloClient}
       mutation={UPDATE_BOX}
     >
-      {(handleUpdate, { loading, error, data }) => {
+      {(handleUpdate, { loading, error }) => {
         if (loading) { 
           return (
             <React.Fragment>
@@ -49,7 +48,7 @@ export default function BoxShopTitle({ id, title }) {
             shopify_id: parseInt(storeProduct.id.split('/')[4]),
           };
           handleUpdate({ variables: { input } })
-            .then((value) => {
+            .then(() => {
               setValue(storeProduct.title);
             })
         };

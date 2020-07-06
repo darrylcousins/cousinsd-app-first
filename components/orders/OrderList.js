@@ -1,25 +1,18 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import gql from 'graphql-tag';
-import fetch from 'node-fetch';
+import React from 'react';
 import {
   Badge,
   Banner,
   Button,
   DataTable,
-  EmptyState,
-  Layout,
   Loading,
 } from '@shopify/polaris';
-import { Query } from 'react-apollo';
+import { Query } from '@apollo/react-components';
 import { ShopifyApolloClient } from '../../graphql/shopify-client';
 import { LoadingPageMarkup } from '../common/LoadingPageMarkup';
-import { dateToISOString } from '../../lib';
 import OrderAddress from './OrderAddress';
 import LineItemProductList from './LineItemProductList';
 
 export default function OrderList({ query, shopUrl, input, checkbox, LineCheckbox }) {
-
-  const ShopId = SHOP_ID;
 
   const adminUrl = `${shopUrl}/admin/orders/`;
   const [delivery_date, including, addons, removed] = LABELKEYS;
@@ -53,7 +46,7 @@ export default function OrderList({ query, shopUrl, input, checkbox, LineCheckbo
       variables={ { input } }
       notifyOnNetworkStatusChange
       >
-      {({ loading, error, data, refetch, networkStatus }) => {
+      {({ loading, error, data }) => {
         const isError = error && (
           <Banner status="critical">{error.message}</Banner>
         );
@@ -67,15 +60,7 @@ export default function OrderList({ query, shopUrl, input, checkbox, LineCheckbo
         /* datatable stuff */
         let rows = Array();
 
-        const checkAddons = (addons, lineItems) => {
-          console.log(lineItems);
-          console.log(addons);
-          return addons;
-        }
-
         if (!loading) {
-          //console.log(query);
-          //console.log(data);
           for (const [ key, order ] of Object.entries(data)) {
             let row = Array();
             let lineItems = order.lineItems.edges;
@@ -89,8 +74,8 @@ export default function OrderList({ query, shopUrl, input, checkbox, LineCheckbo
               let node = lineItems[i].node;
               if (node.product.productType == 'Box Produce') {
                 produce.push(node.product.handle);
-              };
-            };
+              }
+            }
             for (let i = 0; i < lineItems.length; i++) {
               let node = lineItems[i].node;
               if (node.product.productType == 'Veggie Box') {
@@ -121,9 +106,9 @@ export default function OrderList({ query, shopUrl, input, checkbox, LineCheckbo
                   );
                   row.push(node.quantity);
                   row.push(attrs[delivery_date]);
-                  row.push(<LineItemProductList list={attrs[including]} />);
-                  row.push(<LineItemProductList list={attrs[addons]} produce={produce} />);
-                  row.push(<LineItemProductList list={attrs[removed]} />);
+                  row.push(<LineItemProductList key={i} list={attrs[including]} />);
+                  row.push(<LineItemProductList key={i} list={attrs[addons]} produce={produce} />);
+                  row.push(<LineItemProductList key={i} list={attrs[removed]} />);
                   row.push(<OrderAddress address={order.shippingAddress} />);
                   done = true;
                   rows.push(row);
@@ -131,8 +116,8 @@ export default function OrderList({ query, shopUrl, input, checkbox, LineCheckbo
                 }
               }
             }
-          };
-        };
+          }
+        }
 
         return (
           <React.Fragment>
@@ -143,14 +128,14 @@ export default function OrderList({ query, shopUrl, input, checkbox, LineCheckbo
                   columnContentTypes={Array(8).fill('text')}
                   headings={[
                     checkbox,
-                    <strong>Order</strong>,
-                    <strong>Box</strong>,
-                    <strong>Qty</strong>,
-                    <strong>Delivery Date</strong>,
-                    <strong>Including</strong>,
-                    <strong>Extras</strong>,
-                    <strong>Removed</strong>,
-                    <strong>Address</strong>,
+                    <strong key={0}>Order</strong>,
+                    <strong key={1}>Box</strong>,
+                    <strong key={2}>Qty</strong>,
+                    <strong key={3}>Delivery Date</strong>,
+                    <strong key={4}>Including</strong>,
+                    <strong key={5}>Extras</strong>,
+                    <strong key={6}>Removed</strong>,
+                    <strong key={7}>Address</strong>,
                   ]}
                   rows={rows}
                 />

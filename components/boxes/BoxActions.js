@@ -3,11 +3,10 @@ import {
   ActionList,
   Banner,
   Button,
-  Loading,
   Popover,
   Spinner,
 } from '@shopify/polaris';
-import { Query } from 'react-apollo';
+import { Query } from '@apollo/react-components';
 import { LocalApolloClient } from '../../graphql/local-client';
 import BoxDelete from './BoxDelete';
 import BoxDuplicate from './BoxDuplicate';

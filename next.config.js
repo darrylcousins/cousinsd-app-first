@@ -2,8 +2,7 @@ require("dotenv").config();
 const path = require("path")
 const withCSS = require('@zeit/next-css');
 const webpack = require('webpack');
-const merge = require('webpack-merge');
-const fetch = require('node-fetch');
+const fetch = require('isomorphic-fetch');
 
 // next-css needed for polaris to load css files
 // XXX next now has another way of creating globals - catch up!

@@ -1,4 +1,4 @@
-import gql from 'graphql-tag';
+import gql from '@apollo/client';
 
 // TODO this fails because a fulfillment service is required
 export const FULFILL_LINE_ITEMS = gql`

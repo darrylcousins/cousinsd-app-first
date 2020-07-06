@@ -1,21 +1,15 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import {
   Banner,
-  Button,
   Loading,
   Modal,
   Spinner,
   TextContainer,
 } from '@shopify/polaris';
-import { Query, Mutation } from 'react-apollo';
-import { useQuery, useMutation } from '@apollo/react-hooks';
-import { dateToISOString } from '../../lib';
+import { Mutation } from '@apollo/react-components';
 import { LocalApolloClient } from '../../graphql/local-client';
-import { LoadingPageMarkup } from '../common/LoadingPageMarkup';
 import { 
   DELETE_BOX, 
-  GET_BOXES,
-  GET_SELECTED_DATE,
 } from './queries';
 
 export default function BoxDelete({ open, box, onComplete, onCancel }) {
@@ -48,11 +42,13 @@ export default function BoxDelete({ open, box, onComplete, onCancel }) {
           </React.Fragment>
         );
 
+        console.log(data);
+
         const deleteBox = () => {
           const input = { id: instance.id }
           console.log('deleting', input);
           boxDelete({ variables: { input } })
-            .then((value) => {
+            .then(() => {
               onComplete();
           }).catch((error) => {
             console.log('error', error);

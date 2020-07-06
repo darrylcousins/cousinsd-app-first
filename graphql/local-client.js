@@ -1,7 +1,5 @@
-import ApolloClient from 'apollo-boost';
-import gql from 'graphql-tag';
-import fetch from 'node-fetch';
-import { createHttpLink } from 'apollo-link-http';
+import { gql, ApolloClient, createHttpLink } from '@apollo/client';
+import fetch from 'isomorphic-fetch';
 import { dateToISOString } from '../lib';
 
 const resolvers = {

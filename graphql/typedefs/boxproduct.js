@@ -1,4 +1,4 @@
-const { gql } = require("apollo-server-koa");
+const { gql } = require('@apollo/client');
 
 const boxproduct = gql`
   type BoxProduct {

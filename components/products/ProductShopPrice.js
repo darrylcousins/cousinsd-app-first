@@ -1,11 +1,11 @@
-import React, { useState, useCallback } from 'react';
+import React from 'react';
 import {
   Banner,
   Button,
   Spinner,
   TextStyle,
 } from '@shopify/polaris';
-import { Query } from 'react-apollo';
+import { Query } from '@apollo/react-components';
 import { ShopifyApolloClient } from '../../graphql/shopify-client';
 import { 
   GET_PRODUCT_PRICE,

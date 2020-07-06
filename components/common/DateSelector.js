@@ -2,14 +2,11 @@ import React, { useEffect, useState, useCallback } from 'react';
 import {
   ActionList,
   Badge,
-  Banner,
   Button,
-  Loading,
   Popover,
 } from '@shopify/polaris';
-import { Query, Mutation } from 'react-apollo';
-import { useQuery } from '@apollo/react-hooks';
-import { LocalApolloClient, resetStore } from '../../graphql/local-client';
+import { useQuery } from '@apollo/client';
+import { LocalApolloClient } from '../../graphql/local-client';
 import { dateToISOString } from '../../lib';
 import { 
   GET_SELECTED_DATE,
@@ -17,7 +14,6 @@ import {
 
 export default function DateSelector({ handleDateChange, disabled, dates }) {
 
-  const ShopId = SHOP_ID;
   const [popoverActive, setPopoverActive] = useState(false);
   const togglePopoverActive = useCallback(
     () => setPopoverActive((popoverActive) => !popoverActive),
@@ -58,7 +54,7 @@ export default function DateSelector({ handleDateChange, disabled, dates }) {
           const label = <><Badge>{ count }</Badge> <span>{ d.toDateString() }</span></>;
           return { 
             content: label, 
-            onAction: (e) => setSelectedDateChange(d),
+            onAction: (e) => setSelectedDateChange(e),
           }
         })}
       />

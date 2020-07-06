@@ -28,7 +28,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     available: {
       type: DataTypes.BOOLEAN,
-      defaultValue: true,
+      defaultValue: '0',
     },
     /*
     shopId: {

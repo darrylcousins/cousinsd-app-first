@@ -38,7 +38,6 @@ const createDocDefinition = ({ data, delivered }) => {
     layout: 'noBorders',
   }
   const length = Object.keys(orders).length;
-  let labels = Array();
   let counter = 0;
   for (let j=0; j<length; j++) {
     var order = orders[`order${j}`];
@@ -58,8 +57,8 @@ const createDocDefinition = ({ data, delivered }) => {
         let node = lineItems[i].node;
         if (node.product.productType == 'Box Produce') {
           produce.push(node.product.handle);
-        };
-      };
+        }
+      }
       if (lineItems[i].node.product.productType == 'Veggie Box') {
         var customAttributes = lineItems[i].node.customAttributes.reduce(
           (acc, curr) => Object.assign(acc, { [`${curr.key}`]: curr.value }),
@@ -102,7 +101,7 @@ const createDocDefinition = ({ data, delivered }) => {
           );
           table.table.body.push(['\n\n']);
           bothColumns[counter%2].push(table);
-          var table = {
+          table = {
             table: {
               widths: [250],
               body: [

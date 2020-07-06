@@ -1,21 +1,9 @@
-import React, { useRef, useEffect, useState, useCallback } from 'react';
+import React, { useRef, useEffect } from 'react';
 import './order.css';
 
 export default function LineItemProductList({ list, produce }) {
 
-  //console.log(items);
-  /*
-  const temp = list.split(',').map(el => {
-    if (!produce) return el;
-    const handle = el.replace(' ', '_').toLowerCase();
-    if (produce.indexOf(handle) == -1) return '';
-    return el;
-  });
-  const products = temp.filter(el => (el != ''));
-  */
-
   const products = list.split(',').filter(el => {
-    return true;
     if (!produce) return true;
     const handle = el.replace(' ', '_').toLowerCase();
     return (produce.indexOf(handle) > -1);
@@ -36,5 +24,3 @@ export default function LineItemProductList({ list, produce }) {
     </ul>
   );
 }
-
-

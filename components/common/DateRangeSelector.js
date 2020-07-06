@@ -1,14 +1,11 @@
 import React, { useState, useCallback } from 'react';
 import {
-  Banner,
   Button,
   DatePicker,
-  Loading,
   Popover,
 } from '@shopify/polaris';
-import { Query, Mutation } from 'react-apollo';
-import { useQuery } from '@apollo/react-hooks';
-import { LocalApolloClient, resetStore } from '../../graphql/local-client';
+import { useQuery } from '@apollo/client';
+import { LocalApolloClient } from '../../graphql/local-client';
 import { dateToISOString } from '../../lib';
 import { 
   GET_SELECTED_DATE,
@@ -16,7 +13,6 @@ import {
 
 export default function DateRangeSelector({ handleDateChange, disabled }) {
 
-  const ShopId = SHOP_ID;
   const [popoverActive, setPopoverActive] = useState(false);
   const togglePopoverActive = useCallback(
     () => setPopoverActive((popoverActive) => !popoverActive),

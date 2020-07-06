@@ -6,7 +6,7 @@ const { default: graphQLProxy } = require('@shopify/koa-shopify-graphql-proxy');
 const { ApiVersion } = require('@shopify/koa-shopify-graphql-proxy');
 const { verifyRequest } = require('@shopify/koa-shopify-auth');
 const session = require('koa-session');
-const Router = require('koa-router');
+const Router = require('@koa/router');
 const {receiveWebhook, registerWebhook} = require('@shopify/koa-shopify-webhooks');
 const bodyParser = require('koa-body');
 const pdfMakePrinter = require('pdfmake/src/printer');
@@ -298,7 +298,7 @@ app.prepare().then(() => {
   });
   /* end handle pdf creation */
 
-  router.get('*', verifyRequest(), async (ctx) => {
+  router.get('/(.*)', verifyRequest(), async (ctx) => {
     await handle(ctx.req, ctx.res);
     ctx.respond = false;
     ctx.res.statusCode = 200;

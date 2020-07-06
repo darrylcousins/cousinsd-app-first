@@ -13,7 +13,7 @@ import {
 import {
   MobileCancelMajorMonotone,
 } from '@shopify/polaris-icons';
-import { Query } from 'react-apollo';
+import { Query } from '@apollo/react-components';
 import { LocalApolloClient } from '../graphql/local-client';
 import { printCache } from '../components/common/ShowCache';
 import ProductList from '../components/products/ProductList';

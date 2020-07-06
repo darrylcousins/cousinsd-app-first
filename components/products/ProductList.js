@@ -1,14 +1,12 @@
-import React, { useState, useCallback } from 'react';
+import React from 'react';
 import {
   Banner,
-  Button,
   DataTable,
   EmptyState,
   Layout,
   Loading,
-  TextStyle,
 } from '@shopify/polaris';
-import { Query } from 'react-apollo';
+import { Query } from '@apollo/react-components';
 import { ShopifyApolloClient } from '../../graphql/shopify-client';
 import { LocalApolloClient } from '../../graphql/local-client';
 import { LoadingPageMarkup } from '../common/LoadingPageMarkup';
@@ -37,8 +35,7 @@ export default function ProductList({ shopUrl }) {
       variables={ { input } }
       notifyOnNetworkStatusChange
       >
-      {({ loading, error, data, refetch, networkStatus }) => {
-        //console.log('GetBox Network status:', networkStatus);
+      {({ loading, error, data }) => {
         const isError = error && (
           <Banner status="critical">{error.message}</Banner>
         );
@@ -54,6 +51,7 @@ export default function ProductList({ shopUrl }) {
           [
             (
               <Editable 
+                key={0}
                 title={product.title}
                 id={product.shopify_gid}
                 fieldName='title'
@@ -65,6 +63,7 @@ export default function ProductList({ shopUrl }) {
             ),
             (
               <Switch
+                key={1}
                 id={product.id}
                 fieldName='available'
                 client={LocalApolloClient}
@@ -76,6 +75,7 @@ export default function ProductList({ shopUrl }) {
             ),
             (
               <ProductShopPrice
+                key={2}
                 id={product.shopify_gid}
                 adminUrl={adminUrl}
                 productId={product.shopify_id}
@@ -92,9 +92,9 @@ export default function ProductList({ shopUrl }) {
               <DataTable
                 columnContentTypes={Array(2).fill('text').concat(['number'])}
                 headings={[
-                  <strong>Title</strong>,
-                  <strong>Available</strong>,
-                  <strong>Store Product Price</strong>,
+                  <strong key={0}>Title</strong>,
+                  <strong key={1}>Available</strong>,
+                  <strong key={2}>Store Product Price</strong>,
                 ]}
                 rows={rows}
               />
@@ -108,8 +108,8 @@ export default function ProductList({ shopUrl }) {
                   >
                       <p style={{ textAlign: 'left' }}>
                         Add products on your store, be sure to set<br />
-                        <strong>Product Type</strong> as <strong>"Box Produce"</strong>,<br />
-                        <strong>Vendor</strong> as <strong>"Spring Collective"</strong>
+                        <strong>Product Type</strong> as <strong>&quot;Box Produce&quot;</strong>,<br />
+                        <strong>Vendor</strong> as <strong>&quot;Spring Collective&quot;</strong>
                       </p>
                   </EmptyState>
                 </Layout.Section>

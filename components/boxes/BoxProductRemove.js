@@ -1,4 +1,4 @@
-import React, {useState, useCallback} from 'react';
+import React from 'react';
 import {
   Banner,
   Button,
@@ -11,7 +11,7 @@ import {
 import {
   CircleMinusOutlineMinor,
 } from '@shopify/polaris-icons';
-import { Mutation } from 'react-apollo';
+import { Mutation } from '@apollo/react-components';
 import { LocalApolloClient } from '../../graphql/local-client';
 import {
   BOX_REMOVE_PRODUCT,
@@ -41,11 +41,13 @@ export default function BoxProductRemove({ boxId, product, refetch, isAddOn }) {
           <Banner status="critical">{error.message}</Banner>
         )}
 
+        console.log(data);
+
         const handleProductRemove = () => {
           const productId = parseInt(product.id);
           const input = { boxId, productId, isAddOn };
           productRemove({ variables: { input } })
-            .then((value) => {
+            .then(() => {
               refetch();
           }).catch((error) => {
             console.log('error', error);

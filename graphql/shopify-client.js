@@ -1,7 +1,5 @@
-import ApolloClient from 'apollo-boost';
-import { HttpLink } from 'apollo-link-http';
-import { createHttpLink } from 'apollo-link-http';
-import fetch from 'node-fetch';
+import { ApolloClient, createHttpLink } from '@apollo/client';
+import fetch from 'isomorphic-fetch';
 
 export const ShopifyApolloClient = new ApolloClient({
   uri: `${HOST}/graphql`,

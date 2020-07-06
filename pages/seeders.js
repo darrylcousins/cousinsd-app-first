@@ -13,7 +13,7 @@ import {
   TextContainer,
   TextField,
 } from '@shopify/polaris';
-import fetch from 'node-fetch';
+import fetch from 'isomorphic-fetch';
 import { SeedOrders } from '../lib/order-seeder';
 import { GET_ALL_ORDERS } from '../components/orders/queries';
 

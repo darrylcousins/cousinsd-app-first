@@ -3,17 +3,14 @@ import {
   Banner,
   Button,
   ButtonGroup,
-  Heading,
   Loading,
   Stack,
   Sheet,
   TextStyle,
 } from '@shopify/polaris';
-import { Mutation } from 'react-apollo';
-import { useQuery } from '@apollo/react-hooks';
-import { execute, makePromise } from 'apollo-link';
+import { Mutation } from '@apollo/react-components';
+import { execute, makePromise } from '@apollo/client';
 import { LocalApolloClient, LocalHttpLink } from '../../graphql/local-client';
-import { dateToISOString, findErrorMessage } from '../../lib';
 import SheetHelper from '../common/SheetHelper';
 import BoxAddSelectDate from './BoxAddSelectDate';
 import { 
@@ -35,7 +32,8 @@ export default function BoxDuplicate({ open, box, onComplete, onCancel }) {
   const [duplicateLoading, setDuplicateLoading] = useState(false);
 
   const [dateError, setDateError] = useState(false);
-  const [dateMessage, setDateMessage] = useState(true);
+  //const [dateMessage, setDateMessage] = useState(true);
+  const dateMessage = true; // eslint
 
   useEffect(() => {
     setInstance(box);
@@ -94,7 +92,7 @@ export default function BoxDuplicate({ open, box, onComplete, onCancel }) {
                 })
                 .catch(err => console.log(err))
                 .finally(console.log('Got all the way here'));
-            };
+            }
 
             const handleBoxDuplicate = (e) => {
               setDuplicateLoading(true);
@@ -103,7 +101,7 @@ export default function BoxDuplicate({ open, box, onComplete, onCancel }) {
                 setDuplicateLoading(false);
                 e.stopPropagation();
                 return false;
-              };
+              }
               const tempDate = selectedDate;
               const delivered = tempDate.toDateString();
               const shopify_gid = instance.shopify_gid;

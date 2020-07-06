@@ -1,5 +1,4 @@
 import React, {useState, useCallback} from 'react';
-import PropTypes from 'prop-types';
 import {
   Banner,
   Button,
@@ -9,18 +8,15 @@ import {
   Spinner,
   TextStyle,
 } from '@shopify/polaris';
-import { Mutation } from 'react-apollo';
+import { Mutation } from '@apollo/react-components';
 import { LocalApolloClient } from '../../graphql/local-client';
 import { dateToISOString } from '../../lib';
 
 export default function ItemDatePicker(props) {
 
-  const {id, fieldName, date, mutation, refetch, variation, ...args} = props;
+  const {id, fieldName, date, mutation, refetch, variation} = props;
 
   const [popoverActive, setPopoverActive] = useState(false);
-
-  const [saveActive, setSaveActive] = useState(false);
-
   const [selectedDate, setSelectedDate] = useState(date);
 
   const [{month, year}, setDate] = useState({
@@ -71,8 +67,9 @@ export default function ItemDatePicker(props) {
         const setSelectedDateChange = (date) => {
           setSelectedDate(date.start);
           dateChange(date.start);
-          setSaveActive(true);
         }
+
+        console.log(data);
 
         return (
           <Popover fluidContent={true} active={popoverActive} onClose={togglePopoverActive} activator={(

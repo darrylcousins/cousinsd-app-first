@@ -1,4 +1,5 @@
-const { gql } = require("apollo-server-koa");
+const { gql } = require('@apollo/client');
+const { makeExecutableSchema } = require('graphql-tools');
 
 const order = gql`
   type Order {

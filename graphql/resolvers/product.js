@@ -1,7 +1,5 @@
-const { UserInputError } = require("apollo-server-koa");
 const { Op } = require("sequelize");
-const { Shop, Product, Box } = require('../../models');
-const { dateToISOString, getFieldsFromInfo } = require('../../lib');
+const { Product } = require('../../models');
 
 const resolvers = {
   Product: {

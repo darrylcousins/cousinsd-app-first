@@ -5,7 +5,6 @@ import {
   TextContainer,
   SkeletonDisplayText,
   SkeletonBodyText,
-  Spinner,
 } from '@shopify/polaris';
 
 export const LoadingPageMarkup = () => {

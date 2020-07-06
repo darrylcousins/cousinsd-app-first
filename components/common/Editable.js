@@ -1,7 +1,5 @@
 import React, {useState, useCallback} from 'react';
-import PropTypes from 'prop-types';
 import {
-  Banner,
   Button,
   InlineError,
   Loading,
@@ -9,12 +7,12 @@ import {
   TextField,
   TextStyle,
 } from '@shopify/polaris';
-import { Mutation } from 'react-apollo';
+import { Mutation } from '@apollo/react-components';
 import { findErrorMessage } from '../../lib';
 
 export function Editable(props) {
 
-  const {id, fieldName, title, client, mutation, update, textStyle, type, ...args} = props;
+  const {id, fieldName, title, client, mutation, update, textStyle, type} = props;
 
   let fieldType = 'text';
   if (type) fieldType = type;
@@ -52,9 +50,11 @@ export function Editable(props) {
             input[fieldName] = value;
             console.log(input);
             handleTitleChange({ variables: { input } })
-              .then((value) => setEditing(false));
+              .then(() => setEditing(false));
           }
         }
+
+        console.log(data);
 
         return (
           editing ?

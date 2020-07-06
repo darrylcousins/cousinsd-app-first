@@ -24,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     isAddOn: {
       type: DataTypes.BOOLEAN,
-      defaultValue: false,
+      defaultValue: '0',
     },
   }, {});
   BoxProduct.associate = function(models) {

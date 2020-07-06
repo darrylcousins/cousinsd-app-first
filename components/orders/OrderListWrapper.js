@@ -1,19 +1,11 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import fetch from 'node-fetch';
 import {
-  Banner,
   Button,
   ButtonGroup,
   Checkbox,
-  DataTable,
-  EmptyState,
-  Heading,
-  Layout,
-  Loading,
-  TextStyle,
 } from '@shopify/polaris';
-import { execute, makePromise } from 'apollo-link';
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery, execute, makePromise } from '@apollo/client';
 import { ShopifyHttpLink } from '../../graphql/shopify-client';
 import { LocalApolloClient, LocalHttpLink } from '../../graphql/local-client';
 import { dateToISOString } from '../../lib';
@@ -32,8 +24,6 @@ export default function OrderListWrapper({ shopUrl }) {
   const { data } = useQuery(GET_SELECTED_DATE, { client: LocalApolloClient });
   const [delivered, setDelivered] = useState(data.selectedDate);
   const [labelLoading, setLabelLoading] = useState(false);
-  const [fulfillmentLoading, setFulfillmentLoading] = useState(false);
-  const [delivery_date, including, addons, removed] = LABELKEYS;
 
   /* checkbox stuff */
   const [checkedIds, setCheckedIds] = useState([]);
@@ -48,7 +38,7 @@ export default function OrderListWrapper({ shopUrl }) {
     }
     }, [checkedIds]);
 
-  const handleCheckAll = useCallback((checked, value) => {
+  const handleCheckAll = useCallback((checked) => {
     if (checked) setCheckedIds(ids);
     if (!checked) setCheckedIds([]);
   }, [ids, checkedIds]);

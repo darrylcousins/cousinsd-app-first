@@ -1,4 +1,4 @@
-import gql from 'graphql-tag';
+import gql from '@apollo/client';
 
 export const PRODUCT_UPDATE= gql`
   mutation productUpdate($input: ProductInput!) {

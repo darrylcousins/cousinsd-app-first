@@ -11,7 +11,7 @@ import {
   CirclePlusOutlineMinor
 } from '@shopify/polaris-icons';
 import { ResourcePicker } from '@shopify/app-bridge-react';
-import { Mutation } from 'react-apollo';
+import { Mutation } from '@apollo/react-components';
 import { LocalApolloClient } from '../../graphql/local-client';
 import {
   BOX_ADD_PRODUCTS,
@@ -47,6 +47,8 @@ export default function BoxProductAdd({ boxId, isAddOn, refetch }) {
           <Banner status="critical">{error.message}</Banner>
         )}
 
+        console.log(data);
+
         const handleResourceSelection = ({ selection }) => {
           handleResourcePickerClose();
           const productGids = selection
@@ -58,7 +60,7 @@ export default function BoxProductAdd({ boxId, isAddOn, refetch }) {
             isAddOn
           };
           handleAdd({ variables: { input } })
-            .then((value) => {
+            .then(() => {
               refetch();
           }).catch((error) => {
             console.log('error', error);

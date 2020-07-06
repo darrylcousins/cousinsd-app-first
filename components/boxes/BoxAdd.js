@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import {
   Banner,
   Button,
@@ -6,10 +6,8 @@ import {
   Loading,
   Stack,
 } from '@shopify/polaris';
-import { Mutation } from 'react-apollo';
-import { useQuery } from '@apollo/react-hooks';
+import { Mutation } from '@apollo/react-components';
 import { LocalApolloClient } from '../../graphql/local-client';
-import { dateToISOString, findErrorMessage } from '../../lib';
 import BoxAddSelectDate from './BoxAddSelectDate';
 import BoxAddSelectName from './BoxAddSelectName';
 import BoxAddSelectProduct from './BoxAddSelectProduct';
@@ -32,10 +30,12 @@ export default function BoxAdd({ onComplete, refetch }) {
     >
       {(boxAdd, { loading, error, data }) => {
         if (loading) { return <Loading />; }
+
         const isError = error && (
           <Banner status="critical">{error.message}</Banner>
         );
 
+        console.log(data);
 
         const handleBoxAdd = () => {
           const tempDate = selectedDate;
@@ -46,11 +46,13 @@ export default function BoxAdd({ onComplete, refetch }) {
           const shopify_id = parseInt(storeProduct.id.split('/')[4]);
           const title = name;
           const input = { ShopId, title, shopify_handle, delivered, shopify_title, shopify_gid, shopify_id };
-          boxAdd({ variables: { input } }).then((value) => {
-            onComplete();
-            refetch();
-          }).catch((error) => {
-            console.log('error', error);
+          boxAdd({ variables: { input } })
+            .then(() => {
+              onComplete();
+              refetch();
+            })
+            .catch((error) => {
+              console.log('error', error);
           });
         }
 

@@ -2,13 +2,12 @@ import React, {useState, useCallback} from 'react';
 import {
   TextField,
 } from '@shopify/polaris';
-import { dateToISOString } from '../../lib';
 
 export default function BoxAddSelectName({ name, onSelect }) {
 
   const [value, setValue] = useState(name);
 
-  const handleValueChange = useCallback((newValue) => setValue(value), []);
+  const handleValueChange = useCallback((newValue) => setValue(newValue), []);
 
   const handleNameChange = (name) => {
     handleValueChange(name);

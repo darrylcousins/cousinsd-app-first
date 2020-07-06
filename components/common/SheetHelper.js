@@ -2,7 +2,6 @@ import React from 'react';
 import {
   Button,
   Heading,
-  Sheet,
 } from '@shopify/polaris';
 import {
   MobileCancelMajorMonotone,

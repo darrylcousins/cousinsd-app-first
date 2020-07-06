@@ -7,27 +7,23 @@ import {
   EmptyState,
   DataTable,
   Icon,
-  Layout,
   Loading,
   Sheet,
-  TextStyle,
 } from '@shopify/polaris';
 import {
     MinusMinor
 } from '@shopify/polaris-icons';
-import { execute, makePromise } from 'apollo-link';
-import { Query, Mutation } from 'react-apollo';
-import { useQuery, useMutation } from '@apollo/react-hooks';
+import {  } from 'apollo-link';
+import { Query } from '@apollo/react-components';
+import { execute, makePromise, useQuery } from '@apollo/client';
 import { LocalApolloClient, LocalHttpLink } from '../../graphql/local-client';
 import { LoadingPageMarkup } from '../common/LoadingPageMarkup';
 import { Editable } from '../common/Editable';
-import { dateToISOString } from '../../lib';
 import DateSelector from '../common/DateSelector';
 import ItemDatePicker from '../common/ItemDatePicker';
 import SheetHelper from '../common/SheetHelper';
 import BoxShopTitle from './BoxShopTitle';
 import BoxProductList from './BoxProductList';
-import BoxDelete from './BoxDelete';
 import BoxAdd from './BoxAdd';
 import BoxActions from './BoxActions';
 import { 
@@ -40,7 +36,6 @@ import {
 export default function BoxList({ shopUrl, addBox, toggleAddBox }) {
 
   const ShopId = SHOP_ID;
-  const adminUrl = `${shopUrl}/admin/products/`;
 
   /* boxes datatable stuff */
   const { data } = useQuery(GET_SELECTED_DATE, { client: LocalApolloClient });
@@ -83,7 +78,7 @@ export default function BoxList({ shopUrl, addBox, toggleAddBox }) {
         variables={ { input } }
         notifyOnNetworkStatusChange
       >
-        {({ loading, error, data, refetch, networkStatus }) => {
+        {({ loading, error, data, refetch }) => {
           //console.log('GetBox Network status:', networkStatus);
           const isError = error && (
             <Banner status="critical">{error.message}</Banner>
@@ -99,6 +94,7 @@ export default function BoxList({ shopUrl, addBox, toggleAddBox }) {
             [
               (
                 <Checkbox 
+                  key={0}
                   id={box.id}
                   label={box.title}
                   labelHidden={true}
@@ -108,6 +104,7 @@ export default function BoxList({ shopUrl, addBox, toggleAddBox }) {
               ),
               (
                 <Editable 
+                  key={1}
                   title={box.title}
                   id={box.id}
                   fieldName='title'
@@ -118,10 +115,12 @@ export default function BoxList({ shopUrl, addBox, toggleAddBox }) {
                 />
               ),
               <BoxShopTitle
+                key={2}
                 id={parseInt(box.id)}
                 title={box.shopify_title}
               />,
               <ItemDatePicker
+                key={3}
                 id={parseInt(box.id)}
                 refetch={refetch}
                 mutation={UPDATE_BOX}
@@ -130,10 +129,12 @@ export default function BoxList({ shopUrl, addBox, toggleAddBox }) {
                 variation='subdued'
               />,
               <BoxProductList
+                key={4}
                 id={parseInt(box.id)}
                 isAddOn={false}
               />,
               <BoxProductList
+                key={5}
                 id={parseInt(box.id)}
                 isAddOn={true}
               />,
@@ -186,6 +187,7 @@ export default function BoxList({ shopUrl, addBox, toggleAddBox }) {
                   headings={[
                     ( checked ? (
                       <Button 
+                        key={0}
                         plain
                         onClick={() => clearChecked()}
                       >
@@ -202,11 +204,11 @@ export default function BoxList({ shopUrl, addBox, toggleAddBox }) {
                         </div>
                       </Button>
                     ) : '' ),
-                    <strong>Title</strong>,
-                    <strong>Store Product</strong>,
-                    <strong>Delivery Date</strong>,
-                    <strong>Included Produce</strong>,
-                    <strong>Add On Produce</strong>,
+                    <strong key={1}>Title</strong>,
+                    <strong key={2}>Store Product</strong>,
+                    <strong key={3}>Delivery Date</strong>,
+                    <strong key={4}>Included Produce</strong>,
+                    <strong key={5}>Add On Produce</strong>,
                   ]}
                   rows={rows}
                 />

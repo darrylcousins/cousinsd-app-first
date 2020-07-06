@@ -8,8 +8,7 @@ import {
   Stack,
   TextStyle,
 } from '@shopify/polaris';
-import { Query, Mutation } from 'react-apollo';
-import { useQuery, useMutation } from '@apollo/react-hooks';
+import { Query } from '@apollo/react-components';
 import { LocalApolloClient } from '../../graphql/local-client';
 import BoxProductAdd from './BoxProductAdd';
 import BoxProductRemove from './BoxProductRemove';
