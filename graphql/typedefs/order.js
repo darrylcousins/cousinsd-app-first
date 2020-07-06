@@ -32,6 +32,7 @@ const order = gql`
     getOrderDates: [OrderDate]
     getOrder(input: OrderIdInput!): Order
     getOrders(input: OrderSearchInput!): [Order]
+    getAllOrders(input: ShopIdInput!): [Order]
   }
 `;
 

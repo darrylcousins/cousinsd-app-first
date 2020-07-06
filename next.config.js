@@ -12,6 +12,7 @@ module.exports = withCSS({
   webpack: (config, options) => {
     const env = { 
       API_KEY: JSON.stringify(process.env.SHOPIFY_API_KEY),
+      API_VERSION: JSON.stringify(process.env.API_VERSION),
       SHOP_ID: JSON.stringify(process.env.SHOP_ID),
       SHOP_PASSWORD: JSON.stringify(process.env.SHOP_PASSWORD),
       SHOP_USERNAME: JSON.stringify(process.env.SHOP_USERNAME),

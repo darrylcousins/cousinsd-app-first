@@ -58,7 +58,7 @@ export default function BoxList({ shopUrl, addBox, toggleAddBox }) {
       .catch(error => {
         console.log('get date errors:', error);
       })
-  }, []);
+  }, [input]);
 
   /* checkbox stuff */
   const [checkedId, setCheckedId] = useState(0);
@@ -141,11 +141,14 @@ export default function BoxList({ shopUrl, addBox, toggleAddBox }) {
           ));
           /* end datatable stuff */
 
-          const refetchQuery = () => refetch({ input });
+          const refetchQuery = () => {
+            const temp = { ...input };
+            setInput(temp);
+            refetch({ input });
+          }
 
           const handleDateChange = (date) => {
             const input = { ShopId, delivered: date};
-            console.log('box date change', date);
             setDelivered(date);
             setInput(input);
             refetch({ input });

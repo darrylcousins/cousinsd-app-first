@@ -60,14 +60,10 @@ export default function OrderListWrapper({ shopUrl }) {
 
   /* absolutely vital, collect this data before anything else */
   useEffect(() => {
-    console.log('do we get here at all', input);
     makePromise(execute(LocalHttpLink, { query: GET_ORDERS, variables: { input } }))
       .then(async response => {
         const res = await response;
-        console.log(input);
-        console.log(response);
         const orderids = res.data.getOrders.map(el => el.shopify_order_id);
-        console.log('got ids', orderids);
         if (orderids.length > 0) {
           setQuery(getQuery(orderids));
           setIds(orderids.map(el => el.toString()));

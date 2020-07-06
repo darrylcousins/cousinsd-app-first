@@ -18,6 +18,13 @@ const resolvers = {
       });
       return order;
     },
+    async getAllOrders(root, { input }, { models }, info) {
+      let { ShopId } = input;
+      const orders = await Order.findAll({
+        where: { ShopId },
+      });
+      return orders
+    },
     async getOrders(root, { input }, { models }, info) {
       let { ShopId, delivered } = input;
       if (!delivered) delivered = dateToISOString(new Date());
@@ -25,7 +32,6 @@ const resolvers = {
         where: { ShopId, delivered: {[Op.eq]: delivered} },
         order: [['delivered', 'ASC']],
       });
-      console.log('these ordeers', orders);
       return orders
     },
     async getOrderDates(root, { input }, { models }, info){

@@ -22,6 +22,12 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
+    shopify_variant_id: {
+      type: DataTypes.BIGINT,
+    },
+    shopify_price: {
+      type: DataTypes.INTEGER,
+    },
     delivered: {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,

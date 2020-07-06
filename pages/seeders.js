@@ -7,15 +7,25 @@ import {
   Form,
   FormLayout,
   Heading,
+  Modal,
   List,
   Spinner,
+  TextContainer,
   TextField,
 } from '@shopify/polaris';
 import fetch from 'node-fetch';
+import { SeedOrders } from '../lib/order-seeder';
+import { GET_ALL_ORDERS } from '../components/orders/queries';
 
 export default function Index() {
 
   const ShopId = SHOP_ID;
+
+  /* modal stuff */
+  const [modalOpen, setModalOpen] = useState(false);
+  /* end modal stuff */
+
+  const toggleModalOpen = useCallback(() => setModalOpen(!modalOpen), [modalOpen]);
 
   const [customerLoading, setCustomerLoading] = useState(false);
   const [orderLoading, setOrderLoading] = useState(false);
@@ -121,7 +131,14 @@ export default function Index() {
   };
 
   const seedOrders = () => {
-    for (let i=1; i<=5; i++) {
+    setOrderLoading(true);
+    const count = 1;
+    SeedOrders({ count });
+    setOrderLoading(false);
+
+    return false;
+
+    for (let i=1; i<1; i++) {
       setOrderLoading(true);
       let data = require(`../shopify_seeders/orders/${i}.json`);
       data = JSON.stringify(data);
@@ -144,7 +161,27 @@ export default function Index() {
   };
 
   const deleteOrders = () => {
+    setDeleteOrdersLoading(true);
+    toggleModalOpen(false);
+    console.log('Deleting all orders');
+    const url = `${HOST}/api/orders/${orderId}`;
+    console.log(url);
+    setDeleteOrdersLoading(false);
     return false;
+    postDelete({ url })
+      .then(res => {
+        console.log(res.status, res.statusText);
+        return res.json();
+      })
+      .then(json => {
+        console.log(json);
+        setDeleteOrderLoading(false);
+        setOrderId('');
+      })
+      .catch(err => {
+        console.log(err);
+        setDeleteOrdersLoading(false);
+      })
   };
 
   const getWebhooks = () => {
@@ -234,8 +271,7 @@ export default function Index() {
             <Heading>Delete all</Heading>
             <ButtonGroup segmented>
               <Button
-                disabled
-                onClick={deleteOrders}
+                onClick={() => setModalOpen(true)}
                 loading={deleteOrdersLoading}
               >Delete all orders</Button>
             </ButtonGroup>
@@ -288,6 +324,31 @@ export default function Index() {
           </div>
         </Card>
       </div>
+      <Modal
+        open={modalOpen}
+        onClose={toggleModalOpen}
+        title={`Are you sure you want to delete all orders?`}
+        primaryAction={{
+          content: "Yes, I'm sure",
+          onAction: deleteOrders,
+          destructive: true,
+        }}
+        secondaryActions={[
+          {
+            content: 'Cancel',
+            onAction: toggleModalOpen,
+          },
+        ]}
+      >
+        <Modal.Section>
+            <TextContainer>
+              <p>
+                Deleting all orders. 
+                This action cannot be undone.
+              </p>
+            </TextContainer>
+        </Modal.Section>
+      </Modal>
     </Frame>
   );
 }

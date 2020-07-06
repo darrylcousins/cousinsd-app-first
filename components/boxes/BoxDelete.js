@@ -20,7 +20,7 @@ import {
 
 export default function BoxDelete({ open, box, onComplete, onCancel }) {
 
-  /* checkbox stuff */
+  /* modal stuff */
   const [modalOpen, setModalOpen] = useState(open);
   const [instance, setInstance] = useState(box);
 

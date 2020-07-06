@@ -13,6 +13,14 @@ export const GET_ORDERS = gql`
   }
 `;
 
+export const GET_ALL_ORDERS = gql`
+  query getAllOrders($input: ShopIdInput!) {
+    getAllOrders(input: $input) {
+      shopify_order_id
+    }
+  }
+`;
+
 export const GET_ORDER_DATES = gql`
   query getOrderDates {
     getOrderDates {

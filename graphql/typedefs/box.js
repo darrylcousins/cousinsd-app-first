@@ -9,6 +9,8 @@ const box = gql`
     shopify_gid: String!
     shopify_title: String!
     shopify_handle: String!
+    shopify_variant_id: BigInt!
+    shopify_price: Int!
     ShopId: Int!
     createdAt: String!
     updatedAt: String!
@@ -30,6 +32,8 @@ const box = gql`
     shopify_gid: String!
     shopify_title: String!
     shopify_handle: String!
+    shopify_variant_id: BigInt!
+    shopify_price: Int!
   }
 
   input BoxUpdateInput {
@@ -41,6 +45,8 @@ const box = gql`
     shopify_gid: String
     shopify_title: String
     shopify_handle: String
+    shopify_variant_id: BigInt!
+    shopify_price: Int!
   }
 
   input BoxSearchInput {
