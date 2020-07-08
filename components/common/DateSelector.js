@@ -29,7 +29,12 @@ export default function DateSelector({ handleDateChange, disabled, dates }) {
     setSelectedDate(date);
     const dateString = dateToISOString(date);
     setDelivered(dateString);
-    LocalApolloClient.writeData({ data: { selectedDate: dateString }})
+    LocalApolloClient.writeQuery({
+      query: GET_SELECTED_DATE,
+      data: {
+        selectedDate: dateString,
+      }
+    });
     togglePopoverActive();
     handleDateChange(dateString);
   }
@@ -54,7 +59,7 @@ export default function DateSelector({ handleDateChange, disabled, dates }) {
           const label = <><Badge>{ count }</Badge> <span>{ d.toDateString() }</span></>;
           return { 
             content: label, 
-            onAction: (e) => setSelectedDateChange(e),
+            onAction: () => setSelectedDateChange(d),
           }
         })}
       />

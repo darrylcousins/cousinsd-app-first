@@ -2,7 +2,7 @@ import { dateToISOString } from '../../lib';
 
 const createDocDefinition = ({ data, delivered }) => {
 
-  const [delivery_date, including, addons, removed] = LABELKEYS;
+  const [delivery_date, including, addons, removed, subscription] = LABELKEYS;
   
   const orders = data.data;
   const dd = {
@@ -110,7 +110,6 @@ const createDocDefinition = ({ data, delivered }) => {
             layout: 'noBorders',
           }
           counter++;
-          console.log('table counter after', counter, 'column:', counter%2)
         }
       }
     }

@@ -45,18 +45,14 @@ export default function BoxList({ shopUrl, addBox, toggleAddBox }) {
   /* end boxes datatable stuff */
 
   useEffect(() => {
-    /*
-    makePromise(execute(LocalHttpLink, { query: GET_BOX_DATES }))
-      .then(async response => {
-        const res = await response;
-        setDates(res.data.getBoxDates.map(el => ({ delivered: el.delivered, count: el.count })));
-      })
-      .catch(error => {
-        console.log('get date errors:', error);
-      })
-      */
-    const res = useQuery(GET_BOX_DATES, { client: LocalApolloClient });
-    setDates(res.data.getBoxDates.map(el => ({ delivered: el.delivered, count: el.count })));
+    execute(LocalHttpLink, { query: GET_BOX_DATES })
+      .subscribe({
+        next: (res) => {
+          setDates(res.data.getBoxDates.map(el => ({ delivered: el.delivered, count: el.count })));
+        },
+        error: (err) => console.log('get orders error', err),
+        //complete: () => console.log('execute orders complete'),
+      });
   }, [input]);
 
   /* checkbox stuff */

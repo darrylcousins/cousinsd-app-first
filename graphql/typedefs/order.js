@@ -16,13 +16,26 @@ const order = gql`
   }
 
   type OrderDate {
-    delivered: String
-    count: Int
+    delivered: String!
+    count: Int!
   }
 
   input OrderSearchInput {
     ShopId: ID!
-    delivered: String
+    delivered: String!
+    offset: Int!
+    limit: Int!
+  }
+
+  input OrderDuplicateInput {
+    ShopId: ID!
+    delivered: String!
+    shopify_product_id: BigInt!
+    shopify_customer_id: BigInt!
+  }
+
+  input OrderShopIdInput {
+    ShopId: ID!
   }
 
   input OrderIdInput {
@@ -33,9 +46,9 @@ const order = gql`
     getOrderDates: [OrderDate]
     getOrder(input: OrderIdInput!): Order
     getOrders(input: OrderSearchInput!): [Order]
-    getAllOrders(input: ShopIdInput!): [Order]
+    getAllOrders(input: OrderShopIdInput!): [Order]
+    checkOrderDuplicate(input: OrderDuplicateInput!): Order
   }
 `;
 
 module.exports = order;
-

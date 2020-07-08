@@ -31,7 +31,7 @@ export default function BoxDelete({ open, box, onComplete, onCancel }) {
       client={LocalApolloClient}
       mutation={DELETE_BOX}
     >
-      {(boxDelete, { loading, error, data }) => {
+      {(boxDelete, { loading, error }) => {
         const isError = error && (
           <Banner status="critical">{error.message}</Banner>
         );
@@ -41,8 +41,6 @@ export default function BoxDelete({ open, box, onComplete, onCancel }) {
             <Spinner />
           </React.Fragment>
         );
-
-        console.log(data);
 
         const deleteBox = () => {
           const input = { id: instance.id }

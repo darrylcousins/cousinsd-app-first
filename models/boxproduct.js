@@ -12,6 +12,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       onUpdate: 'CASCADE',
       onDelete: 'SET NULL',
+      unique: 'compositeIndex',
     },
     ProductId: {
       type: DataTypes.INTEGER,
@@ -21,6 +22,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       onUpdate: 'CASCADE',
       onDelete: 'SET NULL',
+      unique: 'compositeIndex',
     },
     isAddOn: {
       type: DataTypes.BOOLEAN,

@@ -5,6 +5,7 @@ import {
   Button,
   DataTable,
   Loading,
+  Pagination,
 } from '@shopify/polaris';
 import { Query } from '@apollo/react-components';
 import { ShopifyApolloClient } from '../../graphql/shopify-client';
@@ -15,7 +16,7 @@ import LineItemProductList from './LineItemProductList';
 export default function OrderList({ query, shopUrl, input, checkbox, LineCheckbox }) {
 
   const adminUrl = `${shopUrl}/admin/orders/`;
-  const [delivery_date, including, addons, removed] = LABELKEYS;
+  const [delivery_date, including, addons, removed, subscription] = LABELKEYS;
 
   const getBadge = (text) => {
     var progress = '';
@@ -44,7 +45,6 @@ export default function OrderList({ query, shopUrl, input, checkbox, LineCheckbo
       query={query}
       fetchPolicy='no-cache'
       variables={ { input } }
-      notifyOnNetworkStatusChange
       >
       {({ loading, error, data }) => {
         const isError = error && (
@@ -59,6 +59,8 @@ export default function OrderList({ query, shopUrl, input, checkbox, LineCheckbo
 
         /* datatable stuff */
         let rows = Array();
+
+        // XXX TODO handle no data
 
         if (!loading) {
           for (const [ key, order ] of Object.entries(data)) {
@@ -110,8 +112,8 @@ export default function OrderList({ query, shopUrl, input, checkbox, LineCheckbo
                   row.push(<LineItemProductList key={i} list={attrs[addons]} produce={produce} />);
                   row.push(<LineItemProductList key={i} list={attrs[removed]} />);
                   row.push(<OrderAddress address={order.shippingAddress} />);
-                  done = true;
                   rows.push(row);
+                  done = true;
                   row = Array();
                 }
               }

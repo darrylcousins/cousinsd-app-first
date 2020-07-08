@@ -33,7 +33,7 @@ export default function BoxProductAdd({ boxId, isAddOn, refetch }) {
       mutation={BOX_ADD_PRODUCTS}
       fetchPolicy='no-cache'
     >
-      {(handleAdd, { loading, error, data }) => {
+      {(handleAdd, { loading, error }) => {
         if (loading) { 
           return (
             <React.Fragment>
@@ -46,8 +46,6 @@ export default function BoxProductAdd({ boxId, isAddOn, refetch }) {
         if (error) { return (
           <Banner status="critical">{error.message}</Banner>
         )}
-
-        console.log(data);
 
         const handleResourceSelection = ({ selection }) => {
           handleResourcePickerClose();

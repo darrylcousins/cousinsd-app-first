@@ -51,6 +51,8 @@ export const GET_BOX = gql`
       shopify_handle
       shopify_gid
       shopify_id
+      shopify_variant_id
+      shopify_price
     }
   }
 `;
@@ -64,6 +66,8 @@ export const GET_BOXES = gql`
       shopify_title
       shopify_gid
       shopify_id
+      shopify_variant_id
+      shopify_price
     }
   }
 `;

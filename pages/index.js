@@ -63,15 +63,6 @@ export default function Index() {
   ];
   /* end tab stuff */
 
-/*
-secondaryActions={[
-  {
-    content: 'Show Cache',
-    onAction: () => printCache(),
-  },
-]}
-*/
-
   const input = { id: ShopId };
   return (
     <Frame>

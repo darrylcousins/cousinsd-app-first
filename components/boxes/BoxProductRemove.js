@@ -28,7 +28,7 @@ export default function BoxProductRemove({ boxId, product, refetch, isAddOn }) {
       client={LocalApolloClient}
       mutation={BOX_REMOVE_PRODUCT}
     >
-      {(productRemove, { loading, error, data }) => {
+      {(productRemove, { loading, error }) => {
         if (loading) { 
           return (
             <React.Fragment>
@@ -40,8 +40,6 @@ export default function BoxProductRemove({ boxId, product, refetch, isAddOn }) {
         if (error) { return (
           <Banner status="critical">{error.message}</Banner>
         )}
-
-        console.log(data);
 
         const handleProductRemove = () => {
           const productId = parseInt(product.id);
@@ -55,7 +53,6 @@ export default function BoxProductRemove({ boxId, product, refetch, isAddOn }) {
         };
 
         const textStyle = product.available === true ? 'strong' : 'subdued';
-        console.log(product.available, textStyle);
 
         return (
           <Stack>

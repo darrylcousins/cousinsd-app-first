@@ -14,7 +14,7 @@ export const GET_ORDERS = gql`
 `;
 
 export const GET_ALL_ORDERS = gql`
-  query getAllOrders($input: ShopIdInput!) {
+  query getAllOrders($input: OrderShopIdInput!) {
     getAllOrders(input: $input) {
       shopify_order_id
     }

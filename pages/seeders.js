@@ -14,7 +14,10 @@ import {
   TextField,
 } from '@shopify/polaris';
 import fetch from 'isomorphic-fetch';
-import { SeedOrders } from '../lib/order-seeder';
+import { execute } from '@apollo/client';
+import { LocalHttpLink } from '../graphql/local-client';
+import { OrderSeeder } from '../lib/order-seeder';
+import { makePromise } from '../lib';
 import { GET_ALL_ORDERS } from '../components/orders/queries';
 
 export default function Index() {
@@ -51,6 +54,17 @@ export default function Index() {
   const getFetch = ({ url }) => {
     return fetch(url, {
       credentials: 'include',
+    })
+  };
+
+  const asyncPostFetch = async ({ data, url }) => {
+    return await fetch(url, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: data,
     })
   };
 
@@ -108,55 +122,63 @@ export default function Index() {
   };
 
   const seedCustomers = () => {
-    for (let i=3; i<=4; i++) {
-      setCustomerLoading(true);
-      let data = require(`../shopify_seeders/customers/${i}.json`);
-      data = JSON.stringify(data);
-      const url = `${HOST}/api/customers`;
-      postFetch({ data, url })
-        .then(res => {
-          console.log(res.status, res.statusText);
-          return res.json();
-        })
-        .then(json => {
-          console.log(JSON.stringify(json, null, 2));
-          setCustomerLoading(false);
-        })
-        .catch(err => {
-          console.log(err);
-          setCustomerLoading(false);
-        })
+    setCustomerLoading(true);
+    const { customers } = require(`../shopify_seeders/customers/customers.json`);
+    const url = `${HOST}/api/customers`;
+    const task = (i) => {
+      setTimeout(() => {
+        console.log('every half sec', i);
+        const customer = customers[i];
+        const data = JSON.stringify({ customer });
+        postFetch({ data, url })
+          .then(res => {
+            console.log(res.status, res.statusText);
+            return res.json();
+          })
+          .then(json => {
+            console.log(json.customer.email);
+            setCustomerLoading(false);
+          })
+          .catch(err => {
+            console.log(err);
+            setCustomerLoading(false);
+          })
+      }, 600 * i);
+    };
+    for (let i=0; i<customers.length; i++) {
+      task(i);
     }
     return false;
   };
 
   const seedOrders = () => {
     setOrderLoading(true);
-    const count = 1;
-    SeedOrders({ count });
-    setOrderLoading(false);
+    const url = `${HOST}/api/orders`;
+    OrderSeeder()
+      .then((orders) => {
+        const task = (i) => {
+          const data = {
+            order: orders[i]
+          };
+          setTimeout(() => {
+            console.log(data.order.email, data.order.user_id);
+            postFetch({ data: JSON.stringify(data), url })
+              .then(res => {
+                return res.json();
+              })
+              .then(json => {
+                console.log(i, json.order.email);
+              });
+          }, 30000 * i);
+        };
+        for (let i=0; i<orders.length; i++) {
+          task(i);
+        }
+        setOrderLoading(false);
+      })
+      .then(() => {
+      });
 
-    return false;
-
-    for (let i=1; i<1; i++) {
-      setOrderLoading(true);
-      let data = require(`../shopify_seeders/orders/${i}.json`);
-      data = JSON.stringify(data);
-      const url = `${HOST}/api/orders`;
-      postFetch({ data, url })
-        .then(res => {
-          console.log(res.status, res.statusText);
-          return res.json();
-        })
-        .then(json => {
-          console.log(JSON.stringify(json, null, 2));
-          setOrderLoading(false);
-        })
-        .catch(err => {
-          console.log(err);
-          setOrderLoading(false);
-        })
-    }
     return false;
   };
 
@@ -164,24 +186,45 @@ export default function Index() {
     setDeleteOrdersLoading(true);
     toggleModalOpen(false);
     console.log('Deleting all orders');
-    const url = `${HOST}/api/orders/${orderId}`;
-    console.log(url);
-    setDeleteOrdersLoading(false);
-    return false;
-    postDelete({ url })
-      .then(res => {
-        console.log(res.status, res.statusText);
-        return res.json();
+    const variables = { input: { ShopId } };
+    makePromise(execute(LocalHttpLink, { query: GET_ALL_ORDERS, variables }))
+      .then(({ data }) => {
+        const orderIds = data.getAllOrders.map(el => el.shopify_order_id);
+        console.log(orderIds);
+        return orderIds;
       })
-      .then(json => {
-        console.log(json);
-        setDeleteOrderLoading(false);
-        setOrderId('');
+      .then((orderIds) => {
+        const task = (i) => {
+          setTimeout(() => {
+            console.log('every half sec', i);
+            const orderId = orderIds[i];
+            const url = `${HOST}/api/orders/${orderId}`;
+            postDelete({ url })
+              .then(res => {
+                console.log(res.status, res.statusText);
+                return res.json();
+              })
+              .then(json => {
+                console.log(json);
+                setDeleteOrderLoading(false);
+                setOrderId('');
+              })
+              .catch(err => {
+                console.log(err);
+                setDeleteOrdersLoading(false);
+              })
+          }, 600 * i);
+        };
+
+        for (let i=0; i<orderIds.length; i++) {
+          task(i);
+        }
       })
-      .catch(err => {
-        console.log(err);
+      .then(() => {
         setDeleteOrdersLoading(false);
-      })
+      });
+
+    return false;
   };
 
   const getWebhooks = () => {

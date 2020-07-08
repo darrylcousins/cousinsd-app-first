@@ -7,20 +7,23 @@ import {
   Stack,
 } from '@shopify/polaris';
 import { Mutation } from '@apollo/react-components';
+import { useQuery } from '@apollo/client';
 import { LocalApolloClient } from '../../graphql/local-client';
 import BoxAddSelectDate from './BoxAddSelectDate';
 import BoxAddSelectName from './BoxAddSelectName';
 import BoxAddSelectProduct from './BoxAddSelectProduct';
 import { 
   CREATE_BOX, 
+  GET_SELECTED_DATE,
 } from './queries';
 
 export default function BoxAdd({ onComplete, refetch }) {
 
   const ShopId = SHOP_ID;
 
+  const { data } = useQuery(GET_SELECTED_DATE, { client: LocalApolloClient });
   const [storeProduct, setStoreProduct] = useState(null);
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(new Date(Date.parse(data.selectedDate)));
   const [name, setName] = useState('');
 
   return (
@@ -35,18 +38,21 @@ export default function BoxAdd({ onComplete, refetch }) {
           <Banner status="critical">{error.message}</Banner>
         );
 
-        console.log(data);
-
         const handleBoxAdd = () => {
-          const tempDate = selectedDate;
-          const delivered = tempDate.toDateString();
-          const shopify_gid = storeProduct.id;
-          const shopify_title = storeProduct.title;
-          const shopify_handle = storeProduct.handle;
-          const shopify_id = parseInt(storeProduct.id.split('/')[4]);
-          const title = name;
-          const input = { ShopId, title, shopify_handle, delivered, shopify_title, shopify_gid, shopify_id };
-          boxAdd({ variables: { input } })
+          const variables = {
+            input: {
+              ShopId,
+              title: name,
+              delivered: selectedDate.toDateString(),
+              shopify_title: storeProduct.title,
+              shopify_gid: storeProduct.id,
+              shopify_id: parseInt(storeProduct.id.split('/')[4]),
+              shopify_handle: storeProduct.handle,
+              shopify_variant_id: parseInt(storeProduct.variants[0].id.split('/')[4]),
+              shopify_price: parseFloat(storeProduct.variants[0].price)*100,
+            }
+          };
+          boxAdd({ variables })
             .then(() => {
               onComplete();
               refetch();

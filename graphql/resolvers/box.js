@@ -35,6 +35,16 @@ const resolvers = {
       });
       return boxes
     },
+    async getCurrentBoxes(root, { input }, { models }, info) {
+      // return boxes later than a current date (usually today)
+      let { ShopId, delivered } = input;
+      if (!delivered) delivered = dateToISOString(new Date());
+      const boxes = await Box.findAll({
+        where: { ShopId, delivered: {[Op.gt]: delivered} },
+        order: [['delivered', 'ASC'], ['shopify_gid', 'ASC']],
+      });
+      return boxes
+    },
     async getBoxProducts(root, { input }, { models }, info){
       // graphql includes products
       const { id } = input;

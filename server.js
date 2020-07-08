@@ -191,7 +191,7 @@ app.prepare().then(() => {
   router.get('/api/:object', verifyRequest(), async (ctx, next) => {
     const type = ctx.params.object;
     const { shop, accessToken } = ctx.session;
-    const url = `https://${shop}/admin/api/${ApiVer}/${type}.json`;
+    const url = `https://${shop}/admin/api/${ApiVer}/${type}.json?limit=250`;
     const result = await fetch(url, {
       headers: {
         'X-Shopify-Access-Token': accessToken,

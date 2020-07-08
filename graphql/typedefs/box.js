@@ -67,6 +67,7 @@ const box = gql`
     getBoxDates: [BoxDate]
     getBox(input: BoxIdInput!): Box
     getBoxes(input: BoxSearchInput!): [Box]
+    getCurrentBoxes(input: BoxSearchInput!): [Box]
     getBoxProducts(input: BoxIdInput!): Box
     getBoxesByShopifyId(input: BoxShopifyIdInput!): [Box]
   }

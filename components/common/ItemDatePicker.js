@@ -39,7 +39,7 @@ export default function ItemDatePicker(props) {
       client={LocalApolloClient}
       mutation={mutation}
     >
-      {(handleDateChange, { loading, error, data }) => {
+      {(handleDateChange, { loading, error }) => {
         if (loading) {
           return (
             <React.Fragment>
@@ -54,9 +54,7 @@ export default function ItemDatePicker(props) {
         )}
 
         const dateChange = (tempDate) => {
-          //const tempDate = selectedDate;
           const delivered = dateToISOString(tempDate);
-          console.log(delivered);
           let input = { id };
           input[fieldName] = delivered;
           handleDateChange({ variables: { input } });
@@ -68,8 +66,6 @@ export default function ItemDatePicker(props) {
           setSelectedDate(date.start);
           dateChange(date.start);
         }
-
-        console.log(data);
 
         return (
           <Popover fluidContent={true} active={popoverActive} onClose={togglePopoverActive} activator={(

@@ -1,6 +1,5 @@
 import React from 'react';
 import '@shopify/polaris/styles.css';
-import App from 'next/app';
 import Head from 'next/head';
 import { AppProvider } from '@shopify/polaris';
 import { Provider } from '@shopify/app-bridge-react';
@@ -9,31 +8,26 @@ import { ApolloProvider } from '@apollo/client';
 import translations from '@shopify/polaris/locales/en.json';
 import { ShopifyApolloClient } from '../graphql/shopify-client';
 
-class MyApp extends App {
+const MyApp = ({ Component, pageProps }) => {
 
-  render() {
-    const { Component, pageProps } = this.props;
-    const config = { apiKey: API_KEY, shopOrigin: Cookies.get("shopOrigin"), forceRedirect: true };
+  const config = { apiKey: API_KEY, shopOrigin: Cookies.get("shopOrigin"), forceRedirect: true };
+  //console.log(config);
 
-
-    //console.log(Component.name);
-
-    return (
-      <React.Fragment>
-        <Head>
-          <title>Vege Boxes</title>
-          <meta charSet="utf-8" />
-        </Head>
-        <Provider config={config}>
-          <AppProvider i18n={translations}>
-            <ApolloProvider client={ShopifyApolloClient}>
-              <Component {...pageProps} />
-            </ApolloProvider>
-          </AppProvider>
-        </Provider>
-      </React.Fragment>
-    );
-  }
+  return (
+    <React.Fragment>
+      <Head>
+        <title>Vege Boxes</title>
+        <meta charSet="utf-8" />
+      </Head>
+      <Provider config={config}>
+        <AppProvider i18n={translations}>
+          <ApolloProvider client={ShopifyApolloClient}>
+            <Component {...pageProps} />
+          </ApolloProvider>
+        </AppProvider>
+      </Provider>
+    </React.Fragment>
+  );
 }
 
 export default MyApp;

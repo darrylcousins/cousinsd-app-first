@@ -20,6 +20,7 @@ const resolvers = {
         products.forEach((product) => {
           var values = { isAddOn, BoxId: boxId, ProductId: product.id };
           // find ob in the array
+          console.log('upserting', values);
           var bp = BoxProduct.upsert(values);
           console.log('bp', bp.BoxId, bp.isAddOn, bp.ProductId);
         });

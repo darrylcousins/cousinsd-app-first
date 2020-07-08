@@ -90,6 +90,15 @@ const mainQuery = `
   }
 `;
 
+/*
+ * constructing an order query
+{
+  order1: order(id:"gid://shopify/Order/1248358563862") {
+    ...
+  }
+  ...
+}
+*/
 export const getQuery = (ids) => {
   const gid = 'gid://shopify/Order/';
   const queries = ids.map((id, idx) => mainQuery
@@ -103,15 +112,3 @@ export const getQuery = (ids) => {
     }
   `;
 };
-/*
- * constructing query to get list of orders
- * Get a list of orders using their IDs and GraphQL aliases
-{
-  order1: order(id:"gid://shopify/Order/1248358563862") {
-    name
-  }
-  order2: order(id:"gid://shopify/Order/1248358694934") {
-    name
-  }
-}
-*/

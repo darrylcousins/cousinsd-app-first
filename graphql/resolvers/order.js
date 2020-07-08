@@ -25,11 +25,14 @@ const resolvers = {
       return orders
     },
     async getOrders(root, { input }, { models }, info) {
-      let { ShopId, delivered } = input;
+      console.log(input);
+      let { ShopId, delivered, limit, offset } = input;
       if (!delivered) delivered = dateToISOString(new Date());
       const orders = await Order.findAll({
         where: { ShopId, delivered: {[Op.eq]: delivered} },
         order: [['delivered', 'ASC']],
+        limit,
+        offset
       });
       return orders
     },
@@ -45,6 +48,13 @@ const resolvers = {
           data.push(date.toJSON())
       })
       return data;
+    },
+    async checkOrderDuplicate(root, { input }, { models }, info) {
+      let { ShopId, delivered, shopify_product_id, shopify_customer_id } = input;
+      const order = await Order.findOne({
+        where: { ShopId, delivered: {[Op.eq]: delivered}, shopify_product_id, shopify_customer_id },
+      });
+      return order;
     },
   },
 

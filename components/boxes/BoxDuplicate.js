@@ -9,7 +9,7 @@ import {
   TextStyle,
 } from '@shopify/polaris';
 import { Mutation } from '@apollo/react-components';
-import { execute, makePromise } from '@apollo/client';
+import { execute } from '@apollo/client';
 import { LocalApolloClient, LocalHttpLink } from '../../graphql/local-client';
 import SheetHelper from '../common/SheetHelper';
 import BoxAddSelectDate from './BoxAddSelectDate';
@@ -40,10 +40,16 @@ export default function BoxDuplicate({ open, box, onComplete, onCancel }) {
     setSheetOpen(open);
   }, [open, box]);
 
-  const addProducts = async (variables) => {
-    const query = BOX_ADD_PRODUCTS;
-    const result = await makePromise(execute(LocalHttpLink, { query, variables }));
-    return result;
+  const addProducts = (variables) => {
+    let result;
+    execute(LocalHttpLink, { query: BOX_ADD_PRODUCTS, variables })
+      .subscribe({
+        next: (res) => {
+          console.log('box duplicate', res);
+        },
+        error: (err) => console.log('box duplicate add products', err),
+        complete: () => console.log('box duplicate add products'),
+      });
   };
 
   return (
@@ -64,34 +70,32 @@ export default function BoxDuplicate({ open, box, onComplete, onCancel }) {
               const query = GET_BOX_PRODUCTS;
               const variables = { input: { id: instance.id }};
               var input, productGids, isAddOn;
-              makePromise(execute(LocalHttpLink, { query, variables }))
-                .then(({ data }) => {
-                  let { getBoxProducts } = data;
-                  return getBoxProducts;
-                })
-                .then((getBoxProducts) => {
-                  productGids = getBoxProducts.products
-                    .map((item) => item.shopify_gid);
-                  isAddOn = false;
-                  input = {
-                    boxId,
-                    productGids,
-                    isAddOn
-                  };
-                  addProducts({ input });
-                  productGids = getBoxProducts.addOnProducts
-                    .map((item) => item.shopify_gid);
-                  isAddOn = true;
-                  input = {
-                    boxId,
-                    productGids,
-                    isAddOn
-                  };
-                  addProducts({ input });
-                  onComplete();
-                })
-                .catch(err => console.log(err))
-                .finally(console.log('Got all the way here'));
+              execute(LocalHttpLink, { query: GET_BOX_PRODUCTS, variables })
+                .subscribe({
+                  next: (res) => {
+                    const newBox = res.data.getBoxProducts;
+                    productGids = newBox.products
+                      .map((item) => item.shopify_gid);
+                    isAddOn = false;
+                    input = {
+                      boxId,
+                      productGids,
+                      isAddOn
+                    };
+                    addProducts({ input });
+                    productGids = newBox.addOnProducts
+                      .map((item) => item.shopify_gid);
+                    isAddOn = true;
+                    input = {
+                      boxId,
+                      productGids,
+                      isAddOn
+                    };
+                    addProducts({ input });
+                    onComplete();
+                  },
+                  //complete: () => console.log('execute orders complete'),
+                });
             }
 
             const handleBoxDuplicate = (e) => {
@@ -102,18 +106,20 @@ export default function BoxDuplicate({ open, box, onComplete, onCancel }) {
                 e.stopPropagation();
                 return false;
               }
-              const tempDate = selectedDate;
-              const delivered = tempDate.toDateString();
-              const shopify_gid = instance.shopify_gid;
-              const shopify_title = instance.shopify_title;
-              const shopify_handle = instance.shopify_handle;
-              const shopify_id = instance.shopify_id;
-              const title = instance.title;
-              const input = { ShopId, title, shopify_handle, delivered, shopify_title, shopify_gid, shopify_id };
-              console.log(JSON.stringify(input, null, 2));
-              boxAdd({ variables: { input } }).then((value) => {
-                console.log('success', value);
-                console.log('and now the products!');
+              const variables = {
+                input: {
+                  ShopId,
+                  title: instance.title,
+                  delivered: selectedDate.toDateString(),
+                  shopify_title: instance.shopify_title,
+                  shopify_gid: instance.shopify_gid,
+                  shopify_id: instance.shopify_id,
+                  shopify_handle: instance.shopify_handle,
+                  shopify_price: instance.shopify_price,
+                  shopify_variant_id: instance.shopify_variant_id,
+                }
+              };
+              boxAdd({ variables }).then((value) => {
               }).catch((error) => {
                 console.log('error', error);
               });
@@ -136,16 +142,16 @@ export default function BoxDuplicate({ open, box, onComplete, onCancel }) {
                   fullWidth
                 >
                   <Button
-                    onClick={onCancel}
-                  >
-                    Cancel
-                  </Button>
-                  <Button
                     primary
                     loading={duplicateLoading}
                     onClick={handleBoxDuplicate}
                   >
                     Duplicate
+                  </Button>
+                  <Button
+                    onClick={onCancel}
+                  >
+                    Cancel
                   </Button>
                 </ButtonGroup>
               </Stack>

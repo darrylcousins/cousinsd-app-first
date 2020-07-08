@@ -28,7 +28,7 @@ export function Editable(props) {
       mutation={mutation}
       update={update}
     >
-      {(handleTitleChange, { loading, error, data }) => {
+      {(handleTitleChange, { loading, error }) => {
         if (loading) { 
           return (
             <React.Fragment>
@@ -53,8 +53,6 @@ export function Editable(props) {
               .then(() => setEditing(false));
           }
         }
-
-        console.log(data);
 
         return (
           editing ?
