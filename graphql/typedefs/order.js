@@ -20,11 +20,17 @@ const order = gql`
     count: Int!
   }
 
+  type OrdersCountAndRows {
+    rows: [Order]
+    count: Int
+  }
+
   input OrderSearchInput {
     ShopId: ID!
     delivered: String!
     offset: Int!
     limit: Int!
+    shopify_product_id: BigInt
   }
 
   input OrderDuplicateInput {
@@ -45,7 +51,7 @@ const order = gql`
   extend type Query {
     getOrderDates: [OrderDate]
     getOrder(input: OrderIdInput!): Order
-    getOrders(input: OrderSearchInput!): [Order]
+    getOrders(input: OrderSearchInput!): OrdersCountAndRows
     getAllOrders(input: OrderShopIdInput!): [Order]
     checkOrderDuplicate(input: OrderDuplicateInput!): Order
   }

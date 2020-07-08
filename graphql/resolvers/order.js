@@ -26,15 +26,18 @@ const resolvers = {
     },
     async getOrders(root, { input }, { models }, info) {
       console.log(input);
-      let { ShopId, delivered, limit, offset } = input;
+      let { ShopId, delivered, limit, offset, shopify_product_id } = input;
       if (!delivered) delivered = dateToISOString(new Date());
-      const orders = await Order.findAll({
-        where: { ShopId, delivered: {[Op.eq]: delivered} },
-        order: [['delivered', 'ASC']],
+      const where = { ShopId, delivered: {[Op.eq]: delivered} };
+      if (shopify_product_id) where.shopify_product_id = shopify_product_id;
+      console.log(where);
+      const orders = await Order.findAndCountAll({
+        where,
         limit,
-        offset
+        offset,
+        order: [['delivered', 'ASC']],
       });
-      return orders
+      return orders;
     },
     async getOrderDates(root, { input }, { models }, info){
       const dates = await Order.findAll({

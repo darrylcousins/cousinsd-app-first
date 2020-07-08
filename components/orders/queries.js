@@ -3,12 +3,15 @@ import { gql } from '@apollo/client';
 export const GET_ORDERS = gql`
   query getOrders($input: OrderSearchInput!) {
     getOrders(input: $input) {
-      id
-      delivered
-      shopify_order_id
-      shopify_line_item_id
-      shopify_product_id
-      shopify_customer_id
+      count
+      rows {
+        id
+        delivered
+        shopify_order_id
+        shopify_line_item_id
+        shopify_product_id
+        shopify_customer_id
+      }
     }
   }
 `;
@@ -26,6 +29,15 @@ export const GET_ORDER_DATES = gql`
     getOrderDates {
       delivered
       count
+    }
+  }
+`;
+
+export const GET_BOXES = gql`
+  query getBoxes($input: BoxSearchInput!) {
+    getBoxes(input: $input) {
+      shopify_id
+      shopify_title
     }
   }
 `;
