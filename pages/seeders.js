@@ -16,7 +16,7 @@ import {
 import fetch from 'isomorphic-fetch';
 import { execute } from '@apollo/client';
 import { LocalHttpLink } from '../graphql/local-client';
-import { OrderSeeder } from '../lib/order-seeder';
+import { OrderSeeder, fixNames } from '../lib/order-seeder';
 import { makePromise } from '../lib';
 import { GET_ALL_ORDERS } from '../components/orders/queries';
 
@@ -308,6 +308,10 @@ export default function Index() {
                 onClick={seedOrders}
                 loading={orderLoading}
               >Seed orders</Button>
+              <Button
+                disabled
+                onClick={fixNames}
+              >Names (done)</Button>
             </ButtonGroup>
           </div>
           <div style={{ padding: '1em' }}>

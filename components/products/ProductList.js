@@ -9,6 +9,7 @@ import {
 import { Query } from '@apollo/react-components';
 import { ShopifyApolloClient } from '../../graphql/shopify-client';
 import { LocalApolloClient } from '../../graphql/local-client';
+import { numberFormat } from '../../lib';
 import { LoadingPageMarkup } from '../common/LoadingPageMarkup';
 import { Editable } from '../common/Editable';
 import { Switch } from '../common/Switch';
@@ -74,12 +75,7 @@ export default function ProductList({ shopUrl }) {
               />
             ),
             (
-              <ProductShopPrice
-                key={2}
-                id={product.shopify_gid}
-                adminUrl={adminUrl}
-                productId={product.shopify_id}
-              />
+              <span>{ numberFormat({ amount: product.shopify_price, currencyCode: 'NZD' }) }</span>
             ),
           ]
         ));
@@ -94,7 +90,7 @@ export default function ProductList({ shopUrl }) {
                 headings={[
                   <strong key={0}>Title</strong>,
                   <strong key={1}>Available</strong>,
-                  <strong key={2}>Store Product Price</strong>,
+                  <strong key={2}>Price</strong>,
                 ]}
                 rows={rows}
               />

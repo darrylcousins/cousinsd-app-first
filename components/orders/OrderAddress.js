@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import './order.css';
 
-export default function OrderAddress({ address }) {
+export default function OrderAddress({ address, customer }) {
 
   const ulRef = useRef(null);
 
@@ -15,9 +15,10 @@ export default function OrderAddress({ address }) {
         className='overflow listed'
         ref={ulRef}
       >
-        <li>{ address.name }</li>
-        <li>{ address.address1 } { address.address2 }</li>
-        <li>{ address.city } { address.zip }</li>
+        { customer && <li key={0}>{ customer.email }</li> }
+        <li key={1}>{ address.name }</li>
+        <li key={2}>{ address.address1 } { address.address2 }</li>
+        <li key={3}>{ address.city } { address.zip }</li>
       </ul>
     ) : <p>No shipping</p>
   );

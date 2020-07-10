@@ -111,7 +111,7 @@ export default function OrderList({ query, shopUrl, input, checkbox, LineCheckbo
                   row.push(<LineItemProductList key={i} list={attrs[including]} />);
                   row.push(<LineItemProductList key={i} list={attrs[addons]} produce={produce} />);
                   row.push(<LineItemProductList key={i} list={attrs[removed]} />);
-                  row.push(<OrderAddress address={order.shippingAddress} />);
+                  row.push(<OrderAddress address={order.shippingAddress} customer={order.customer} />);
                   rows.push(row);
                   done = true;
                   row = Array();
@@ -137,7 +137,7 @@ export default function OrderList({ query, shopUrl, input, checkbox, LineCheckbo
                     <strong key={4}>Including</strong>,
                     <strong key={5}>Extras</strong>,
                     <strong key={6}>Removed</strong>,
-                    <strong key={7}>Address</strong>,
+                    <strong key={7}>Customer</strong>,
                   ]}
                   rows={rows}
                 />

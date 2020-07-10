@@ -8,6 +8,7 @@ export const GET_PRODUCTS = gql`
       shopify_gid
       shopify_id
       available
+      shopify_price
     }
   }
 `;

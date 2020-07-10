@@ -65,7 +65,8 @@ const createDocDefinition = ({ data, delivered }) => {
           {});
         if (dateToISOString(new Date(customAttributes[delivery_date])) == dateToISOString(new Date(delivered))) {
           stack.push(address.name);
-          stack.push(`${address.address1} ${isNull(address.address2)}`);
+          stack.push(`${address.address1}`)
+          if (address.address2) stack.push(`${isNull(address.address2)}`);
           stack.push(`${address.city} ${address.zip}`);
           stack.push(`\n${new Date(delivered).toDateString()} o/n${order.name}`);
 
@@ -77,7 +78,7 @@ const createDocDefinition = ({ data, delivered }) => {
           products = customAttributes[addons].split(',');
 
           products = products.filter(el => {
-            const handle = el.replace(' ', '_').toLowerCase();
+            const handle = el.replace(' ', '-').toLowerCase();
             return (produce.indexOf(handle) > -1);
           });
 

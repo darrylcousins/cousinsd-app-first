@@ -18,7 +18,6 @@ import { Query } from '@apollo/react-components';
 import { execute, useQuery } from '@apollo/client';
 import { LocalApolloClient, LocalHttpLink } from '../../graphql/local-client';
 import { LoadingPageMarkup } from '../common/LoadingPageMarkup';
-import { Editable } from '../common/Editable';
 import DateSelector from '../common/DateSelector';
 import ItemDatePicker from '../common/ItemDatePicker';
 import SheetHelper from '../common/SheetHelper';
@@ -100,18 +99,6 @@ export default function BoxList({ shopUrl, addBox, toggleAddBox }) {
                   labelHidden={true}
                   onChange={handleCheckedChange}
                   checked={checked && checkedId == box.id}
-                />
-              ),
-              (
-                <Editable 
-                  key={1}
-                  title={box.title}
-                  id={box.id}
-                  fieldName='title'
-                  client={LocalApolloClient}
-                  mutation={UPDATE_BOX}
-                  update={(data) => console.log(data)}
-                  textStyle='strong'
                 />
               ),
               <BoxShopTitle
@@ -204,7 +191,6 @@ export default function BoxList({ shopUrl, addBox, toggleAddBox }) {
                         </div>
                       </Button>
                     ) : '' ),
-                    <strong key={1}>Title</strong>,
                     <strong key={2}>Store Product</strong>,
                     <strong key={3}>Delivery Date</strong>,
                     <strong key={4}>Included Produce</strong>,

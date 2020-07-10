@@ -7,6 +7,7 @@ const orderCreate = (webhook, ShopId) => {
 
   const shopify_order_id = payload.id;
   const shopify_customer_id = payload.customer.id;
+  const shopify_name = payload.name;
 
   // if line item quantity is 2 or more then will be picked up when printing labels
   payload.line_items.forEach(item => {
@@ -15,6 +16,7 @@ const orderCreate = (webhook, ShopId) => {
       {});
     if (attrs['Delivery Date']) {
       var input = {
+        shopify_name,
         shopify_order_id,
         shopify_customer_id,
         ShopId: parseInt(ShopId),

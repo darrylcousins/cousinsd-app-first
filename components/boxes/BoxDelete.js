@@ -22,9 +22,9 @@ export default function BoxDelete({ open, box, onComplete, onCancel }) {
     setModalOpen(open);
     setInstance(box);
   }, [open, box])
-  /* end checkbox stuff */
 
   const toggleModalOpen = useCallback(() => setModalOpen(!modalOpen), [modalOpen]);
+  /* end modal stuff */
 
   return (
     <Mutation

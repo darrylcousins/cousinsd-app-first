@@ -5,6 +5,7 @@ const order = gql`
   type Order {
     id: ID!
     delivered: String!
+    shopify_name: String!
     shopify_order_id: BigInt!
     shopify_product_id: BigInt!
     shopify_line_item_id: BigInt!
@@ -31,6 +32,7 @@ const order = gql`
     offset: Int!
     limit: Int!
     shopify_product_id: BigInt
+    shopify_name: String
   }
 
   input OrderDuplicateInput {
@@ -48,12 +50,21 @@ const order = gql`
     id: ID!
   }
 
+  input OrderShopifyUpdateInput {
+    shopify_order_id: BigInt!
+    shopify_name: String!
+  }
+
   extend type Query {
     getOrderDates: [OrderDate]
     getOrder(input: OrderIdInput!): Order
     getOrders(input: OrderSearchInput!): OrdersCountAndRows
     getAllOrders(input: OrderShopIdInput!): [Order]
     checkOrderDuplicate(input: OrderDuplicateInput!): Order
+  }
+
+  extend type Mutation {
+    updateOrderName(input: OrderShopifyUpdateInput!): Order
   }
 `;
 

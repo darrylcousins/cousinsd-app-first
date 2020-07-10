@@ -26,10 +26,11 @@ const resolvers = {
     },
     async getOrders(root, { input }, { models }, info) {
       console.log(input);
-      let { ShopId, delivered, limit, offset, shopify_product_id } = input;
+      let { ShopId, delivered, limit, offset, shopify_product_id, shopify_name } = input;
       if (!delivered) delivered = dateToISOString(new Date());
       const where = { ShopId, delivered: {[Op.eq]: delivered} };
       if (shopify_product_id) where.shopify_product_id = shopify_product_id;
+      if (shopify_name) where.shopify_name = shopify_name;
       console.log(where);
       const orders = await Order.findAndCountAll({
         where,
@@ -60,7 +61,21 @@ const resolvers = {
       return order;
     },
   },
-
+  Mutation: {
+    async updateOrderName(root, { input }, { models }, info) {
+      let { shopify_order_id, shopify_name } = input;
+      const order = await Order.findOne({
+        where: { shopify_order_id },
+      });
+      await Order.update(
+        { shopify_name },
+        { where: { shopify_order_id } }
+      );
+      return await Order.findOne({ 
+        where: { shopify_order_id },
+      });
+    },
+  },
 };
 
 module.exports = resolvers;

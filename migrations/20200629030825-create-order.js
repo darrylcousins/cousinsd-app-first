@@ -13,6 +13,9 @@ module.exports = {
         type: Sequelize.DATE,
         defaultValue: Sequelize.NOW,
       },
+      shopify_name: {
+        type: Sequelize.STRING,
+      },
       shopify_order_id: {
         type: Sequelize.BIGINT,
       },

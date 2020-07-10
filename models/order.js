@@ -1,6 +1,9 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
   const Order = sequelize.define('Order', {
+    shopify_name: {
+      type: DataTypes.STRING,
+    },
     shopify_order_id: {
       type: DataTypes.BIGINT,
     },

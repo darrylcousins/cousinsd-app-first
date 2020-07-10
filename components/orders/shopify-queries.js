@@ -15,41 +15,11 @@ export const FULFILL_LINE_ITEMS = gql`
 }
 `;
 
-export const GET_SHOPIFY_ORDERS= gql`
-  query orders($first: Int!, $query: String) {
-    orders(first: $first, query: $query) {
-      edges {
-        node {
-          id
-          name
-          closed
-          shippingAddress {
-            name
-            address1
-            address2
-            city
-            province
-            zip
-          }
-          lineItems(first: 5) {
-            edges {
-              node {
-                id
-                name
-                product {
-                  id
-                  productType
-                }
-                quantity
-                customAttributes {
-                  key
-                  value
-                }
-              }
-            }
-          }
-        }
-      }
+export const GET_SHOPIFY_ORDER= gql`
+  query order($id: ID!) {
+    order(id: $id) {
+      id
+      name
     }
   }
 `
@@ -60,6 +30,9 @@ const mainQuery = `
     name
     displayFinancialStatus
     displayFulfillmentStatus
+    customer {
+      email
+    }
     shippingAddress {
       name
       address1
@@ -99,9 +72,29 @@ const mainQuery = `
   ...
 }
 */
-export const getQuery = (ids) => {
+const shortQuery = `
+  order@idx: order(id: "@id") {
+    lineItems(first: 10) {
+      edges {
+        node {
+          customAttributes {
+            key
+            value
+          }
+          product {
+            productType
+            handle
+          }
+          quantity
+        }
+      }
+    }
+  }
+`;
+
+const queryHelper = (ids, queryTemplate) => {
   const gid = 'gid://shopify/Order/';
-  const queries = ids.map((id, idx) => mainQuery
+  const queries = ids.map((id, idx) => queryTemplate
     .replace(`@idx`, idx)
     .replace(`@id`, `${gid}${id}`)
     .trim()
@@ -112,3 +105,6 @@ export const getQuery = (ids) => {
     }
   `;
 };
+
+export const getQuery = (ids) => queryHelper(ids, mainQuery);
+export const getFullQuery = (ids) => queryHelper(ids, shortQuery);
