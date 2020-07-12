@@ -21,26 +21,28 @@ const createPickingDoc = ({ data, delivered }) => {
     const length = Object.keys(orders).length;
     let order;
     let lineItems;
-    let item;
+    let lineItem;
     let attrs;
     let product;
     for (let j=0; j<length; j++) {
       order = orders[`order${j}`];
       lineItems = order.lineItems.edges;
       for (let i = 0; i < lineItems.length; i++) {
-        item = lineItems[i].node;
-        if (item.product.productType == 'Box Produce') {
-          if (item.quantity > 1) {
-            if (Object.keys(productQuantities).indexOf(item.product.handle) > -1) {
-              productQuantities[item.product.handle] = productQuantities[item.product.handle] + item.quantity - 1;
+        lineItem = lineItems[i].node;
+
+        // XXX TODO check for correct date for box association (hint: uses customAttributes)
+        if (lineItem.product.productType == 'Box Produce') {
+          if (lineItem.quantity > 1) {
+            if (Object.keys(productQuantities).indexOf(lineItem.product.handle) > -1) {
+              productQuantities[lineItem.product.handle] = productQuantities[lineItem.product.handle] + lineItem.quantity - 1;
             } else {
-              productQuantities[item.product.handle] = item.quantity - 1;
+              productQuantities[lineItem.product.handle] = lineItem.quantity - 1;
             }
-            console.log('produce quantity counter', item.product.handle, item.quantity);
+            console.log('produce quantity counter', lineItem.product.handle, lineItem.quantity);
           }
         }
-        if (item.product.productType == 'Veggie Box') {
-          attrs = item.customAttributes.reduce(
+        if (lineItem.product.productType == 'Veggie Box') {
+          attrs = lineItem.customAttributes.reduce(
             (acc, curr) => Object.assign(acc, { [`${curr.key}`]: curr.value }),
             {});
           attrs[including].split(',').forEach(key => {
@@ -84,7 +86,6 @@ const createPickingDoc = ({ data, delivered }) => {
       layout: 'noBorders',
   };
   dd.content.push(table);
-  console.log(productQuantities);
   return new Promise((resolve, reject) => resolve(dd));
 };
 

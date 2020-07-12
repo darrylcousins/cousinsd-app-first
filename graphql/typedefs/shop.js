@@ -12,6 +12,7 @@ const shop = gql`
     updatedAt: String!
     boxes: [Box]
     products: [Product]
+    subscribers: [Subscriber]
   }
 
   input ShopInput {

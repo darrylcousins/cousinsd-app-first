@@ -24,14 +24,17 @@ export const GET_SHOPIFY_ORDER= gql`
   }
 `
 
+/* full query to populate table data */
 const mainQuery = `
   order@idx: order(id: "@id") {
     id
     name
     displayFinancialStatus
     displayFulfillmentStatus
+    note
     customer {
       email
+      phone
     }
     shippingAddress {
       name
@@ -63,15 +66,46 @@ const mainQuery = `
   }
 `;
 
-/*
- * constructing an order query
-{
-  order1: order(id:"gid://shopify/Order/1248358563862") {
-    ...
+/* export query to populate csv export data */
+const exportQuery = `
+  order@idx: order(id: "@id") {
+    id
+    name
+    note
+    customer {
+      email
+      phone
+    }
+    shippingAddress {
+      name
+      address1
+      address2
+      city
+      province
+      zip
+    }
+    lineItems(first: 10) {
+      edges {
+        node {
+          id
+          name
+          product {
+            id
+            productType
+            handle
+          }
+          quantity
+          customAttributes {
+            key
+            value
+          }
+        }
+      }
+    }
   }
-  ...
-}
-*/
+`;
+
+/* just enough information to print picking list */
 const shortQuery = `
   order@idx: order(id: "@id") {
     lineItems(first: 10) {
@@ -106,5 +140,15 @@ const queryHelper = (ids, queryTemplate) => {
   `;
 };
 
-export const getQuery = (ids) => queryHelper(ids, mainQuery);
-export const getFullQuery = (ids) => queryHelper(ids, shortQuery);
+export const getMainQuery = (ids) => queryHelper(ids, mainQuery);
+export const getShortQuery = (ids) => queryHelper(ids, shortQuery);
+export const getExportQuery = (ids) => queryHelper(ids, exportQuery);
+/*
+ * constructing an order query
+{
+  order1: order(id:"gid://shopify/Order/1248358563862") {
+    ...
+  }
+  ...
+}
+*/

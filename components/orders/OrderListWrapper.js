@@ -5,6 +5,7 @@ import {
   Button,
   ButtonGroup,
   Checkbox,
+  Loading,
   Modal,
   Pagination,
   TextField,
@@ -12,14 +13,21 @@ import {
 import { useQuery, execute } from '@apollo/client';
 import { ShopifyHttpLink } from '../../graphql/shopify-client';
 import { LocalApolloClient, LocalHttpLink } from '../../graphql/local-client';
-import { dateToISOString, makePromise, makeThrottledPromise, getPdf } from '../../lib';
+import {
+  dateToISOString,
+  makePromise,
+  makeThrottledPromise,
+  getPdf,
+  getCsv
+} from '../../lib';
 import DateSelector from '../common/DateSelector';
 import BoxSelector from './BoxSelector';
 import OrderList from './OrderList';
 import NoteWrapper from './NoteWrapper';
-import createDocDefinition from './docdefinition';
+import createLabelDoc from './labels';
 import createPickingDoc from './pickinglist';
-import { getQuery, getFullQuery } from './shopify-queries';
+import createCsvRows from './csvrows';
+import { getMainQuery, getShortQuery, getExportQuery } from './shopify-queries';
 import { GET_ORDERS, GET_ORDER_DATES, GET_BOXES } from './queries';
 import { GET_SELECTED_DATE } from '../boxes/queries';
 import './order.css';
@@ -32,11 +40,14 @@ export default function OrderListWrapper({ shopUrl }) {
   const [delivered, setDelivered] = useState(data.selectedDate);
   const [labelLoading, setLabelLoading] = useState(false);
   const [pickingLoading, setPickingLoading] = useState(false);
+  const [csvExportLoading, setCsvExportLoading] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  /* modal stuff */
-  const [modalOpen, setModalOpen] = useState(open);
-  /* end modal stuff */
+  /* modals for printing feedback stuff */
+  const [pickingListModalOpen, setPickingListModalOpen] = useState(open);
+  const [labelModalOpen, setLabelModalOpen] = useState(open);
+  const [csvExportModalOpen, setCsvExportModalOpen] = useState(open);
+  /* end modals for printing feedback stuff */
 
   /* checkbox stuff */
   const [checkedIds, setCheckedIds] = useState([]);
@@ -72,7 +83,7 @@ export default function OrderListWrapper({ shopUrl }) {
   /* end query stuff */
 
   /* filters */
-  const [box, setBox] = useState(null);
+  const [boxFilter, setBoxFilter] = useState(null);
   const [boxes, setBoxes] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [nameSearchTerm, setNameSearchTerm] = useState('');
@@ -101,7 +112,7 @@ export default function OrderListWrapper({ shopUrl }) {
 
   const handleBoxSelected = (box) => {
     // filters query by box product (i.e. Small Box)
-    setBox(box);
+    setBoxFilter(box);
   };
   /* end filters */
   /* page stuff */
@@ -120,7 +131,7 @@ export default function OrderListWrapper({ shopUrl }) {
     const variables = { input: {
         offset,
         limit,
-        shopify_product_id: box ? box.shopify_id : null,
+        shopify_product_id: boxFilter ? boxFilter.shopify_id : null,
         shopify_name: searchTerm.length ? searchTerm : null,
         ...input
       }
@@ -130,9 +141,9 @@ export default function OrderListWrapper({ shopUrl }) {
         next: (res) => {
           const rows = res.data.getOrders.rows;
           const count = res.data.getOrders.count;
-          const orderids = res.data.getOrders.rows.map(el => el.shopify_order_id);
+          const orderids = rows.map(el => el.shopify_order_id);
           if (orderids.length > 0) {
-            setQuery(getQuery(orderids));
+            setQuery(getMainQuery(orderids));
             setIds(orderids.map(el => el.toString()));
           } else {
             setQuery(null);
@@ -147,7 +158,7 @@ export default function OrderListWrapper({ shopUrl }) {
         },
         error: (err) => console.log('get orders error', err),
       });
-  }, [input, delivered, offset, box, searchTerm]);
+  }, [input, delivered, offset, boxFilter, searchTerm]);
 
   /* collect data for the date selection */
   useEffect(() => {
@@ -178,96 +189,175 @@ export default function OrderListWrapper({ shopUrl }) {
   }, [delivered]);
   /* end collect data for the box filter selection */
 
-  /* pdf labels */
-  const printLabels = () => {
-    setLabelLoading(true);
-    const query = getQuery(checkedIds);
-    makePromise(execute(ShopifyHttpLink, { query }))
-      .then(data => createDocDefinition({ data, delivered }))
-      .then(dd => {
-        const pdf = getPdf(dd);
-        return pdf;
-      })
+  /* printing helper methods */
+  const docToPdf = (docdefinition) => {
+      return getPdf(docdefinition)
       .then(response => response.blob())
       .then(blob => URL.createObjectURL(blob))
-      .then(url => {
-        var link = document.createElement('a');
-        link.href = url;
-        link.download = `labels-${dateToISOString(new Date())}.pdf`;
-        link.click();
-        setLabelLoading(false);
-        handleCheckAll(false);
-      })
-      .catch(err => console.log(err));
-  };
-  /* end pdf labels */
-
-  /* create the picking list */
-  const preparePrintPickingList = () => {
-    if (checkedIds.length) {
-      // show modal and ask the question
-      setModalOpen(true);
-    } else {
-      printPickingList(false);
-    }
   };
 
-  const printPickingList = (useSelected) => {
-    setModalOpen(false)
-    setPickingLoading(true);
-    setFeedbackText('Requesting data ... ');
-    const variables = {
+  const collectVariables = () => {
+    return ({
       input: {
         ShopId,
         offset: 0,
         limit: totalCount,
         delivered: input.delivered,
+        shopify_product_id: boxFilter ? boxFilter.shopify_id : null,
+      }
+    });
+  };
+
+  const collectPromises = ({ useChecked, rows, getQuery }) => {
+    const promises = [];
+    if (useChecked) { // set on open modal
+      const orderids = checkedIds; // always less than limit
+      const query = getQuery(orderids);
+      promises.push(makePromise(execute(ShopifyHttpLink, { query })));
+    } else {
+      const orderids = rows.map(el => el.shopify_order_id);
+      for (let i=0; i<pageCount; i++) {
+        const query = getQuery(orderids.slice(i*limit, i*limit+limit));
+        promises.push(makeThrottledPromise(execute(ShopifyHttpLink, { query }), i+1));
       }
     }
+    return promises;
+  };
+  /* end printing helper methods */
+
+  /* pdf labels */
+  const preparePrintLabels = () => {
+    if (checkedIds.length || boxFilter) {
+      // show modal and ask the question
+      setLabelModalOpen(true);
+    } else {
+      printLabels(false);
+    }
+  };
+
+  const printLabels = ({ useChecked, useBoxFilter }) => {
+    setLabelModalOpen(false)
+    setLabelLoading(true);
+    setFeedbackText('Requesting data');
+    const variables = collectVariables();
     execute(LocalHttpLink, { query: GET_ORDERS, variables })
       .subscribe({
         next: (res) => {
-          const promises = [];
-          if (useSelected) {
-            const orderids = checkedIds; // always less than limit
-            const query = getFullQuery(orderids);
-            promises.push(makePromise(execute(ShopifyHttpLink, { query })));
-          } else {
-            const orderids = res.data.getOrders.rows.map(el => el.shopify_order_id);
-            // need to split this up
-            //for (let i=0; i<pageCount; i++) {
-            for (let i=0; i<1; i++) {
-              const query = getFullQuery(orderids.slice(i*limit, i*limit+limit));
-              // note the i for count - this multiplies the time
-              promises.push(makeThrottledPromise(execute(ShopifyHttpLink, { query }), i+1));
-            }
-          }
+          const rows = res.data.getOrders.rows;
+          const promises = collectPromises({ useChecked, rows, getQuery: getExportQuery });
           const response = Promise.all(promises)
             .then(data => {
-              setFeedbackText('Creating pdf ...');
-              return createPickingDoc({ data });
+              console.log(data);
+              setFeedbackText('Creating pdf file');
+              return createLabelDoc({ data, delivered });
             })
-            .then(dd => {
-              //console.log(JSON.stringify(dd, null, 2));
-              const pdf = getPdf(dd);
-              return pdf;
+            .then(dd => docToPdf(dd))
+            .then(url => {
+              var link = document.createElement('a');
+              link.href = url;
+              link.download = `labels-${dateToISOString(new Date(Date.parse(delivered)))}.pdf`;
+              link.click();
+            })
+            .catch(err => console.log(err))
+            .finally(() => {
+              setLabelLoading(false);
+              setFeedbackText('');
+            });
+        },
+        error: (err) => console.log('get orders error', err),
+      });
+  };
+  /* end pdf labels */
+
+  /* create the picking list */
+  const preparePrintPickingList = () => {
+    if (checkedIds.length || boxFilter) {
+      // show modal and ask the question
+      setPickingListModalOpen(true);
+    } else {
+      printPickingList({ useChecked: false, useBoxFilter: false });
+    }
+  };
+
+  const printPickingList = ({ useChecked, useBoxFilter }) => {
+    setPickingListModalOpen(false)
+    setPickingLoading(true);
+    setFeedbackText('Requesting data');
+    const variables = collectVariables();
+    execute(LocalHttpLink, { query: GET_ORDERS, variables })
+      .subscribe({
+        next: (res) => {
+          const rows = res.data.getOrders.rows;
+          const promises = collectPromises({ useChecked, rows, getQuery: getShortQuery });
+          const response = Promise.all(promises)
+            .then(data => {
+              console.log(data);
+              setFeedbackText('Creating pdf file');
+              return createPickingDoc({ data, delivered });
+            })
+            .then(dd => docToPdf(dd))
+            .then(url => {
+              var link = document.createElement('a');
+              link.href = url;
+              link.download = `picking-list-${dateToISOString(new Date(Date.parse(delivered)))}.pdf`;
+              link.click();
+            })
+            .catch(err => console.log(err))
+            .finally(() => {
+              setPickingLoading(false);
+              setFeedbackText('');
+            });
+        },
+        error: (err) => console.log('get orders error', err),
+      });
+  };
+  /* end create the picking list */
+
+  /* handle cvs export */
+  const prepareCsvExport = () => {
+    if (checkedIds.length || boxFilter) {
+      // show modal and ask the question
+      setCsvExportModalOpen(true);
+    } else {
+      printCsvExport({ useChecked: false, useBoxFilter: false });
+    }
+  };
+
+  const printCsvExport = ({ useChecked, useBoxFilter }) => {
+    setCsvExportModalOpen(false)
+    setCsvExportLoading(true);
+    setFeedbackText('Requesting data');
+    const variables = collectVariables();
+    execute(LocalHttpLink, { query: GET_ORDERS, variables })
+      .subscribe({
+        next: (res) => {
+          const rows = res.data.getOrders.rows;
+          const promises = collectPromises({ useChecked, rows, getQuery: getExportQuery});
+          const response = Promise.all(promises)
+            .then(data => createCsvRows({ data, delivered }))
+            .then(csvData => {
+              setFeedbackText('Creating csv file');
+              csvData.rows.unshift(csvData.headers);
+              return getCsv(csvData.rows);
             })
             .then(response => response.blob())
             .then(blob => URL.createObjectURL(blob))
             .then(url => {
               var link = document.createElement('a');
               link.href = url;
-              link.download = `picking-list-${dateToISOString(new Date(Date.parse(delivered)))}.pdf`;
+              link.download = `export-${dateToISOString(new Date(Date.parse(delivered)))}.csv`;
               link.click();
-              setPickingLoading(false);
-              setFeedbackText('');
             })
-            .catch(err => console.log(err));
+            .catch(err => console.log(err))
+            .finally(() => {
+              setCsvExportLoading(false);
+              setFeedbackText('');
+            });
         },
         error: (err) => console.log('get orders error', err),
       });
   };
-  /* end create the picking list */
+  /* end handle cvs export */
 
   /* checkboxes for the list */
   const checkbox = (
@@ -309,16 +399,32 @@ export default function OrderListWrapper({ shopUrl }) {
   /* feedback banner */
   const FeedbackBanner = () => {
     return (
-      <Banner status='info'>{ feedbackText }</Banner>
+      <Banner status='info'>
+        <div style={{ position: 'relative', color: '#4d8ab3', fontWeight: 'bold' }}>
+          <div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ feedbackText }
+        </div>
+      </Banner>
     );
   }
   /* end feedback banner */
 
   return (
     <React.Fragment>
-      { feedbackText && <FeedbackBanner /> }
+      { (loading || labelLoading || pickingLoading || csvExportLoading) && <Loading /> }
+      <div style={{ padding: '.6rem' }}>
+        { feedbackText && <FeedbackBanner /> }
+      </div>
       <div style={{ padding: '1.6rem' }}>
         <ButtonGroup segmented >
+          <Button
+            disabled={totalCount === 0}
+            primary={checkedIds.length > 0}
+            onClick={prepareCsvExport}
+            loading={csvExportLoading}
+          >
+            Export
+          </Button>
           <Button
             disabled={totalCount === 0}
             primary={checkedIds.length > 0}
@@ -328,9 +434,10 @@ export default function OrderListWrapper({ shopUrl }) {
             Print Picking List
           </Button>
           <Button
-            disabled={checkedIds.length === 0}
+            //disabled={checkedIds.length === 0}
+            disabled={totalCount === 0}
             primary={checkedIds.length > 0}
-            onClick={printLabels}
+            onClick={preparePrintLabels}
             loading={labelLoading}
           >
             Print Labels
@@ -356,13 +463,10 @@ export default function OrderListWrapper({ shopUrl }) {
         </ButtonGroup>
         <div style={{ padding: '1.6rem 0 0 0' }}>
           <ButtonGroup segmented >
-            <NoteWrapper segmentedRight={true}>
-              Filters:
-            </NoteWrapper>
             <BoxSelector 
               handleBoxSelected={handleBoxSelected}
               boxes={boxes}
-              box={ box }
+              box={ boxFilter }
               disabled={ loading || boxes.length === 0 }
             />
             <TextField
@@ -404,17 +508,83 @@ export default function OrderListWrapper({ shopUrl }) {
         </div>
       )}
       <Modal
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
+        open={pickingListModalOpen}
+        onClose={() => setPickingListModalOpen(false)}
         title='Print picking list for selected orders only?'
         primaryAction={{
-          content: 'Only selected orders',
-          onAction: () => printPickingList(true),
+          content: 'All orders',
+          onAction: () => printPickingList({ useChecked: false, useBoxFilter: false }),
         }}
         secondaryActions={[
           {
-            content: 'All orders',
-            onAction: () => printPickingList(false),
+            content: 'Cancel',
+            onAction: () => setPickingListModalOpen(false),
+          },
+          {
+            content: 'Selected orders only',
+            disabled: checkedIds.length === 0,
+            onAction: () => printPickingList({ useChecked: true, useBoxFilter: false }),
+            primary: true,
+          },
+          {
+            content: 'Filtered orders only',
+            disabled: boxFilter === null,
+            onAction: () => printPickingList({ useChecked: false, useBoxFilter: true }),
+            primary: true,
+          },
+        ]}
+      />
+      <Modal
+        open={labelModalOpen}
+        onClose={() => setLabelModalOpen(false)}
+        title='Print labesl for selected orders only?'
+        primaryAction={{
+          content: 'All orders',
+          onAction: () => printLabels({ useChecked: false, useBoxFilter: false }),
+        }}
+        secondaryActions={[
+          {
+            content: 'Cancel',
+            onAction: () => setLabelModalOpen(false),
+          },
+          {
+            content: 'Selected orders only',
+            disabled: checkedIds.length === 0,
+            onAction: () => printLabels({ useChecked: true, useBoxFilter: false }),
+            primary: true,
+          },
+          {
+            content: 'Filtered orders only',
+            disabled: boxFilter === null,
+            onAction: () => printLabels({ useChecked: false, useBoxFilter: true }),
+            primary: true,
+          },
+        ]}
+      />
+      <Modal
+        open={csvExportModalOpen}
+        onClose={() => setCsvExportModalOpen(false)}
+        title='Export selected orders only?'
+        primaryAction={{
+          content: 'All orders',
+          onAction: () => printCsvExport({ useChecked: false, useBoxFilter: false }),
+        }}
+        secondaryActions={[
+          {
+            content: 'Cancel',
+            onAction: () => setCsvExportModalOpen(false),
+          },
+          {
+            content: 'Selected orders only',
+            disabled: checkedIds.length === 0,
+            onAction: () => printCsvExport({ useChecked: true, useBoxFilter: false }),
+            primary: true,
+          },
+          {
+            content: 'Filtered orders only',
+            disabled: boxFilter === null,
+            onAction: () => printCsvExport({ useChecked: false, useBoxFilter: true }),
+            primary: true,
           },
         ]}
       />

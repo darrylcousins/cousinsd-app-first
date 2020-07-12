@@ -9,6 +9,9 @@ const resolvers = {
     async products(instance, arguments, context, info) {
       return await instance.getProducts();
     },
+    async subscribers(instance, arguments, context, info) {
+      return await instance.getSubscribers();
+    },
   },
   Query: {
     async getShop(root, { input }, { models }, info) {

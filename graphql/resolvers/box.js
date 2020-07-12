@@ -77,7 +77,6 @@ const resolvers = {
   },
   Mutation: {
     async createBox (root, { input }, { models }, info) {
-      console.log('got this in createBox', input);
       /* title, ShopId, shopify_id, shopify_gid, shopify_title, shopify_handle, delivered */
       return Box.create(input);
     },

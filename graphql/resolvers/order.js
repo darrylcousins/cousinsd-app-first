@@ -25,13 +25,11 @@ const resolvers = {
       return orders
     },
     async getOrders(root, { input }, { models }, info) {
-      console.log(input);
       let { ShopId, delivered, limit, offset, shopify_product_id, shopify_name } = input;
       if (!delivered) delivered = dateToISOString(new Date());
       const where = { ShopId, delivered: {[Op.eq]: delivered} };
       if (shopify_product_id) where.shopify_product_id = shopify_product_id;
       if (shopify_name) where.shopify_name = shopify_name;
-      console.log(where);
       const orders = await Order.findAndCountAll({
         where,
         limit,

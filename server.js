@@ -10,6 +10,7 @@ const Router = require('@koa/router');
 const {receiveWebhook, registerWebhook} = require('@shopify/koa-shopify-webhooks');
 const bodyParser = require('koa-body');
 const pdfMakePrinter = require('pdfmake/src/printer');
+const csv = require('csv');
 
 const ENV = require('./config');
 const { graphQLServer } = require('./graphql');
@@ -295,6 +296,19 @@ app.prepare().then(() => {
     ctx.respond = true;
     ctx.res.statusCode = 200;
     return new Promise(resolve => ctx.res.on('finish', resolve));
+  });
+  /* end handle pdf creation */
+
+  /* handle csv creation */
+  router.post('/csv', verifyRequest(), async (ctx) => {
+    const rows = ctx.request.body;
+    const t = csv.stringify(rows, {quoted_string: true, delimiter: ';'});
+    t.pipe(ctx.res);
+    ctx.set('Content-Type', 'text/csv');
+    ctx.set('Content-Disposition', 'attachment; filename=export.csv');
+    ctx.respond = true;
+    ctx.res.statusCode = 200;
+    return new Promise(resolve => ctx.res.on('end', resolve));
   });
   /* end handle pdf creation */
 

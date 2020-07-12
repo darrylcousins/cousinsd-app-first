@@ -59,6 +59,7 @@ export default function OrderList({ query, shopUrl, input, checkbox, LineCheckbo
 
         /* datatable stuff */
         let rows = Array();
+        //console.log(data);
 
         // XXX TODO handle no data
 
