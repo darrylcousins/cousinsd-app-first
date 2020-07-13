@@ -7,6 +7,7 @@ const subscription = gql`
     frequency: String!
     current_cart: JSON!
     last_cart: JSON!
+    shopify_product_id: BigInt!
     SubscriberId: Int!
     subscriber: Subscriber
     createdAt: String!
@@ -18,6 +19,7 @@ const subscription = gql`
     frequency: String!
     current_cart: JSON!
     last_cart: JSON!
+    shopify_product_id: BigInt!
     SubscriberId: Int!
   }
 

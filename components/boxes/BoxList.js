@@ -69,152 +69,150 @@ export default function BoxList({ shopUrl, addBox, toggleAddBox }) {
   /* end checkbox stuff */
 
   return (
-    <React.Fragment>
-      <Query
-        client={LocalApolloClient}
-        query={GET_BOXES}
-        fetchPolicy='no-cache'
-        variables={ { input } }
-        notifyOnNetworkStatusChange
-      >
-        {({ loading, error, data, refetch }) => {
-          //console.log('GetBox Network status:', networkStatus);
-          const isError = error && (
-            <Banner status="critical">{error.message}</Banner>
-          );
-          const isLoading = loading && (
-            <React.Fragment>
-              <Loading />
-              <LoadingPageMarkup />
-            </React.Fragment>
-          );
-          /* datatable stuff */
-          const rows = isLoading ? Array(4) : data.getBoxes.map((box) => (
-            [
-              (
-                <Checkbox 
-                  key={0}
-                  id={box.id}
-                  label={box.title}
-                  labelHidden={true}
-                  onChange={handleCheckedChange}
-                  checked={checked && checkedId == box.id}
+    <Query
+      client={LocalApolloClient}
+      query={GET_BOXES}
+      fetchPolicy='no-cache'
+      variables={ { input } }
+      notifyOnNetworkStatusChange
+    >
+      {({ loading, error, data, refetch }) => {
+        //console.log('GetBox Network status:', networkStatus);
+        const isError = error && (
+          <Banner status="critical">{error.message}</Banner>
+        );
+        const isLoading = loading && (
+          <React.Fragment>
+            <Loading />
+            <LoadingPageMarkup />
+          </React.Fragment>
+        );
+        /* datatable stuff */
+        const rows = isLoading ? Array(4) : data.getBoxes.map((box) => (
+          [
+            (
+              <Checkbox 
+                key={0}
+                id={box.id}
+                label={box.title}
+                labelHidden={true}
+                onChange={handleCheckedChange}
+                checked={checked && checkedId == box.id}
+              />
+            ),
+            <BoxShopTitle
+              key={2}
+              id={parseInt(box.id)}
+              title={box.shopify_title}
+            />,
+            <ItemDatePicker
+              key={3}
+              id={parseInt(box.id)}
+              refetch={refetch}
+              mutation={UPDATE_BOX}
+              date={new Date(parseInt(box.delivered))}
+              fieldName='delivered'
+              variation='subdued'
+            />,
+            <BoxProductList
+              key={4}
+              id={parseInt(box.id)}
+              isAddOn={false}
+            />,
+            <BoxProductList
+              key={5}
+              id={parseInt(box.id)}
+              isAddOn={true}
+            />,
+          ]
+        ));
+        /* end datatable stuff */
+
+        const refetchQuery = () => {
+          const temp = { ...input };
+          setInput(temp);
+          refetch({ input });
+        }
+
+        const handleDateChange = (date) => {
+          const input = { ShopId, delivered: date};
+          setDelivered(date);
+          setInput(input);
+          refetch({ input });
+        };
+
+
+        return (
+          <React.Fragment>
+            <Sheet open={addBox} onClose={toggleAddBox}>
+              <SheetHelper title='Add Box' toggle={toggleAddBox}>
+                <BoxAdd
+                  onComplete={toggleAddBox}
+                  refetch={refetchQuery}
                 />
-              ),
-              <BoxShopTitle
-                key={2}
-                id={parseInt(box.id)}
-                title={box.shopify_title}
-              />,
-              <ItemDatePicker
-                key={3}
-                id={parseInt(box.id)}
-                refetch={refetch}
-                mutation={UPDATE_BOX}
-                date={new Date(parseInt(box.delivered))}
-                fieldName='delivered'
-                variation='subdued'
-              />,
-              <BoxProductList
-                key={4}
-                id={parseInt(box.id)}
-                isAddOn={false}
-              />,
-              <BoxProductList
-                key={5}
-                id={parseInt(box.id)}
-                isAddOn={true}
-              />,
-            ]
-          ));
-          /* end datatable stuff */
-
-          const refetchQuery = () => {
-            const temp = { ...input };
-            setInput(temp);
-            refetch({ input });
-          }
-
-          const handleDateChange = (date) => {
-            const input = { ShopId, delivered: date};
-            setDelivered(date);
-            setInput(input);
-            refetch({ input });
-          };
-
-
-          return (
-            <React.Fragment>
-              <Sheet open={addBox} onClose={toggleAddBox}>
-                <SheetHelper title='Add Box' toggle={toggleAddBox}>
-                  <BoxAdd
-                    onComplete={toggleAddBox}
-                    refetch={refetchQuery}
-                  />
-                </SheetHelper>
-              </Sheet>
-              <div style={{ padding: '1.6rem' }}>
-                <ButtonGroup segmented >
-                  <BoxActions
-                    checked={checked}
-                    checkedId={checkedId}
-                    onComplete={clearChecked}
-                    refetch={refetchQuery}
-                  />
-                  <DateSelector
-                    handleDateChange={handleDateChange}
-                    dates={dates}
-                    disabled={ Boolean(isLoading) } />
-                </ButtonGroup>
-              </div>
-              { isError && isError } 
-              { isLoading ? isLoading :
-                <DataTable
-                  columnContentTypes={Array(5).fill('text')}
-                  headings={[
-                    ( checked ? (
-                      <Button 
-                        key={0}
-                        plain
-                        onClick={() => clearChecked()}
-                      >
-                        <div style={{ 
-                          width: '18px',
-                          height: '18px',
-                          border: '1px solid silver',
-                          background: 'transparent',
-                          borderRadius: '3px',
-                        }}>
-                          <Icon
-                            color='inkLightest'
-                            source={MinusMinor} />
-                        </div>
-                      </Button>
-                    ) : '' ),
-                    <strong key={2}>Store Product</strong>,
-                    <strong key={3}>Delivery Date</strong>,
-                    <strong key={4}>Included Produce</strong>,
-                    <strong key={5}>Add On Produce</strong>,
-                  ]}
-                  rows={rows}
+              </SheetHelper>
+            </Sheet>
+            <div style={{ padding: '1.6rem' }}>
+              <ButtonGroup segmented >
+                <BoxActions
+                  checked={checked}
+                  checkedId={checkedId}
+                  onComplete={clearChecked}
+                  refetch={refetchQuery}
                 />
-              }
-              { data && data.getBoxes.length == 0 &&
-                <EmptyState
-                  heading="Manage your vege boxes"
-                  action={{content: 'Add box', onAction: toggleAddBox}}
-                  secondaryAction={{content: 'Learn more', url: 'http://cousinsd.net/'}}
-                >
-                  <p style={{ textAlign: 'left' }}>
-                    Add boxes with products and link to your products on your store
-                  </p>
-                </EmptyState>
-              }
-            </React.Fragment>
-          );
-        }}
-      </Query>
-    </React.Fragment>
+                <DateSelector
+                  handleDateChange={handleDateChange}
+                  dates={dates}
+                  disabled={ Boolean(isLoading) } />
+              </ButtonGroup>
+            </div>
+            { isError && isError } 
+            { isLoading ? isLoading :
+              <DataTable
+                columnContentTypes={Array(5).fill('text')}
+                headings={[
+                  ( checked ? (
+                    <Button 
+                      key={0}
+                      plain
+                      onClick={() => clearChecked()}
+                    >
+                      <div style={{ 
+                        width: '18px',
+                        height: '18px',
+                        border: '1px solid silver',
+                        background: 'transparent',
+                        borderRadius: '3px',
+                      }}>
+                        <Icon
+                          color='inkLightest'
+                          source={MinusMinor} />
+                      </div>
+                    </Button>
+                  ) : '' ),
+                  <strong key={2}>Store Product</strong>,
+                  <strong key={3}>Delivery Date</strong>,
+                  <strong key={4}>Included Produce</strong>,
+                  <strong key={5}>Add On Produce</strong>,
+                ]}
+                rows={rows}
+              />
+            }
+            { data && data.getBoxes.length == 0 &&
+              <EmptyState
+                heading="Manage your vege boxes"
+                action={{content: 'Add box', onAction: toggleAddBox}}
+                secondaryAction={{content: 'Learn more', url: 'http://cousinsd.net/'}}
+              >
+                <p style={{ textAlign: 'left' }}>
+                  Add boxes with products and link to your products on your store
+                </p>
+              </EmptyState>
+            }
+          </React.Fragment>
+        );
+      }}
+    </Query>
   );
 }
 

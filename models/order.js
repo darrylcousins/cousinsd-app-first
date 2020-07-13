@@ -19,6 +19,10 @@ module.exports = (sequelize, DataTypes) => {
     delivered: {
       type: DataTypes.DATE,
     },
+    is_subscription: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: '0',
+    },
   }, {});
   Order.associate = function(models) {
     // associations can be defined here

@@ -19,6 +19,9 @@ module.exports = {
       last_cart: {
         type: Sequelize.JSONB,
       },
+      shopify_product_id: {
+        type: Sequelize.BIGINT,
+      },
       SubscriberId: {
         type: Sequelize.INTEGER,
       },

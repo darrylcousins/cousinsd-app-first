@@ -28,6 +28,10 @@ module.exports = {
       shopify_customer_id: {
         type: Sequelize.BIGINT,
       },
+      is_subscription: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false,
+      },
       ShopId: {
         type: Sequelize.INTEGER,
       },

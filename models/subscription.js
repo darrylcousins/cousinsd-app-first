@@ -3,11 +3,9 @@ const { Shop } = require('./shop');
 
 module.exports = (sequelize, DataTypes) => {
   const Subscription = sequelize.define('Subscription', {
-    /*
     shopify_product_id: {
       type: DataTypes.BIGINT,
     },
-    */
     frequency: {
       type: DataTypes.ENUM,
       values: ['Weekly', 'Fortnightly', 'Monthly'],

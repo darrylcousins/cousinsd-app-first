@@ -115,6 +115,7 @@ export default function OrderListWrapper({ shopUrl }) {
     setBoxFilter(box);
   };
   /* end filters */
+
   /* page stuff */
   const handleNextPage = useCallback(() => {
     setLoading(true);
@@ -125,6 +126,7 @@ export default function OrderListWrapper({ shopUrl }) {
     setLoading(true);
     setOffset(offset-limit);
   }, [offset]);
+  /* end page stuff */
 
   /* collect orders and pageInfo: hasNextPage and hasPreviousPage */
   useEffect(() => {
@@ -196,6 +198,7 @@ export default function OrderListWrapper({ shopUrl }) {
       .then(blob => URL.createObjectURL(blob))
   };
 
+  /* collect query variables from current state */
   const collectVariables = () => {
     return ({
       input: {
@@ -208,6 +211,7 @@ export default function OrderListWrapper({ shopUrl }) {
     });
   };
 
+  /* collect query promises */
   const collectPromises = ({ useChecked, rows, getQuery }) => {
     const promises = [];
     if (useChecked) { // set on open modal
@@ -537,7 +541,7 @@ export default function OrderListWrapper({ shopUrl }) {
       <Modal
         open={labelModalOpen}
         onClose={() => setLabelModalOpen(false)}
-        title='Print labesl for selected orders only?'
+        title='Print labels for selected orders only?'
         primaryAction={{
           content: 'All orders',
           onAction: () => printLabels({ useChecked: false, useBoxFilter: false }),

@@ -13,7 +13,6 @@ import { numberFormat } from '../../lib';
 import { LoadingPageMarkup } from '../common/LoadingPageMarkup';
 import { Editable } from '../common/Editable';
 import { Switch } from '../common/Switch';
-import { ProductShopPrice } from './ProductShopPrice';
 import { 
   GET_PRODUCTS,
   TOGGLE_PRODUCT_AVAILABLE,
