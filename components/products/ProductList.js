@@ -21,11 +21,11 @@ import {
   PRODUCT_UPDATE,
 } from './shopify-queries';
 
-export default function ProductList({ shopUrl }) {
+export default function ProductList() {
 
   const ShopId = SHOP_ID;
   const input = { ShopId };
-  const adminUrl = `${shopUrl}/admin/products/`;
+  const adminUrl = `/admin/products/`;
 
   return (
     <Query

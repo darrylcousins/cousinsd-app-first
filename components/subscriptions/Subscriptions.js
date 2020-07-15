@@ -1,11 +1,9 @@
 import React from 'react';
 import {
-  Banner,
   DataTable,
-  Loading,
+  Button,
 } from '@shopify/polaris';
-import { Query } from '@apollo/react-components';
-import { ShopifyApolloClient } from '../../graphql/shopify-client';
+import { Link } from 'react-router-dom';
 import ProductTitle from './ProductTitle';
 
 export default function Subscriptions({ subscriptions }) {
@@ -13,12 +11,15 @@ export default function Subscriptions({ subscriptions }) {
   const rows = subscriptions.map((el) => (
     [
       <ProductTitle id={el.shopify_product_id} />,
+      <Link
+        to={`/subscription/${el.uid}`}
+      >View subscription</Link>,
       el.frequency,
     ]
   ));
   return (
     <DataTable
-      columnContentTypes={Array(2).fill('text')}
+      columnContentTypes={Array(3).fill('text')}
       headings={[]}
       rows={rows}
     />

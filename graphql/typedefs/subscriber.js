@@ -3,6 +3,7 @@ const { gql } = require("apollo-server-koa");
 const subscriber = gql`
   type Subscriber {
     id: ID!
+    uid: UUID!
     shopify_customer_id: BigInt!
     ShopId: Int!
     createdAt: String!
@@ -12,12 +13,13 @@ const subscriber = gql`
 
   input SubscriberInput {
     id: ID
+    uid: UUID!
     shopify_customer_id: BigInt!
     ShopID: Int!
   }
 
-  input SubscriberIdInput{
-    id: ID!
+  input SubscriberUUIDInput{
+    uid: UUID!
   }
 
   input SubscriberSearchInput {
@@ -25,14 +27,14 @@ const subscriber = gql`
   }
 
   extend type Query {
-    getSubscriber(input: SubscriberIdInput!): Subscriber
+    getSubscriber(input: SubscriberUUIDInput!): Subscriber
     getSubscribers(input: SubscriberSearchInput): [Subscriber]
   }
 
   extend type Mutation {
     createSubscriber(input: SubscriberInput!): Subscriber
     updateSubscriber(input: SubscriberInput!): Subscriber
-    deleteSubscriber(input: SubscriberIdInput!): Int
+    deleteSubscriber(input: SubscriberUUIDInput!): UUID
   }
 `;
 

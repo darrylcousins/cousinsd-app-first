@@ -13,9 +13,9 @@ import { LoadingPageMarkup } from '../common/LoadingPageMarkup';
 import OrderAddress from './OrderAddress';
 import LineItemProductList from './LineItemProductList';
 
-export default function OrderList({ query, shopUrl, input, checkbox, LineCheckbox }) {
+export default function OrderList({ query, input, checkbox, LineCheckbox }) {
 
-  const adminUrl = `${shopUrl}/admin/orders/`;
+  const adminUrl = `/admin/orders/`;
   const [delivery_date, including, addons, removed, subscription] = LABELKEYS;
 
   const getBadge = (text) => {
@@ -63,9 +63,10 @@ export default function OrderList({ query, shopUrl, input, checkbox, LineCheckbo
 
         // XXX TODO handle no data
 
-        if (!loading) {
+        if (!loading && data) {
           for (const [ key, order ] of Object.entries(data)) {
             let row = Array();
+            if (!order) continue;
             let lineItems = order.lineItems.edges;
             let id = order.id.split('/').pop();
             let done = false;

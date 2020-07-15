@@ -96,8 +96,6 @@ export const Switch = (props) => {
             );
         };
 
-        console.log(data);
-
         return (
           <React.Fragment>
             <input

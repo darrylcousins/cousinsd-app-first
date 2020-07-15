@@ -3,10 +3,11 @@ import { gql } from '@apollo/client';
 export const GET_SUBSCRIBERS = gql`
   query getSubscribers ($input: SubscriberSearchInput) {
     getSubscribers (input: $input) {
-      id
+      uid
       ShopId
       shopify_customer_id
       subscriptions {
+        uid
         frequency
         shopify_product_id
       }
@@ -14,11 +15,13 @@ export const GET_SUBSCRIBERS = gql`
   }
 `;
 
-export const GET_SUBSCRIPTIONS = gql`
-  query getSubscriptions ($input: SubscriptionSearchInput!) {
-    getSubscriptions (input: $input) {
+export const GET_SUBSCRIPTION = gql`
+  query getSubscription ($input: SubscriptionUUIDInput!) {
+    getSubscription (input: $input) {
+      uid
       SubscriberId
       subscriber {
+        uid
         shopify_customer_id
       }
       frequency

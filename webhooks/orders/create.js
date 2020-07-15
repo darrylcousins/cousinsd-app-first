@@ -1,59 +1,6 @@
 const { Op } = require("sequelize");
 const { Box, Order, Subscription, Subscriber } = require('../../models');
-const LABELKEYS = [
-  'Delivery Date', 
-  'Including', 
-  'Add on items', 
-  'Removed items', 
-  'Subscription',
-  'Add on product to'
-];
-const fs = require('fs');
-
-/* helpers */
-const toHandle = (title) => title.replace(' ', '-').toLowerCase();
-
-const listToArray = (arr) => {
-  return arr.split(',')
-    .map(el => el.trim())
-    .filter(el => el != '')
-    .map(el => toHandle(el));
-};
-
-const arrayAdd = (arr, value) => {
-  if (!arr.includes(value)) arr.push(value);
-  return arr;
-};
-
-const getTotalPrice = (items) => {
-  let price = 0;
-  items.forEach((el) => {
-    price += el.quantity * el.price;
-  });
-  return price;
-};
-
-const getQuantities = (items, addons) => {
-  let quantities = [];
-  items.forEach((el) => {
-    if (addons.indexOf(el.handle) > -1) {
-      quantities.push({
-        handle: el.handle,
-        quantity: el.quantity,
-        variant_id: el.shopify_variant_id
-      });
-    }
-  });
-  return quantities;
-};
-
-const savePayload = (payload) => {
-  fs.appendFile('order.json', JSON.stringify(payload, null, 2), function (err) {
-    if (err) console.log('Error saving json to file');
-    console.log('Saved!');
-  });
-};
-
+const { LABELKEYS, toHandle, listToArray, arrayAdd, getTotalPrice, getQuantities } = require('./lib');
 
 const orderCreate = (webhook, ShopId) => {
   const [delivery_date, p_in, p_add, p_dislikes, subscribed, addprod] = LABELKEYS;
@@ -126,6 +73,11 @@ const orderCreate = (webhook, ShopId) => {
     )
     .then(box => {
       let addOnProducts = listToArray(boxItem.addons);
+      let addOnRemoveQty = addOnProducts.map(el => {
+        const idx = el.indexOf(' '); // should be safe because these are spaceless handles
+        if (idx > -1 ) return el.slice(0, idx);
+        return el;
+      });
       const cart = {
         box_id: box.id,
         delivered,
@@ -136,7 +88,7 @@ const orderCreate = (webhook, ShopId) => {
         shopify_id: boxItem.shopify_product_id,
         subscription: boxItem.subscription,
         total_price: getTotalPrice(productItems.concat([boxItem])),
-        quantities: getQuantities(productItems, addOnProducts),
+        quantities: getQuantities(productItems, addOnRemoveQty),
         is_loaded: true,
       };
       const order_input = {
@@ -150,12 +102,11 @@ const orderCreate = (webhook, ShopId) => {
         is_subscription: boxItem.subscription !== null,
       };
       console.log('Inserting order with', order_input);
-      /*
+      console.log('Cart: ', cart);
       Order.create(order_input)
         .then((value) => console.log('created order', value.id))
         .catch((error) => console.log('got error', error)
       );
-      */
       console.log('Subscribed', boxItem.subscription);
       if (boxItem.subscription !== null) {
         const subscriber_input = {
@@ -165,7 +116,7 @@ const orderCreate = (webhook, ShopId) => {
         console.log('Inserting subscriber with', subscriber_input);
         const subscriber = Subscriber.findOrCreate({ where: subscriber_input })
           .then(([instance, created]) => {
-            console.log('created subscriber', instance, created);
+            console.log('created subscriber', instance.id, created);
             const subscription_input = {
               shopify_product_id: boxItem.shopify_product_id,
               SubscriberId: instance.id,
@@ -175,22 +126,25 @@ const orderCreate = (webhook, ShopId) => {
             Subscription.findOrCreate({ where: subscription_input })
               .then(([instance, created]) => {
                 const subscription_update = {
+                  /*
                   id: instance.id,
+                  uid: instance.uid,
                   shopify_product_id: instance.shopify_product_id,
                   SubscriberId: instance.SubscriberId,
+                  */
                   frequency: boxItem.subscription,
                   current_cart: cart,
                   last_cart: cart,
                 };
-                Subscription.upsert(subscription_update, { where: { id: instance.id }})
+                Subscription.update(subscription_update, { where: { uid: instance.uid }})
                  .then(([instance, updated]) => console.log('updated subscription', instance.id))
-                 .catch(err => console.log('error updating subscription'));
+                 .catch(err => console.log('error updating subscription', err));
                 console.log('created subscription', instance.id);
               })
-              .catch((error) => console.log('got error', error)
+              .catch((error) => console.log('error creating subscription', error)
             );
           })
-          .catch((error) => console.log('got error', error)
+          .catch((error) => console.log('error creating subscriber', error)
         );
       };
     })

@@ -9,8 +9,10 @@ const SubscriberResolvers = require('./subscriber');
 const BigInt = require('graphql-bigint');
 const GraphQLJSON = require('graphql-type-json');
 const { GraphQLJSONObject } = require('graphql-type-json');
+const GraphQLUUID = require('graphql-type-uuid');
 
 const resolvers = merge(
+  { UUID: GraphQLUUID },
   { JSON: GraphQLJSON, JSONObject: GraphQLJSONObject },
   { BigInt },
   ShopResolvers,

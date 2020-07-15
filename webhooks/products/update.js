@@ -19,7 +19,7 @@ const productUpdate = (webhook, ShopId) => {
 
     console.log(input);
     // get by shopify_id
-    const product = Product.update(
+    Product.update(
       input,
       { where: { shopify_id: payload.id } }
     ).then((value) => console.log('updated product', value))
@@ -36,8 +36,7 @@ const productUpdate = (webhook, ShopId) => {
     };
 
     console.log(input);
-    // get by shopify_id
-    const product = Box.update(
+    Box.update(
       input,
       { where: { shopify_id: payload.id } }
     ).then((value) => console.log('updated box', value))

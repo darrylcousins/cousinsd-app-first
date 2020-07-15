@@ -8,9 +8,9 @@ const resolvers = {
   },
   Query: {
     async getSubscriber(root, { input }, { models }, info) {
-      const { id } = input;
+      const { uid } = input;
       const subscriber = await Subscriber.findOne({ 
-        where: { id },
+        where: { uid },
       });
       return subscriber;
     },
@@ -27,19 +27,19 @@ const resolvers = {
       return Subscriber.create(input);
     },
     async updateSubscriber (root, { input }, { models }, info) {
-      const { id, ...props } = input;
+      const { uid, ...props } = input;
       await Subscriber.update(
         props,
-        { where: { id } }
+        { where: { uid } }
       );
       return Subscriber.findOne({ 
-        where: { id },
+        where: { uid },
       });
     },
     async deleteSubscriber (root, { input }, { models }, info) {
       /* id */
-      const { id } = input;
-      return Subscriber.destroy({ where: { id } });
+      const { uid } = input;
+      return Subscriber.destroy({ where: { uid } });
     },
   },
 };

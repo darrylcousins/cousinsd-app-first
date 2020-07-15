@@ -13,6 +13,7 @@ const root = gql`
   scalar BigInt
   scalar JSON
   scalar JSONObject
+  scalar UUID
 
   type Query {
     _empty: String

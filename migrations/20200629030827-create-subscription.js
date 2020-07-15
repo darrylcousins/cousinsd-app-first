@@ -9,6 +9,11 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
+      uid: {
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
+        allowNull: false,
+      },
       frequency: {
         type: Sequelize.ENUM,
         values: ['Weekly', 'Fortnightly', 'Monthly'],

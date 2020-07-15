@@ -9,5 +9,3 @@ import { LocalApolloClient } from '../graphql/local-client';
 export default function Template() {
   return null;
 }
-
-

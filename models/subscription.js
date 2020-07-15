@@ -3,6 +3,12 @@ const { Shop } = require('./shop');
 
 module.exports = (sequelize, DataTypes) => {
   const Subscription = sequelize.define('Subscription', {
+    uid: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      allowNull: false,
+      unique: true,
+    },
     shopify_product_id: {
       type: DataTypes.BIGINT,
     },

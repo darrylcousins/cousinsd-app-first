@@ -32,10 +32,11 @@ import { GET_ORDERS, GET_ORDER_DATES, GET_BOXES } from './queries';
 import { GET_SELECTED_DATE } from '../boxes/queries';
 import './order.css';
 
-export default function OrderListWrapper({ shopUrl }) {
+export default function OrderListWrapper() {
 
   const ShopId = SHOP_ID;
 
+  const open = false;
   const { data } = useQuery(GET_SELECTED_DATE, { client: LocalApolloClient });
   const [delivered, setDelivered] = useState(data.selectedDate);
   const [labelLoading, setLabelLoading] = useState(false);
@@ -493,7 +494,6 @@ export default function OrderListWrapper({ shopUrl }) {
       </div>
       { query ? (
         <OrderList 
-          shopUrl={shopUrl}
           input={input}
           checkbox={checkbox}
           LineCheckbox={LineCheckbox}

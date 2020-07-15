@@ -4,6 +4,7 @@ const { gql } = require("apollo-server-koa");
 const subscription = gql`
   type Subscription {
     id: ID!
+    uid: UUID!
     frequency: String!
     current_cart: JSON!
     last_cart: JSON!
@@ -16,6 +17,7 @@ const subscription = gql`
 
   input SubscriptionInput {
     id: ID
+    uid: UUID!
     frequency: String!
     current_cart: JSON!
     last_cart: JSON!
@@ -23,23 +25,23 @@ const subscription = gql`
     SubscriberId: Int!
   }
 
-  input SubscriptionIdInput{
-    id: ID!
+  input SubscriptionUUIDInput{
+    uid: UUID!
   }
 
   input SubscriptionSearchInput {
-    SubscriberId: ID!
+    SubscriberUUID: UUID!
   }
 
   extend type Query {
-    getSubscription(input: SubscriptionIdInput!): Subscription
+    getSubscription(input: SubscriptionUUIDInput!): Subscription
     getSubscriptions(input: SubscriptionSearchInput!): [Subscription]
   }
 
   extend type Mutation {
     createSubscription(input: SubscriptionInput!): Subscription
     updateSubscription(input: SubscriptionInput!): Subscriber
-    deleteSubscription(input: SubscriptionIdInput!): Int
+    deleteSubscription(input: SubscriptionUUIDInput!): UUID
   }
 `;
 

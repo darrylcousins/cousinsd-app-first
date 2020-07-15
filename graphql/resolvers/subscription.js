@@ -8,9 +8,9 @@ const resolvers = {
   },
   Query: {
     async getSubscription(root, { input }, { models }, info) {
-      const { id } = input;
+      const { uid } = input;
       const subscription = await Subscription.findOne({ 
-        where: { id },
+        where: { uid },
       });
       return subscription;
     },
@@ -27,19 +27,19 @@ const resolvers = {
       return Subscription.create(input);
     },
     async updateSubscription (root, { input }, { models }, info) {
-      const { id, ...props } = input;
+      const { uid, ...props } = input;
       await Subscription.update(
         props,
-        { where: { id } }
+        { where: { uid } }
       );
       return Subscription.findOne({ 
-        where: { id },
+        where: { uid },
       });
     },
     async deleteSubscription (root, { input }, { models }, info) {
-      /* id */
-      const { id } = input;
-      return Subscription.destroy({ where: { id } });
+      /* uid */
+      const { uid } = input;
+      return Subscription.destroy({ where: { uid } });
     },
   },
 };

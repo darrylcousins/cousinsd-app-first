@@ -32,7 +32,7 @@ import {
   UPDATE_BOX,
 } from './queries';
 
-export default function BoxList({ shopUrl, addBox, toggleAddBox }) {
+export default function BoxList() {
 
   const ShopId = SHOP_ID;
 
@@ -42,6 +42,11 @@ export default function BoxList({ shopUrl, addBox, toggleAddBox }) {
   const [input, setInput] = useState({ delivered, ShopId });
   const [dates, setDates] = useState([]);
   /* end boxes datatable stuff */
+
+  /* add box button */
+  const [addBox, setAddBox] = useState(false);
+  const toggleAddBox = useCallback(() => setAddBox(!addBox), [addBox]);
+  /* end add box button */
 
   useEffect(() => {
     execute(LocalHttpLink, { query: GET_BOX_DATES })
@@ -164,6 +169,10 @@ export default function BoxList({ shopUrl, addBox, toggleAddBox }) {
                   handleDateChange={handleDateChange}
                   dates={dates}
                   disabled={ Boolean(isLoading) } />
+                <Button 
+                  primary
+                  onClick={() => toggleAddBox()}
+                >Add Box</Button>
               </ButtonGroup>
             </div>
             { isError && isError } 

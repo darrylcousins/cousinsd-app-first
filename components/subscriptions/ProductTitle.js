@@ -8,6 +8,7 @@ import { Query } from '@apollo/react-components';
 import { ShopifyApolloClient } from '../../graphql/shopify-client';
 import { GET_PRODUCT } from './shopify-queries';
 
+/* get product title for the subscription */
 export default function ProductTitle({ id }) {
 
   const input = { id: `gid://shopify/Product/${id}` };

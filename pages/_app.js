@@ -1,17 +1,22 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import '@shopify/polaris/styles.css';
 import Head from 'next/head';
-import { AppProvider } from '@shopify/polaris';
+import { AppProvider, Frame, Page } from '@shopify/polaris';
 import { Provider } from '@shopify/app-bridge-react';
 import Cookies from 'js-cookie';
 import { ApolloProvider } from '@apollo/client';
 import translations from '@shopify/polaris/locales/en.json';
 import { ShopifyApolloClient } from '../graphql/shopify-client';
+import withReactRouter from '../server/with-react-router';
 
 const MyApp = ({ Component, pageProps }) => {
 
   const config = { apiKey: API_KEY, shopOrigin: Cookies.get("shopOrigin"), forceRedirect: true };
-  //console.log(config);
+
+  useEffect(() => {
+    window.addEventListener('unload', () => console.log('unloading'));
+    //a[href^="https"]
+  });
 
   return (
     <React.Fragment>
@@ -22,7 +27,11 @@ const MyApp = ({ Component, pageProps }) => {
       <Provider config={config}>
         <AppProvider i18n={translations}>
           <ApolloProvider client={ShopifyApolloClient}>
-            <Component {...pageProps} />
+            <Frame>
+              <Page>
+                <Component {...pageProps} />
+              </Page>
+            </Frame>
           </ApolloProvider>
         </AppProvider>
       </Provider>
@@ -30,4 +39,4 @@ const MyApp = ({ Component, pageProps }) => {
   );
 }
 
-export default MyApp;
+export default withReactRouter(MyApp);

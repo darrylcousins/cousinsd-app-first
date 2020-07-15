@@ -1,106 +1,154 @@
 import React, { useState, useCallback } from 'react';
-import {
-  Banner,
-  Card,
-  Frame,
-  Loading,
-  Page,
-  Tabs,
-} from '@shopify/polaris';
-import {
-  TitleBar,
-} from '@shopify/app-bridge-react';
-import {
-  MobileCancelMajorMonotone,
-} from '@shopify/polaris-icons';
-import { Query } from '@apollo/react-components';
-import { LocalApolloClient } from '../graphql/local-client';
-import { printCache } from '../components/common/ShowCache';
-import ProductList from '../components/products/ProductList';
-import BoxList from '../components/boxes/BoxList';
+import { useParams, BrowserRouter, Route, Link, Switch, useHistory } from 'react-router-dom';
+import { createBrowserHistory } from 'history';
+import { Card, Tabs, EmptyState } from '@shopify/polaris';
+import { TitleBar } from '@shopify/app-bridge-react';
 import OrderListWrapper from '../components/orders/OrderListWrapper';
+import BoxList from '../components/boxes/BoxList';
 import SubscriberList from '../components/subscriptions/SubscriberList';
-import {
-  GET_SHOP,
-} from '../components/shop/queries';
+import SubscriptionDetail from '../components/subscriptions/SubscriptionDetail';
+import ProductList from '../components/products/ProductList';
 
-export default function Index() {
+/* tab stuff */
+const tabs = [
+  {
+    id: 'home',
+    content: 'Home',
+    accessibilityLabel: 'Home',
+    panelID: 'home',
+  },
+  {
+    id: 'orders',
+    content: 'Orders',
+    accessibilityLabel: 'Orders',
+    panelID: 'orders',
+  },
+  {
+    id: 'boxes',
+    content: 'Boxes',
+    accessibilityLabel: 'Boxes',
+    panelID: 'boxes',
+  },
+  { 
+    id: 'products',
+    content: 'Produce',
+    accessibilityLabel: 'Produce',
+    panelID: 'products',
+  },
+  { 
+    id: 'subscribers',
+    content: 'Subscribers',
+    accessibilityLabel: 'Subscribers',
+    panelID: 'subscribers',
+  },
+];
+/* end tab stuff */
 
-  const ShopId = SHOP_ID;
-  const [addBox, setAddBox] = useState(false);
-  const toggleAddBox = useCallback(() => setAddBox(!addBox), [addBox]);
-  const [tabSelected, setTabSelected] = useState(0);
-  const handleTabChange = useCallback(
-        (selectedTabIndex) => setTabSelected(selectedTabIndex),
-        [],
-      );
-
-  const tabs = [
-    {
-      id: 'orders',
-      content: 'Orders',
-      accessibilityLabel: 'Orders',
-      panelID: 'orders',
-    },
-    {
-      id: 'boxes',
-      content: 'Boxes',
-      accessibilityLabel: 'Boxes',
-      panelID: 'boxes',
-    },
-    { 
-      id: 'products',
-      content: 'Produce',
-      accessibilityLabel: 'Produce',
-      panelID: 'products',
-    },
-    { 
-      id: 'subscribers',
-      content: 'Subscribers',
-      accessibilityLabel: 'Subscribers',
-      panelID: 'subscribers',
-    },
-  ];
-  /* end tab stuff */
-
-  const input = { id: ShopId };
+function Index() {
   return (
-    <Frame>
-        <TitleBar
-          title={tabs[tabSelected].content}
-          primaryAction={ tabSelected === 1 ? ({
-            content: 'Add Box',
-            onAction: () => toggleAddBox(),
-          }) : null}
-        />
-        <div style={{margin: '2.6rem 3.6rem'}}>
-          <Card>
-            <Query
-              query={GET_SHOP}
-              variables={{ input }}
-              client={LocalApolloClient}
-            >
-              {({ loading, error, data }) => {
-                if (loading) { return <Loading />; }
-                const isError = error && (
-                  <Banner status="critical">{error.message}</Banner>
-                );
-                const { url } = data.getShop;
-                return (
-                  <React.Fragment>
-                    { isError && isError }
-                    <Tabs tabs={tabs} selected={tabSelected} onSelect={handleTabChange}>
-                      { tabSelected === 0 && <OrderListWrapper shopUrl={url} /> }
-                      { tabSelected === 1 && <BoxList shopUrl={url} addBox={addBox} toggleAddBox={toggleAddBox}/> }
-                      { tabSelected === 2 && <ProductList shopUrl={url} /> }
-                      { tabSelected === 3 && <SubscriberList shopUrl={url} /> }
-                    </Tabs>
-                  </React.Fragment>
-                )
-              }}
-            </Query>
-          </Card>
-        </div>
-    </Frame>
+    <>
+      <TitleBar title='Veggies Boxes' />
+      <Card>
+        <EmptyState
+          heading="Manage veggie boxes on store"
+          action={{content: 'View boxes'}}
+          secondaryAction={{content: 'View orders'}}
+          image="https://cdn.shopify.com/s/files/1/0757/9955/files/empty-state.svg"
+          fullWidth={true}
+          centeredLayout={false}
+        >
+          <p>Some content for home page</p>
+        </EmptyState>
+      </Card>
+    </>
   );
 }
+
+function Orders() {
+  return (
+    <>
+      <TitleBar title='Orders' />
+      <Card><OrderListWrapper /></Card>
+    </>
+  );
+}
+
+function Boxes() {
+  return (
+    <>
+      <TitleBar title='Boxes' />
+      <Card><BoxList /></Card>
+    </>
+  );
+}
+
+function Subscriptions() {
+  return (
+    <>
+      <TitleBar title='Subscriptions' />
+      <Card><SubscriberList /></Card>
+    </>
+  );
+}
+
+function Products() {
+  return (
+    <>
+      <TitleBar title='Products' />
+      <Card><ProductList /></Card>
+    </>
+  );
+}
+
+function NotFound() {
+  return (
+    <>
+      <TitleBar title='404' />
+      <Card><h1>Not found</h1></Card>
+    </>
+  );
+}
+
+function Subscription() {
+
+  const { uid } = useParams();
+  console.log(uid);
+
+  return (
+    <>
+      <TitleBar title='Subscription' />
+      <Card><SubscriptionDetail uid={uid} /></Card>
+    </>
+  );
+}
+
+function App(props) {
+
+  const [tabSelected, setTabSelected] = useState(0);
+  const history = useHistory();
+
+  const handleTabSelect = (e) => {
+    setTabSelected(e);
+    if (e === 0) {
+      history.push(`/`);
+    } else {
+      history.push(`/${tabs[e].id}`);
+    }
+  };
+
+  return(
+    <Tabs tabs={tabs} selected={tabSelected} onSelect={handleTabSelect}>
+      <Switch>
+        <Route path="/" exact component={Index} />
+        <Route path="/orders" component={Orders} />
+        <Route path="/boxes" component={Boxes} />
+        <Route path="/products" component={Products} />
+        <Route path="/subscribers" component={Subscriptions} />
+        <Route path="/subscription/:uid" component={Subscription} />
+        <Route component={NotFound}/>
+      </Switch>
+    </Tabs>
+  );
+}
+
+export default App;

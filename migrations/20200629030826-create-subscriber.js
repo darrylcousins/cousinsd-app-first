@@ -9,15 +9,19 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
+      uid: {
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
+        allowNull: false,
+      },
       shopify_customer_id: {
         type: Sequelize.BIGINT,
         allowNull: false,
         validate: { isInt: true },
-        unique: 'compositeIndex',
+        unique: true,
       },
       ShopId: {
         type: Sequelize.INTEGER,
-        unique: 'compositeIndex',
       },
       createdAt: {
         allowNull: false,

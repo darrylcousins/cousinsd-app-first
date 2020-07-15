@@ -8,7 +8,7 @@ import {
 import { Query } from '@apollo/react-components';
 import { LocalApolloClient } from '../../graphql/local-client';
 import { LoadingPageMarkup } from '../common/LoadingPageMarkup';
-import { GET_SUBSCRIBERS, GET_SUBSCRIPTIONS } from './queries';
+import { GET_SUBSCRIBERS } from './queries';
 import Customer from './Customer';
 import Subscriptions from './Subscriptions';
 

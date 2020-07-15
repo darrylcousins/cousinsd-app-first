@@ -7,7 +7,13 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.BIGINT,
       allowNull: false,
       validate: { isInt: true },
-      unique: 'compositeIndex',
+      unique: true,
+    },
+    uid: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      allowNull: false,
+      unique: true,
     },
   }, {});
   Subscriber.associate = function(models) {
