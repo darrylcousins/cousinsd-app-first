@@ -180,7 +180,7 @@ app.prepare().then(() => {
     orderCreate(ctx.state.webhook, ENV.SHOP_ID);
   });
 
-  router.post('/webhooks/orders/update', webhook, (ctx) => {
+  router.post('/webhooks/orders/updated', webhook, (ctx) => {
     orderUpdated(ctx.state.webhook, ENV.SHOP_ID);
   });
 

@@ -9,7 +9,6 @@ import {
   TextStyle,
 } from '@shopify/polaris';
 import { Query } from '@apollo/react-components';
-import { LocalApolloClient } from '../../graphql/local-client';
 import BoxProductAdd from './BoxProductAdd';
 import BoxProductRemove from './BoxProductRemove';
 import { 
@@ -26,7 +25,6 @@ export default function BoxProductList({ id, isAddOn }) {
     <Query
       query={GET_BOX_PRODUCTS}
       variables={{ input }}
-      client={LocalApolloClient}
       fetchPolicy='no-cache'
     >
       {({ loading, error, data, refetch }) => {

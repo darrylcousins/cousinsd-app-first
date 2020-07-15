@@ -6,7 +6,6 @@ import {
   Loading,
 } from '@shopify/polaris';
 import { Query } from '@apollo/react-components';
-import { LocalApolloClient } from '../../graphql/local-client';
 import { LoadingPageMarkup } from '../common/LoadingPageMarkup';
 import { GET_SUBSCRIBERS } from './queries';
 import Customer from './Customer';
@@ -18,7 +17,6 @@ export default function SubscriberList() {
 
   return (
     <Query
-      client={LocalApolloClient}
       query={GET_SUBSCRIBERS}
       fetchPolicy='no-cache'
       variables={ { input } }

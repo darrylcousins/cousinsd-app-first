@@ -10,7 +10,7 @@ import {
 } from '@shopify/polaris';
 import { Mutation } from '@apollo/react-components';
 import { execute } from '@apollo/client';
-import { LocalApolloClient, LocalHttpLink } from '../../graphql/local-client';
+import { LocalHttpLink } from '../../graphql/client';
 import SheetHelper from '../common/SheetHelper';
 import BoxAddSelectDate from './BoxAddSelectDate';
 import { 
@@ -56,7 +56,6 @@ export default function BoxDuplicate({ open, box, onComplete, onCancel }) {
     <Sheet open={sheetOpen} onClose={onCancel}>
       <SheetHelper title={`Duplicate ${instance.title}`} toggle={toggleSheetOpen}>
         <Mutation
-          client={LocalApolloClient}
           mutation={CREATE_BOX}
         >
           {(boxAdd, { loading, error, data }) => {

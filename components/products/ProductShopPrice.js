@@ -6,7 +6,6 @@ import {
   TextStyle,
 } from '@shopify/polaris';
 import { Query } from '@apollo/react-components';
-import { ShopifyApolloClient } from '../../graphql/shopify-client';
 import { 
   GET_PRODUCT_PRICE,
 } from './shopify-queries';
@@ -29,7 +28,7 @@ export function ProductShopPrice({ id, adminUrl, productId }) {
     <Query
       query={GET_PRODUCT_PRICE}
       variables={{ id }}
-      client={ShopifyApolloClient}
+      context={{ shopify: true }}
       fetchPolicy='no-cache'
     >
       {({ loading, error, data }) => {

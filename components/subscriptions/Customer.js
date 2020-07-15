@@ -6,7 +6,6 @@ import {
   Spinner,
 } from '@shopify/polaris';
 import { Query } from '@apollo/react-components';
-import { ShopifyApolloClient } from '../../graphql/shopify-client';
 import { GET_CUSTOMER } from './shopify-queries';
 
 export default function Customer({ id }) {
@@ -15,7 +14,7 @@ export default function Customer({ id }) {
 
   return (
     <Query
-      client={ShopifyApolloClient}
+      context={{ shopify: true }}
       query={GET_CUSTOMER}
       variables={ input }
     >

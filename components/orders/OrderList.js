@@ -8,7 +8,6 @@ import {
   Pagination,
 } from '@shopify/polaris';
 import { Query } from '@apollo/react-components';
-import { ShopifyApolloClient } from '../../graphql/shopify-client';
 import { LoadingPageMarkup } from '../common/LoadingPageMarkup';
 import OrderAddress from './OrderAddress';
 import LineItemProductList from './LineItemProductList';
@@ -41,7 +40,7 @@ export default function OrderList({ query, input, checkbox, LineCheckbox }) {
 
   return (
     <Query
-      client={ShopifyApolloClient}
+      context={{ shopify: true }}
       query={query}
       fetchPolicy='no-cache'
       variables={ { input } }

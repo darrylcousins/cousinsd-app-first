@@ -7,7 +7,6 @@ import {
   TextContainer,
 } from '@shopify/polaris';
 import { Mutation } from '@apollo/react-components';
-import { LocalApolloClient } from '../../graphql/local-client';
 import { 
   DELETE_BOX, 
 } from './queries';
@@ -28,7 +27,6 @@ export default function BoxDelete({ open, box, onComplete, onCancel }) {
 
   return (
     <Mutation
-      client={LocalApolloClient}
       mutation={DELETE_BOX}
     >
       {(boxDelete, { loading, error }) => {

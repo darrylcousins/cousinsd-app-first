@@ -5,7 +5,6 @@ import {
   Spinner,
 } from '@shopify/polaris';
 import { Query } from '@apollo/react-components';
-import { ShopifyApolloClient } from '../../graphql/shopify-client';
 import { GET_PRODUCT } from './shopify-queries';
 
 /* get product title for the subscription */
@@ -15,7 +14,7 @@ export default function ProductTitle({ id }) {
 
   return (
     <Query
-      client={ShopifyApolloClient}
+      context={{ shopify: true }}
       query={GET_PRODUCT}
       variables={ input }
     >

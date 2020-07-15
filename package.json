@@ -20,7 +20,9 @@
   "license": "ISC",
   "dependencies": {
     "@apollo/client": "^3.0.0-rc.10",
+    "@apollo/link-retry": "^2.0.0-beta.3",
     "@apollo/react-components": "^4.0.0-beta.1",
+    "@cousinsd/shopify-boxes-client": "file:../shopify-boxes-client/cousinsd-shopify-boxes-client-1.0.0.tgz",
     "@koa/router": "^9.3.1",
     "@shopify/app-bridge-react": "^1.24.0",
     "@shopify/koa-shopify-auth": "^3.1.64",

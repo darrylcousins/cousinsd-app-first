@@ -6,17 +6,13 @@ import { Provider } from '@shopify/app-bridge-react';
 import Cookies from 'js-cookie';
 import { ApolloProvider } from '@apollo/client';
 import translations from '@shopify/polaris/locales/en.json';
-import { ShopifyApolloClient } from '../graphql/shopify-client';
+import { Client } from '../graphql/client';
 import withReactRouter from '../server/with-react-router';
+import { LocalApolloClient } from '../graphql/local-client';
 
 const MyApp = ({ Component, pageProps }) => {
 
   const config = { apiKey: API_KEY, shopOrigin: Cookies.get("shopOrigin"), forceRedirect: true };
-
-  useEffect(() => {
-    window.addEventListener('unload', () => console.log('unloading'));
-    //a[href^="https"]
-  });
 
   return (
     <React.Fragment>
@@ -26,11 +22,9 @@ const MyApp = ({ Component, pageProps }) => {
       </Head>
       <Provider config={config}>
         <AppProvider i18n={translations}>
-          <ApolloProvider client={ShopifyApolloClient}>
+          <ApolloProvider client={Client}>
             <Frame>
-              <Page>
                 <Component {...pageProps} />
-              </Page>
             </Frame>
           </ApolloProvider>
         </AppProvider>

@@ -11,8 +11,8 @@ import {
   TextField,
 } from '@shopify/polaris';
 import { useQuery, execute } from '@apollo/client';
-import { ShopifyHttpLink } from '../../graphql/shopify-client';
-import { LocalApolloClient, LocalHttpLink } from '../../graphql/local-client';
+import { ShopifyHttpLink } from '../../graphql/client';
+import { LocalHttpLink } from '../../graphql/client';
 import {
   dateToISOString,
   makePromise,
@@ -37,7 +37,7 @@ export default function OrderListWrapper() {
   const ShopId = SHOP_ID;
 
   const open = false;
-  const { data } = useQuery(GET_SELECTED_DATE, { client: LocalApolloClient });
+  const { data } = useQuery(GET_SELECTED_DATE);
   const [delivered, setDelivered] = useState(data.selectedDate);
   const [labelLoading, setLabelLoading] = useState(false);
   const [pickingLoading, setPickingLoading] = useState(false);

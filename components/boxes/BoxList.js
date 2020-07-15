@@ -16,7 +16,7 @@ import {
 import {  } from 'apollo-link';
 import { Query } from '@apollo/react-components';
 import { execute, useQuery } from '@apollo/client';
-import { LocalApolloClient, LocalHttpLink } from '../../graphql/local-client';
+import { LocalHttpLink } from '../../graphql/client';
 import { LoadingPageMarkup } from '../common/LoadingPageMarkup';
 import DateSelector from '../common/DateSelector';
 import ItemDatePicker from '../common/ItemDatePicker';
@@ -37,7 +37,7 @@ export default function BoxList() {
   const ShopId = SHOP_ID;
 
   /* boxes datatable stuff */
-  const { data } = useQuery(GET_SELECTED_DATE, { client: LocalApolloClient });
+  const { data } = useQuery(GET_SELECTED_DATE);
   const [delivered, setDelivered] = useState(data.selectedDate);
   const [input, setInput] = useState({ delivered, ShopId });
   const [dates, setDates] = useState([]);
@@ -75,7 +75,6 @@ export default function BoxList() {
 
   return (
     <Query
-      client={LocalApolloClient}
       query={GET_BOXES}
       fetchPolicy='no-cache'
       variables={ { input } }

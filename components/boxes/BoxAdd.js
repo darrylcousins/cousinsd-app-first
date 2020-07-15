@@ -8,7 +8,6 @@ import {
 } from '@shopify/polaris';
 import { Mutation } from '@apollo/react-components';
 import { useQuery } from '@apollo/client';
-import { LocalApolloClient } from '../../graphql/local-client';
 import BoxAddSelectDate from './BoxAddSelectDate';
 import BoxAddSelectName from './BoxAddSelectName';
 import BoxAddSelectProduct from './BoxAddSelectProduct';
@@ -21,14 +20,13 @@ export default function BoxAdd({ onComplete, refetch }) {
 
   const ShopId = SHOP_ID;
 
-  const { data } = useQuery(GET_SELECTED_DATE, { client: LocalApolloClient });
+  const { data } = useQuery(GET_SELECTED_DATE);
   const [storeProduct, setStoreProduct] = useState(null);
   const [selectedDate, setSelectedDate] = useState(new Date(Date.parse(data.selectedDate)));
   const [name, setName] = useState('');
 
   return (
     <Mutation
-      client={LocalApolloClient}
       mutation={CREATE_BOX}
     >
       {(boxAdd, { loading, error, data }) => {

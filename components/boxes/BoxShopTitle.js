@@ -8,7 +8,6 @@ import {
 } from '@shopify/polaris';
 import { ResourcePicker } from '@shopify/app-bridge-react';
 import { Mutation } from '@apollo/react-components';
-import { LocalApolloClient } from '../../graphql/local-client';
 import { findErrorMessage } from '../../lib';
 import { UPDATE_BOX } from './queries';
 
@@ -22,7 +21,6 @@ export default function BoxShopTitle({ id, title }) {
 
   return (
     <Mutation
-      client={LocalApolloClient}
       mutation={UPDATE_BOX}
     >
       {(handleUpdate, { loading, error }) => {

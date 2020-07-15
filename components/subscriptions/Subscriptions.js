@@ -10,10 +10,10 @@ export default function Subscriptions({ subscriptions }) {
 
   const rows = subscriptions.map((el) => (
     [
-      <ProductTitle id={el.shopify_product_id} />,
       <Link
         to={`/subscription/${el.uid}`}
       >View subscription</Link>,
+      <ProductTitle id={el.shopify_product_id} />,
       el.frequency,
     ]
   ));

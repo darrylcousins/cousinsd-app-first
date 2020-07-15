@@ -53,7 +53,7 @@ const checkedStyle = {
 
 export const Switch = (props) => {
 
-  const {id, fieldName, selected, client, mutation, update, onChange} = props;
+  const {id, fieldName, selected, context, mutation, update, onChange} = props;
 
   const [checked, setChecked] = useState(selected);
   const toggleChecked = useCallback(
@@ -68,7 +68,7 @@ export const Switch = (props) => {
 
   return (
     <Mutation
-      client={client}
+      context={context}
       mutation={mutation}
       update={update}
     >

@@ -7,8 +7,6 @@ import {
   Loading,
 } from '@shopify/polaris';
 import { Query } from '@apollo/react-components';
-import { ShopifyApolloClient } from '../../graphql/shopify-client';
-import { LocalApolloClient } from '../../graphql/local-client';
 import { numberFormat } from '../../lib';
 import { LoadingPageMarkup } from '../common/LoadingPageMarkup';
 import { Editable } from '../common/Editable';
@@ -29,11 +27,9 @@ export default function ProductList() {
 
   return (
     <Query
-      client={LocalApolloClient}
       query={GET_PRODUCTS}
       fetchPolicy='no-cache'
       variables={ { input } }
-      notifyOnNetworkStatusChange
       >
       {({ loading, error, data }) => {
         const isError = error && (
@@ -53,11 +49,11 @@ export default function ProductList() {
               <Editable 
                 key={0}
                 title={product.title}
+                context={ { shopify: true } }
                 id={product.shopify_gid}
                 fieldName='title'
-                client={ShopifyApolloClient}
                 mutation={PRODUCT_UPDATE}
-                update={(data) => console.log(data)}
+                update={(data) => null}
                 textStyle='strong'
               />
             ),
@@ -66,11 +62,11 @@ export default function ProductList() {
                 key={1}
                 id={product.id}
                 fieldName='available'
-                client={LocalApolloClient}
+                context={ { shopify: false } }
                 mutation={TOGGLE_PRODUCT_AVAILABLE}
                 update={(data) => console.log(data)}
                 selected={product.available}
-                onChange={(checked, gid) => console.log('got value', checked, gid)}
+                onChange={(checked, gid) => null}
               />
             ),
             (

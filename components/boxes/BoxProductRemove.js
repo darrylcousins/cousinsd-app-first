@@ -12,7 +12,6 @@ import {
   CircleMinusOutlineMinor,
 } from '@shopify/polaris-icons';
 import { Mutation } from '@apollo/react-components';
-import { LocalApolloClient } from '../../graphql/local-client';
 import {
   BOX_REMOVE_PRODUCT,
 } from './queries';
@@ -25,7 +24,6 @@ export default function BoxProductRemove({ boxId, product, refetch, isAddOn }) {
 
   return (
     <Mutation
-      client={LocalApolloClient}
       mutation={BOX_REMOVE_PRODUCT}
     >
       {(productRemove, { loading, error }) => {

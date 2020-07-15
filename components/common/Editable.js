@@ -12,7 +12,7 @@ import { findErrorMessage } from '../../lib';
 
 export function Editable(props) {
 
-  const {id, fieldName, title, client, mutation, update, textStyle, type} = props;
+  const {id, fieldName, title, context, mutation, update, textStyle, type} = props;
 
   let fieldType = 'text';
   if (type) fieldType = type;
@@ -24,7 +24,7 @@ export function Editable(props) {
 
   return (
     <Mutation
-      client={client}
+      context={context}
       mutation={mutation}
       update={update}
     >
@@ -48,7 +48,6 @@ export function Editable(props) {
             event.preventDefault();
             const input = { id };
             input[fieldName] = value;
-            console.log(input);
             handleTitleChange({ variables: { input } })
               .then(() => setEditing(false));
           }

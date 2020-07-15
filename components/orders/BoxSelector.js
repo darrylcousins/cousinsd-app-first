@@ -16,7 +16,6 @@ export default function BoxSelector({ handleBoxSelected, box, disabled, boxes })
   const [selectedBox, setSelectedBox] = useState(box);
 
   const setSelectedBoxChange = (box) => {
-    console.log(box);
     setSelectedBox(box);
     togglePopoverActive();
     handleBoxSelected(box);

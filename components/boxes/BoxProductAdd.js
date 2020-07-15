@@ -12,7 +12,6 @@ import {
 } from '@shopify/polaris-icons';
 import { ResourcePicker } from '@shopify/app-bridge-react';
 import { Mutation } from '@apollo/react-components';
-import { LocalApolloClient } from '../../graphql/local-client';
 import {
   BOX_ADD_PRODUCTS,
 } from './queries';
@@ -29,7 +28,6 @@ export default function BoxProductAdd({ boxId, isAddOn, refetch }) {
 
   return (
     <Mutation
-      client={LocalApolloClient}
       mutation={BOX_ADD_PRODUCTS}
       fetchPolicy='no-cache'
     >
