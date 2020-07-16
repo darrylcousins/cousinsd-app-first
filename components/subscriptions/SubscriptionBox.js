@@ -5,24 +5,27 @@ import {
   Spinner,
 } from '@shopify/polaris';
 import { Query } from '@apollo/react-components';
-
-import { GET_CURRENT_SELECTION, GET_INITIAL } from '../client/graphql/local-queries';
-import { GET_BOX } from '../client/graphql/queries';
-import { makeCurrent } from '../client/lib';
-import { Client } from '../client/graphql/client';
-import Example from '@cousinsd/shopify-boxes-client';
+import loadable from '@loadable/component';
+import { useApolloClient } from '@apollo/client';
+import { GET_BOX_PRODUCTS } from '../boxes/queries';
+import {
+  Box,
+  makeCurrent,
+  GET_INITIAL,
+  GET_CURRENT_SELECTION,
+} from '@cousinsd/shopify-boxes-client';
 
 export default function SubscriptionBox({ id }) {
 
-  const { initial } = Client.readQuery({ 
+  const client = useApolloClient();
+  const { initial } = client.readQuery({ 
     query: GET_INITIAL,
   });
   const input = { id };
 
   return (
     <Query
-      client={Client}
-      query={GET_BOX}
+      query={GET_BOX_PRODUCTS}
       variables={ { input } }
     >
       {({ loading, error, data }) => {
@@ -40,24 +43,18 @@ export default function SubscriptionBox({ id }) {
           quantities: initial.quantities,
           subscription: initial.subscription,
         };
-        const { current } = makeCurrent({ current: start });
-        Client.writeQuery({ 
+        const { current } = makeCurrent({ current: start, client });
+        client.writeQuery({ 
           query: GET_CURRENT_SELECTION,
           data: { current },
         });
 
         return (
-          <div style={{ width: '50%', textAlign: 'center' }}>
-            <Example />
+          <div style={{ width: '70rem' }}>
+            <Box loaded={true} />
           </div>
         );
       }}
     </Query>
   );
 };
-
-/*
-            <Box loaded={true} />
-            */
-
-

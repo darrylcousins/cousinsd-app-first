@@ -7,22 +7,38 @@ import {
 } from '@shopify/polaris';
 import { Link } from 'react-router-dom';
 import { Query } from '@apollo/react-components';
+import { useApolloClient } from '@apollo/client';
 import { LoadingPageMarkup } from '../common/LoadingPageMarkup';
 import Customer from './Customer';
 import SubscriptionBox from './SubscriptionBox';
 import { GET_SUBSCRIPTION } from './queries';
-
-import { GET_INITIAL } from '../client/graphql/local-queries';
-import { Client } from '../client/graphql/client';
+import {
+  Box,
+  GET_INITIAL,
+  GET_CURRENT_SELECTION,
+  initial,
+  current
+} from '@cousinsd/shopify-boxes-client';
 
 export default function SubscriptionDetail({ uid }) {
 
+  // reset cache data
+  const client = useApolloClient();
+  client.writeQuery({ 
+    query: GET_INITIAL,
+    data: { initial },
+  });
+  client.writeQuery({ 
+    query: GET_CURRENT_SELECTION,
+    data: { current },
+  });
+
   const input = { uid };
-  console.log(Client.cache.data.data);
 
   return (
     <Query
       query={GET_SUBSCRIPTION}
+      fetchPolicy='no-cache'
       variables={ { input } }
     >
       {({ loading, error, data }) => {
@@ -36,11 +52,13 @@ export default function SubscriptionDetail({ uid }) {
         }
 
         const subscription = data.getSubscription;
-        Client.writeQuery({ 
+
+        client.writeQuery({ 
           query: GET_INITIAL,
           data: { initial: subscription.current_cart },
         });
 
+        console.log(client.cache.data.data);
         return (
           <>
           <div style={{ margin: '1.6rem' }}>
@@ -51,8 +69,8 @@ export default function SubscriptionDetail({ uid }) {
                 </TextStyle>
               </Link>
               <Customer id={subscription.subscriber.shopify_customer_id} />
-              <SubscriptionBox id={subscription.current_cart.box_id} />
             </Stack>
+            <SubscriptionBox id={subscription.current_cart.box_id} />
           </div>
           </>
         );
@@ -60,5 +78,6 @@ export default function SubscriptionDetail({ uid }) {
     </Query>
   );
 }
-
+  /*
+              */
 

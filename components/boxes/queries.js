@@ -16,7 +16,7 @@ export const GET_BOX_DATES = gql`
 `;
 
 export const FRAGMENT_PRODUCT_ARRAY = gql`
-  fragment productArr on Box {
+  fragment productArray on Box {
     products {
       id
       title
@@ -25,11 +25,12 @@ export const FRAGMENT_PRODUCT_ARRAY = gql`
       shopify_id
       shopify_variant_id
       shopify_price
+      shopify_handle
     }
 }`
 
 export const FRAGMENT_ADDONS_ARRAY = gql`
-  fragment addOnProductArr on Box {
+  fragment addOnProductArray on Box {
     addOnProducts {
       id
       title
@@ -38,6 +39,7 @@ export const FRAGMENT_ADDONS_ARRAY = gql`
       shopify_id
       shopify_variant_id
       shopify_price
+      shopify_handle
     }
 }`
 
@@ -56,6 +58,25 @@ export const GET_BOX = gql`
   }
 `;
 
+/* returns box with products */
+export const GET_BOX_PRODUCTS = gql`
+  query getBox($input: BoxIdInput!) {
+    getBox(input: $input) {
+      id
+      delivered
+      shopify_gid
+      shopify_id
+      shopify_handle
+      shopify_title
+      shopify_price
+      ...productArray
+      ...addOnProductArray
+    }
+  }
+  ${FRAGMENT_PRODUCT_ARRAY}
+  ${FRAGMENT_ADDONS_ARRAY}
+`;
+
 export const GET_BOXES = gql`
   query getBoxes($input: BoxSearchInput!) {
     getBoxes(input: $input) {
@@ -68,18 +89,6 @@ export const GET_BOXES = gql`
       shopify_price
     }
   }
-`;
-
-/* returns box with products */
-export const GET_BOX_PRODUCTS = gql`
-  query getBoxProducts($input: BoxIdInput!) {
-    getBoxProducts(input: $input) {
-      ...productArr
-      ...addOnProductArr
-    }
-  }
-  ${FRAGMENT_PRODUCT_ARRAY}
-  ${FRAGMENT_ADDONS_ARRAY}
 `;
 
 export const CREATE_BOX = gql`

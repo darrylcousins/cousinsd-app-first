@@ -20,7 +20,7 @@ const resolvers = {
 };
 
 export const LocalHttpLink = new HttpLink({
-  uri: `${HOST}/local_graphql`,
+  uri: `/local_graphql`,
   fetch,
   fetchOptions: {
     credentials: 'include'
@@ -28,7 +28,7 @@ export const LocalHttpLink = new HttpLink({
 });
 
 export const ShopifyHttpLink = new HttpLink({
-  uri: `${HOST}/graphql`,
+  uri: `/graphql`,
   fetch,
   fetchOptions: {
     credentials: 'include'
