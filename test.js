@@ -9,7 +9,6 @@
 //orderUpdated(webhook, ShopId);
 //orderCreate(webhook, ShopId);
 
-const { Box } = require('@cousinsd/shopify-boxes-client/src/components/boxes/Box.js');
+const box = require('@cousinsd/box-trial');
 
-//printMessage();
 console.log('here in test');

@@ -1,4 +1,5 @@
 require('dotenv').config();
+// sequelize uses this file
 
 module.exports = {
   "development": {

@@ -6,11 +6,11 @@ import {
 } from '@shopify/polaris';
 import { Query } from '@apollo/react-components';
 
-import { Box } from '../client/components/boxes/Box';
 import { GET_CURRENT_SELECTION, GET_INITIAL } from '../client/graphql/local-queries';
 import { GET_BOX } from '../client/graphql/queries';
 import { makeCurrent } from '../client/lib';
 import { Client } from '../client/graphql/client';
+import Example from '@cousinsd/shopify-boxes-client';
 
 export default function SubscriptionBox({ id }) {
 
@@ -48,7 +48,7 @@ export default function SubscriptionBox({ id }) {
 
         return (
           <div style={{ width: '50%', textAlign: 'center' }}>
-            <Box loaded={true} />
+            <Example />
           </div>
         );
       }}
@@ -56,5 +56,8 @@ export default function SubscriptionBox({ id }) {
   );
 };
 
+/*
+            <Box loaded={true} />
+            */
 
 

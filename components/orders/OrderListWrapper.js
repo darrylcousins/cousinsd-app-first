@@ -30,7 +30,6 @@ import createCsvRows from './csvrows';
 import { getMainQuery, getShortQuery, getExportQuery } from './shopify-queries';
 import { GET_ORDERS, GET_ORDER_DATES, GET_BOXES } from './queries';
 import { GET_SELECTED_DATE } from '../boxes/queries';
-import './order.css';
 
 export default function OrderListWrapper() {
 

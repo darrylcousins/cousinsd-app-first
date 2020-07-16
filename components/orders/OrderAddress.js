@@ -1,5 +1,4 @@
 import React, { useRef, useEffect } from 'react';
-import './order.css';
 
 export default function OrderAddress({ address, customer }) {
 

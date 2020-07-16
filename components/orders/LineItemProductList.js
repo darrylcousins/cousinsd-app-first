@@ -1,5 +1,4 @@
 import React, { useRef, useEffect } from 'react';
-import './order.css';
 
 export default function LineItemProductList({ list, produce }) {
 
