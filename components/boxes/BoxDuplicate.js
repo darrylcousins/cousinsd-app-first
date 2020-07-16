@@ -54,7 +54,7 @@ export default function BoxDuplicate({ open, box, onComplete, onCancel }) {
 
   return (
     <Sheet open={sheetOpen} onClose={onCancel}>
-      <SheetHelper title={`Duplicate ${instance.title}`} toggle={toggleSheetOpen}>
+      <SheetHelper title={`Duplicate Box`} toggle={toggleSheetOpen}>
         <Mutation
           mutation={CREATE_BOX}
         >
@@ -108,7 +108,6 @@ export default function BoxDuplicate({ open, box, onComplete, onCancel }) {
               const variables = {
                 input: {
                   ShopId,
-                  title: instance.title,
                   delivered: selectedDate.toDateString(),
                   shopify_title: instance.shopify_title,
                   shopify_gid: instance.shopify_gid,

@@ -7,6 +7,8 @@ import {
   Loading,
   Pagination,
 } from '@shopify/polaris';
+import { Redirect } from "@shopify/app-bridge/actions";
+import { Context } from '@shopify/app-bridge-react'
 import { Query } from '@apollo/react-components';
 import { LoadingPageMarkup } from '../common/LoadingPageMarkup';
 import OrderAddress from './OrderAddress';
@@ -14,7 +16,6 @@ import LineItemProductList from './LineItemProductList';
 
 export default function OrderList({ query, input, checkbox, LineCheckbox }) {
 
-  const adminUrl = `/admin/orders/`;
   const [delivery_date, including, addons, removed, subscription] = LABELKEYS;
 
   const getBadge = (text) => {
@@ -92,12 +93,25 @@ export default function OrderList({ query, input, checkbox, LineCheckbox }) {
                     : ''
                   );
                   row.push(!done ? 
-                      <Button 
-                        plain
-                        url={`${adminUrl}${id}`}
-                      >
-                        {order.name}
-                      </Button> : '');
+                    <Context.Consumer>
+                      { app => {
+                        const redirect = Redirect.create(app);
+                        const id = order.id.split('/').slice(-1)[0];
+                        return (
+                          <Button 
+                            plain
+                            external
+                            onClick={() => redirect.dispatch(
+                              Redirect.Action.ADMIN_PATH,
+                              { path: `/orders/${id}`, newContext: true }
+                            )}
+                          >
+                            {order.name}
+                          </Button>
+                        );
+                      }}
+                      </Context.Consumer>
+                      : '');
                   row.push(
                     <>
                     <span>{ node.name }</span><br />

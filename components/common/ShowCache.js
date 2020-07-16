@@ -1,13 +1,7 @@
-import { LocalApolloClient } from '../../graphql/local-client';
+import { useApolloClient } from '@apollo/client';
 
 export const printCache = () => {
-  console.log(LocalApolloClient.cache.data.data);
-  //const key = 'getBoxes({"delivered":"2020-05-28 00:00:00","shopId":1})';
-  //console.log(LocalApolloClient.getData(key));
-
-  const Boxes = Object.values(LocalApolloClient.cache.extract())
-    .filter(item => item.__typename === 'Box')
-    .map(item => item.id);
-  console.log(Boxes);
-}
+  const client = useApolloClient();
+  console.log(client.cache.data.data);
+};
 

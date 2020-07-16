@@ -98,7 +98,7 @@ export default function BoxList() {
               <Checkbox 
                 key={0}
                 id={box.id}
-                label={box.title}
+                label={box.shopify_title}
                 labelHidden={true}
                 onChange={handleCheckedChange}
                 checked={checked && checkedId == box.id}

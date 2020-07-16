@@ -8,7 +8,6 @@ import { ApolloProvider } from '@apollo/client';
 import translations from '@shopify/polaris/locales/en.json';
 import { Client } from '../graphql/client';
 import withReactRouter from '../server/with-react-router';
-import { LocalApolloClient } from '../graphql/local-client';
 
 const MyApp = ({ Component, pageProps }) => {
 

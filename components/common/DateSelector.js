@@ -5,8 +5,7 @@ import {
   Button,
   Popover,
 } from '@shopify/polaris';
-import { useQuery } from '@apollo/client';
-import { LocalApolloClient } from '../../graphql/local-client';
+import { useQuery, useApolloClient } from '@apollo/client';
 import { dateToISOString } from '../../lib';
 import { 
   GET_SELECTED_DATE,
@@ -20,8 +19,9 @@ export default function DateSelector({ handleDateChange, disabled, dates }) {
     [],
   );
 
-  const { data } = useQuery(GET_SELECTED_DATE, { client: LocalApolloClient });
+  const { data } = useQuery(GET_SELECTED_DATE);
   const [delivered, setDelivered] = useState(data.selectedDate);
+  const client = useApolloClient();
 
   const [selectedDate, setSelectedDate] = useState(new Date(Date.parse(delivered)));
 
@@ -29,7 +29,7 @@ export default function DateSelector({ handleDateChange, disabled, dates }) {
     setSelectedDate(date);
     const dateString = dateToISOString(date);
     setDelivered(dateString);
-    LocalApolloClient.writeQuery({
+    client.writeQuery({
       query: GET_SELECTED_DATE,
       data: {
         selectedDate: dateString,

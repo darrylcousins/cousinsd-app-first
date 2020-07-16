@@ -77,11 +77,11 @@ const resolvers = {
   },
   Mutation: {
     async createBox (root, { input }, { models }, info) {
-      /* title, ShopId, shopify_id, shopify_gid, shopify_title, shopify_handle, delivered */
+      /* ShopId, shopify_id, shopify_gid, shopify_title, shopify_handle, delivered */
       return Box.create(input);
     },
     async updateBox (root, { input }, { models }, info) {
-      /* id, title, ShopId, shopify_id, shopify_gid, delivered */
+      /* id, ShopId, shopify_id, shopify_gid, delivered */
       const { id, ...props } = input;
       await Box.update(
         props,

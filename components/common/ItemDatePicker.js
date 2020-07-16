@@ -9,7 +9,6 @@ import {
   TextStyle,
 } from '@shopify/polaris';
 import { Mutation } from '@apollo/react-components';
-import { LocalApolloClient } from '../../graphql/local-client';
 import { dateToISOString } from '../../lib';
 
 export default function ItemDatePicker(props) {
@@ -36,7 +35,6 @@ export default function ItemDatePicker(props) {
 
   return (
     <Mutation
-      client={LocalApolloClient}
       mutation={mutation}
     >
       {(handleDateChange, { loading, error }) => {

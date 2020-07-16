@@ -41,9 +41,9 @@ export default function BoxShopTitle({ id, title }) {
           const storeProduct = selection[0];
           const input = { 
             id: parseInt(id),
-            shopify_gid: storeProduct.id,
+            //shopify_gid: storeProduct.id,
             shopify_title: storeProduct.title,
-            shopify_id: parseInt(storeProduct.id.split('/')[4]),
+            //shopify_id: parseInt(storeProduct.id.split('/')[4]),
           };
           handleUpdate({ variables: { input } })
             .then(() => {

@@ -3,7 +3,6 @@ const { gql } = require('@apollo/client');
 const box = gql`
   type Box {
     id: ID!
-    title: String!
     delivered: String!
     shopify_id: BigInt!
     shopify_gid: String!
@@ -25,7 +24,6 @@ const box = gql`
   }
 
   input BoxInput {
-    title: String!
     delivered: String
     ShopId: ID!
     shopify_id: BigInt!
@@ -38,15 +36,14 @@ const box = gql`
 
   input BoxUpdateInput {
     id: ID!
-    title: String
     delivered: String
     ShopId: ID
     shopify_id: BigInt
     shopify_gid: String
     shopify_title: String
     shopify_handle: String
-    shopify_variant_id: BigInt!
-    shopify_price: Int!
+    shopify_variant_id: BigInt
+    shopify_price: Int
   }
 
   input BoxSearchInput {

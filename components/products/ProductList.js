@@ -1,12 +1,15 @@
 import React from 'react';
 import {
   Banner,
+  Button,
   DataTable,
   EmptyState,
   Layout,
   Loading,
 } from '@shopify/polaris';
 import { Query } from '@apollo/react-components';
+import { Redirect } from "@shopify/app-bridge/actions";
+import { Context } from '@shopify/app-bridge-react'
 import { numberFormat } from '../../lib';
 import { LoadingPageMarkup } from '../common/LoadingPageMarkup';
 import { Editable } from '../common/Editable';
@@ -45,33 +48,44 @@ export default function ProductList() {
         /* datatable stuff */
         const rows = isLoading ? Array(3) : data.getProducts.map((product) => (
           [
-            (
-              <Editable 
-                key={0}
-                title={product.title}
-                context={ { shopify: true } }
-                id={product.shopify_gid}
-                fieldName='title'
-                mutation={PRODUCT_UPDATE}
-                update={(data) => null}
-                textStyle='strong'
-              />
-            ),
-            (
-              <Switch
-                key={1}
-                id={product.id}
-                fieldName='available'
-                context={ { shopify: false } }
-                mutation={TOGGLE_PRODUCT_AVAILABLE}
-                update={(data) => console.log(data)}
-                selected={product.available}
-                onChange={(checked, gid) => null}
-              />
-            ),
-            (
-              <span>{ numberFormat({ amount: product.shopify_price, currencyCode: 'NZD' }) }</span>
-            ),
+            <Editable 
+              key={0}
+              title={product.title}
+              context={ { shopify: true } }
+              id={product.shopify_gid}
+              fieldName='title'
+              mutation={PRODUCT_UPDATE}
+              update={(data) => null}
+              textStyle='strong'
+            />,
+            <Context.Consumer>
+              { app => {
+                const redirect = Redirect.create(app);
+                return (
+                  <Button 
+                    plain
+                    external
+                    onClick={() => redirect.dispatch(
+                      Redirect.Action.ADMIN_PATH,
+                      { path: `/products/${product.shopify_id}`, newContext: true }
+                    )}
+                  >
+                    View in store
+                  </Button>
+                );
+              }}
+              </Context.Consumer>,
+            <Switch
+              key={1}
+              id={product.id}
+              fieldName='available'
+              context={ { shopify: false } }
+              mutation={TOGGLE_PRODUCT_AVAILABLE}
+              update={(data) => console.log(data)}
+              selected={product.available}
+              onChange={(checked, gid) => null}
+            />,
+            <span>{ numberFormat({ amount: product.shopify_price, currencyCode: 'NZD' }) }</span>,
           ]
         ));
         /* end datatable stuff */
@@ -84,8 +98,9 @@ export default function ProductList() {
                 columnContentTypes={Array(2).fill('text').concat(['number'])}
                 headings={[
                   <strong key={0}>Title</strong>,
-                  <strong key={1}>Available</strong>,
-                  <strong key={2}>Price</strong>,
+                  <strong key={1}>View in store</strong>,
+                  <strong key={2}>Available</strong>,
+                  <strong key={3}>Price</strong>,
                 ]}
                 rows={rows}
               />

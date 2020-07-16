@@ -4,8 +4,7 @@ import {
   DatePicker,
   Popover,
 } from '@shopify/polaris';
-import { useQuery } from '@apollo/client';
-import { LocalApolloClient } from '../../graphql/local-client';
+import { useQuery, useApolloClient } from '@apollo/client';
 import { dateToISOString } from '../../lib';
 import { 
   GET_SELECTED_DATE,
@@ -13,13 +12,14 @@ import {
 
 export default function DateRangeSelector({ handleDateChange, disabled }) {
 
+  const client = useApolloClient();
   const [popoverActive, setPopoverActive] = useState(false);
   const togglePopoverActive = useCallback(
     () => setPopoverActive((popoverActive) => !popoverActive),
     [],
   );
 
-  const { data } = useQuery(GET_SELECTED_DATE, { client: LocalApolloClient });
+  const { data } = useQuery(GET_SELECTED_DATE);
   const [delivered, setDelivered] = useState(data.selectedDate);
 
   const [selectedDate, setSelectedDate] = useState(new Date(Date.parse(delivered)));
@@ -40,7 +40,7 @@ export default function DateRangeSelector({ handleDateChange, disabled }) {
     setSelectedDate(tempDate);
     const dateString = dateToISOString(tempDate);
     setDelivered(dateString);
-    LocalApolloClient.writeData({ data: { selectedDate: dateString }})
+    client.writeData({ data: { selectedDate: dateString }})
     togglePopoverActive();
     handleDateChange(dateString);
   }

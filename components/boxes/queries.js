@@ -16,7 +16,7 @@ export const GET_BOX_DATES = gql`
 `;
 
 export const FRAGMENT_PRODUCT_ARRAY = gql`
-  fragment productArray on Box {
+  fragment productArr on Box {
     products {
       id
       title
@@ -29,7 +29,7 @@ export const FRAGMENT_PRODUCT_ARRAY = gql`
 }`
 
 export const FRAGMENT_ADDONS_ARRAY = gql`
-  fragment addOnProductArray on Box {
+  fragment addOnProductArr on Box {
     addOnProducts {
       id
       title
@@ -45,7 +45,6 @@ export const GET_BOX = gql`
   query getBox($input: BoxIdInput!) {
     getBox(input: $input) {
       id
-      title
       delivered
       shopify_title
       shopify_handle
@@ -61,7 +60,6 @@ export const GET_BOXES = gql`
   query getBoxes($input: BoxSearchInput!) {
     getBoxes(input: $input) {
       id
-      title
       delivered
       shopify_title
       shopify_gid
@@ -76,8 +74,8 @@ export const GET_BOXES = gql`
 export const GET_BOX_PRODUCTS = gql`
   query getBoxProducts($input: BoxIdInput!) {
     getBoxProducts(input: $input) {
-      ...productArray
-      ...addOnProductArray
+      ...productArr
+      ...addOnProductArr
     }
   }
   ${FRAGMENT_PRODUCT_ARRAY}
@@ -88,7 +86,6 @@ export const CREATE_BOX = gql`
   mutation createBox($input: BoxInput!) {
     createBox(input: $input) {
       id
-      title
       delivered
       shopify_title
       shopify_gid
@@ -102,7 +99,7 @@ export const UPDATE_BOX = gql`
   mutation updateBox($input: BoxUpdateInput!) {
     updateBox(input: $input) {
       id
-      title
+      shopify_title
     }
   }
 `

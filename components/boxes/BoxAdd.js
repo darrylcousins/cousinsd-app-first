@@ -40,7 +40,6 @@ export default function BoxAdd({ onComplete, refetch }) {
           const variables = {
             input: {
               ShopId,
-              title: name,
               delivered: selectedDate.toDateString(),
               shopify_title: storeProduct.title,
               shopify_gid: storeProduct.id,
@@ -63,7 +62,6 @@ export default function BoxAdd({ onComplete, refetch }) {
         return (
           <Stack vertical>
             { isError && isError } 
-            <BoxAddSelectName name={name} onSelect={setName} />
             <BoxAddSelectProduct product={storeProduct} onSelect={setStoreProduct} />
             <BoxAddSelectDate date={selectedDate} onSelect={setSelectedDate} />
             <ButtonGroup

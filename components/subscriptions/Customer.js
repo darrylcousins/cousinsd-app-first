@@ -6,6 +6,8 @@ import {
   Spinner,
 } from '@shopify/polaris';
 import { Query } from '@apollo/react-components';
+import { Redirect } from "@shopify/app-bridge/actions";
+import { Context } from '@shopify/app-bridge-react'
 import { GET_CUSTOMER } from './shopify-queries';
 
 export default function Customer({ id }) {
@@ -24,13 +26,23 @@ export default function Customer({ id }) {
 
         const { customer } = data;
         return (
-          <Button
-            plain
-            external
-            url={ `https://${SHOP_NAME}.myshopify.com/admin/customers/${id}` }
-          >
-            { `${customer.displayName} <${customer.email}>` }
-          </Button>
+          <Context.Consumer>
+            { app => {
+              const redirect = Redirect.create(app);
+              return (
+                <Button 
+                  plain
+                  external
+                  onClick={() => redirect.dispatch(
+                    Redirect.Action.ADMIN_PATH,
+                    { path: `/customers/${id}`, newContext: true }
+                  )}
+                >
+                  { `${customer.displayName} <${customer.email}>` }
+                </Button>
+              );
+            }}
+          </Context.Consumer>
         );
       }}
     </Query>
