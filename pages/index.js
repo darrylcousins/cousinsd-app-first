@@ -137,6 +137,7 @@ function App(props) {
   };
 
   return(
+    <>
     <Tabs tabs={tabs} selected={tabSelected} onSelect={handleTabSelect}>
       <Switch>
         <Route path="/" exact component={Index} />
@@ -148,6 +149,7 @@ function App(props) {
         <Route component={NotFound}/>
       </Switch>
     </Tabs>
+    </>
   );
 }
 

@@ -2,26 +2,48 @@ import React from 'react';
 import {
   Banner,
   Button,
+  Heading,
   Spinner,
+  TextStyle,
 } from '@shopify/polaris';
 import { Query } from '@apollo/react-components';
-import loadable from '@loadable/component';
 import { useApolloClient } from '@apollo/client';
+import Spacer from '../common/Spacer';
+import SubscriptionEdit from './SubscriptionEdit';
 import { GET_BOX_PRODUCTS } from '../boxes/queries';
 import {
-  Box,
+  WrappedBox,
   makeCurrent,
   GET_INITIAL,
   GET_CURRENT_SELECTION,
+  REACT2,
 } from '@cousinsd/shopify-boxes-client';
 
-export default function SubscriptionBox({ id }) {
+export default function SubscriptionBox({ subscription }) {
 
   const client = useApolloClient();
+
   const { initial } = client.readQuery({ 
     query: GET_INITIAL,
   });
-  const input = { id };
+  const input = { id: subscription.current_cart.box_id };
+
+  /* subscription selector */
+  const handleSubscriptionChange = (frequency) => {
+    console.log(frequency);
+    const { current } = client.readQuery({ 
+      query: GET_CURRENT_SELECTION,
+    });
+    const update = { ...current };
+    update.subscription = frequency;
+    client.writeQuery({ 
+      query: GET_CURRENT_SELECTION,
+      data: { current: update },
+    });
+    console.log('initial', initial);
+    console.log('current', update);
+  };
+  /* end subscription selector */
 
   return (
     <Query
@@ -50,11 +72,34 @@ export default function SubscriptionBox({ id }) {
         });
 
         return (
-          <div style={{ width: '70rem' }}>
-            <Box loaded={true} />
-          </div>
+          <>
+            <Spacer />
+            <Heading>
+              { current.box.shopify_title }&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              <TextStyle variation='subdued'>
+                <span style={{ fontSize: '0.9em', fontWeight: 'normal' }}>{ current.delivered }</span>
+              </TextStyle>
+            </Heading>
+            <div style={{ width: '55rem' }}>
+              <WrappedBox 
+                loaded={true} 
+                state={current.subscription}
+                handleChange={handleSubscriptionChange} />
+              <Spacer />
+              <SubscriptionEdit subscription={subscription} />
+            </div>
+          </>
         );
       }}
     </Query>
   );
 };
+/*
+              <Box loaded={true} />
+              <Spacer />
+              <Subscription
+                state={current.subscription}
+                handleChange={handleSubscriptionChange} />
+              <Spacer />
+              <SubscriptionEdit subscription={subscription} />
+*/

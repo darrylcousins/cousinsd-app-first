@@ -39,7 +39,7 @@ export default function BoxProductList({ id, isAddOn }) {
         if (error) { return (
           <Banner status="critical">{error.message}</Banner>
         )}
-        const products = isAddOn ? data.getBoxProducts.addOnProducts : data.getBoxProducts.products;
+        const products = isAddOn ? data.getBox.addOnProducts : data.getBox.products;
         const doRefetch = () => refetch({ input });
         return (
             <Stack>

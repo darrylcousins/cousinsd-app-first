@@ -13,17 +13,18 @@ import Customer from './Customer';
 import SubscriptionBox from './SubscriptionBox';
 import { GET_SUBSCRIPTION } from './queries';
 import {
-  Box,
   GET_INITIAL,
   GET_CURRENT_SELECTION,
   initial,
-  current
+  current,
+  numberFormat
 } from '@cousinsd/shopify-boxes-client';
 
 export default function SubscriptionDetail({ uid }) {
 
-  // reset cache data
   const client = useApolloClient();
+
+  // reset cache data
   client.writeQuery({ 
     query: GET_INITIAL,
     data: { initial },
@@ -58,7 +59,7 @@ export default function SubscriptionDetail({ uid }) {
           data: { initial: subscription.current_cart },
         });
 
-        console.log(client.cache.data.data);
+        //console.log(client.cache.data.data);
         return (
           <>
           <div style={{ margin: '1.6rem' }}>
@@ -69,8 +70,12 @@ export default function SubscriptionDetail({ uid }) {
                 </TextStyle>
               </Link>
               <Customer id={subscription.subscriber.shopify_customer_id} />
+              <span style={{ fontWeight: 'bold', fontSize: '1.7em' }} data-regular-price>
+                { numberFormat(subscription.current_cart.total_price * 0.01) }
+              </span>
             </Stack>
-            <SubscriptionBox id={subscription.current_cart.box_id} />
+            <SubscriptionBox
+              subscription={subscription} />
           </div>
           </>
         );

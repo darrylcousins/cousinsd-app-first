@@ -28,6 +28,7 @@ const resolvers = {
     },
     async updateSubscription (root, { input }, { models }, info) {
       const { uid, ...props } = input;
+      console.log('update subscriptin input', input);
       await Subscription.update(
         props,
         { where: { uid } }

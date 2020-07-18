@@ -12,6 +12,7 @@ const graphQLServer = new ApolloServer({
   schema: schema,
   playground: true,
   bodyParser: true,
+  debug: true,
 });
 
 module.exports = {

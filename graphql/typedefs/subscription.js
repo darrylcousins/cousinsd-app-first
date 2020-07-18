@@ -25,6 +25,14 @@ const subscription = gql`
     SubscriberId: Int!
   }
 
+  input SubscriptionUpdateInput {
+    uid: UUID!
+    current_cart: JSON!
+    frequency: String!
+    last_cart: JSON
+    shopify_product_id: BigInt
+  }
+
   input SubscriptionUUIDInput{
     uid: UUID!
   }
@@ -40,7 +48,7 @@ const subscription = gql`
 
   extend type Mutation {
     createSubscription(input: SubscriptionInput!): Subscription
-    updateSubscription(input: SubscriptionInput!): Subscriber
+    updateSubscription(input: SubscriptionUpdateInput!): Subscription
     deleteSubscription(input: SubscriptionUUIDInput!): UUID
   }
 `;

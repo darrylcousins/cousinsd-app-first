@@ -18,6 +18,7 @@ export const GET_SUBSCRIBERS = gql`
 export const GET_SUBSCRIPTION = gql`
   query getSubscription ($input: SubscriptionUUIDInput!) {
     getSubscription (input: $input) {
+      id
       uid
       SubscriberId
       subscriber {
@@ -27,6 +28,16 @@ export const GET_SUBSCRIPTION = gql`
       frequency
       last_cart
       current_cart
+      shopify_product_id
     }
   }
 `;
+
+export const UPDATE_SUBSCRIPTION = gql`
+  mutation updateSubscription($input: SubscriptionUpdateInput!) {
+    updateSubscription(input: $input) {
+      id
+    }
+  }
+`;
+

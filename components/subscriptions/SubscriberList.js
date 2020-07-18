@@ -34,8 +34,8 @@ export default function SubscriberList() {
         /* datatable stuff */
         const rows = isLoading ? Array(2) : data.getSubscribers.map((subscriber) => (
           [
+            <Subscriptions subscriptions={subscriber.subscriptions} />,
             <Customer id={subscriber.shopify_customer_id} />,
-            <Subscriptions subscriptions={subscriber.subscriptions} />
           ]
         ));
         /* end datatable stuff */
@@ -47,8 +47,8 @@ export default function SubscriberList() {
               <DataTable
                 columnContentTypes={Array(2).fill('text')}
                 headings={[
-                  <strong key={1}>Customer</strong>,
                   <strong key={1}>Boxes</strong>,
+                  <strong key={1}>Customer</strong>,
                 ]}
                 rows={rows}
               />
